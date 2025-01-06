@@ -65,7 +65,7 @@ export default function Collections() {
                 </Button>
               </div>
               <Grid
-                items={nodes.length === 3 ? 3 : 2}
+                items={nodes.length === 3 ? 3 : 4}
                 data-test="collection-grid"
               >
                 {nodes.map((collection, i) => (
