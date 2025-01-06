@@ -244,7 +244,7 @@ function CartLineItem({line}: {line: CartLine}) {
 
   if (!line?.id) return null;
 
-  const {id, quantity, merchandise} = line;
+  const {id, quantity, merchandise, attributes} = line;
 
   if (typeof quantity === 'undefined' || !merchandise?.product) return null;
 
@@ -289,7 +289,19 @@ function CartLineItem({line}: {line: CartLine}) {
               </Text>
             ))}
           </div>
-
+          {/* Add attributes display */}
+          {attributes && attributes.length > 0 && (
+            <div className="grid pb-2">
+              {attributes.map((attr) => (
+                <div 
+                  key={attr.key}
+                  className="capitalize"
+                >
+                  {attr.key}: {attr.value}
+                </div>
+              ))}
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <div className="flex justify-start text-copy">
               <CartLineQuantityAdjust line={line} />
