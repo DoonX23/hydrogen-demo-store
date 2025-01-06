@@ -247,8 +247,14 @@ const LAYOUT_QUERY = `#graphql
     type
     url
   }
+  fragment GrandChildMenuItem on MenuItem {
+    ...MenuItem
+  }
   fragment ChildMenuItem on MenuItem {
     ...MenuItem
+    items {
+      ...GrandChildMenuItem  
+    }
   }
   fragment ParentMenuItem on MenuItem {
     ...MenuItem

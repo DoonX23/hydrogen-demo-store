@@ -149,18 +149,23 @@ export default function Collection() {
 
   return (
     <>
-      <PageHeader heading={collection.title}>
+      <PageHeader heading={collection.title} className="flex items-baseline justify-center w-full">
         {collection?.description && (
           <div className="flex items-baseline justify-between w-full">
             <div>
+              {/* 删除原来的Text组件,改用div + dangerouslySetInnerHTML 
               <Text format width="narrow" as="p" className="inline-block">
                 {collection.description}
-              </Text>
+              </Text>*/}
+                      <div 
+          dangerouslySetInnerHTML={{__html: collection.descriptionHtml}} 
+          className="inline-block prose prose-sm max-w-custom"  // 添加prose类来美化HTML内容
+        />
             </div>
           </div>
         )}
       </PageHeader>
-      <Section>
+      <Section className="max-w-custom mx-auto">
         <SortFilter
           filters={collection.products.filters as Filter[]}
           appliedFilters={appliedFilters}
@@ -272,6 +277,7 @@ const COLLECTION_QUERY = `#graphql
       handle
       title
       description
+      descriptionHtml
       seo {
         description
         title

@@ -18,7 +18,7 @@ function Icon({
       {...props}
       fill={fill}
       stroke={stroke}
-      className={clsx('w-5 h-5', className)}
+      className={clsx('w-6 h-6', className)}
     >
       {children}
     </svg>

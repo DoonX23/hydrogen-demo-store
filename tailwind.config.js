@@ -11,6 +11,8 @@ export default {
         contrast: 'rgb(var(--color-contrast) / <alpha-value>)',
         notice: 'rgb(var(--color-accent) / <alpha-value>)',
         shopPay: 'rgb(var(--color-shop-pay) / <alpha-value>)',
+        brand: 'rgb(var(--color-brand) / <alpha-value>)',
+        highlight: 'rgb(var(--color-highlight) / <alpha-value>)',
       },
       screens: {
         sm: '32em',
@@ -39,8 +41,8 @@ export default {
         mobileGallery: 'calc(100vw - 3rem)',
       },
       fontFamily: {
-        sans: ['Helvetica Neue', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        serif: ['"IBMPlexSerif"', 'Palatino', 'ui-serif'],
+        sans: ['Poppins', 'Helvetica Neue', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        serif: ['Poppins', '"IBMPlexSerif"', 'Palatino', 'ui-serif'],
       },
       fontSize: {
         display: ['var(--font-size-display)', '1.1'],
@@ -52,6 +54,7 @@ export default {
       maxWidth: {
         'prose-narrow': '45ch',
         'prose-wide': '80ch',
+        'custom': '1580px',
       },
       boxShadow: {
         border: 'inset 0px 0px 0px 1px rgb(var(--color-primary) / 0.08)',
