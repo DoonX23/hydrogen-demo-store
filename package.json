@@ -24,8 +24,14 @@
     "@remix-run/node": "^2.13.1",
     "@remix-run/react": "^2.13.1",
     "@remix-run/server-runtime": "^2.13.1",
+<<<<<<< Updated upstream
     "@shopify/cli": "^3.69.4",
     "@shopify/hydrogen": "^2024.10.0",
+=======
+    "@shopify/admin-api-client": "^1.0.4",
+    "@shopify/cli": "^3.72.2",
+    "@shopify/hydrogen": "^2024.10.1",
+>>>>>>> Stashed changes
     "@shopify/remix-oxygen": "^2.0.9",
     "clsx": "^1.2.1",
     "cross-env": "^7.0.3",
