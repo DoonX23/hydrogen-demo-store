@@ -11,3 +11,5 @@ node_modules
 /test-results/
 /playwright-report/
 /playwright/.cache/
+customer-accountapi.generated.d.ts
+storefrontapi.generated.d.ts

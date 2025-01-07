@@ -46,7 +46,7 @@ export async function loader(args: LoaderFunctionArgs) {
 async function loadCriticalData({context, request}: LoaderFunctionArgs) {
   const [{shop, hero}] = await Promise.all([
     context.storefront.query(HOMEPAGE_SEO_QUERY, {
-      variables: {handle: 'freestyle'},
+      variables: {handle: 'polycarbonate-sheet'},
     }),
     // Add other queries here, so that they are loaded in parallel
   ]);
@@ -159,7 +159,7 @@ export default function Homepage() {
         <Hero {...primaryHero} height="full" top loading="eager" />
       )}
 
-      {featuredProducts && (
+      {/*{featuredProducts && (
         <Suspense>
           <Await resolve={featuredProducts}>
             {(response) => {
@@ -180,7 +180,7 @@ export default function Homepage() {
             }}
           </Await>
         </Suspense>
-      )}
+      )}*/}
 
       {secondaryHero && (
         <Suspense fallback={<Hero {...skeletons[1]} />}>

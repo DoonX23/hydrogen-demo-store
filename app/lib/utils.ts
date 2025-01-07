@@ -4,6 +4,7 @@ import type {FulfillmentStatus} from '@shopify/hydrogen/customer-account-api-typ
 import typographicBase from 'typographic-base';
 
 import type {
+  GrandChildMenuItemFragment,
   ChildMenuItemFragment,
   MenuFragment,
   ParentMenuItemFragment,
@@ -19,8 +20,13 @@ type EnhancedMenuItemProps = {
   isExternal?: boolean;
 };
 
-export type ChildEnhancedMenuItem = ChildMenuItemFragment &
-  EnhancedMenuItemProps;
+// 1. 首先定义最底层的孙菜单项类型
+export type GrandChildEnhancedMenuItem = GrandChildMenuItemFragment & EnhancedMenuItemProps;
+
+// 2. 修改子菜单项类型，让它可以包含孙菜单项
+export type ChildEnhancedMenuItem = (ChildMenuItemFragment & EnhancedMenuItemProps) & {
+  items?: GrandChildEnhancedMenuItem[]; // 注意这里增加了items
+};
 
 export type ParentEnhancedMenuItem = (ParentMenuItemFragment &
   EnhancedMenuItemProps) & {
@@ -150,10 +156,12 @@ function parseItem(primaryDomain: string, env: Env, customPrefixes = {}) {
   return function (
     item:
       | MenuFragment['items'][number]
-      | MenuFragment['items'][number]['items'][number],
+      | MenuFragment['items'][number]['items'][number]
+      | MenuFragment['items'][number]['items'][number]['items'][number] , // 三级菜单项
   ):
     | EnhancedMenu['items'][0]
     | EnhancedMenu['items'][number]['items'][0]
+    | EnhancedMenu['items'][number]['items'][number]['items'][0]  // 增强后的三级菜单项
     | null {
     if (!item?.url || !item?.type) {
       // eslint-disable-next-line no-console

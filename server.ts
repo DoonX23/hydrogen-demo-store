@@ -16,7 +16,8 @@ import {
 
 import {AppSession} from '~/lib/session.server';
 import {getLocaleFromRequest} from '~/lib/utils';
-
+// 添加 Sanity 相关导入
+import {createSanityContext} from 'hydrogen-sanity';
 /**
  * Export a fetch handler in module format.
  */
@@ -39,6 +40,19 @@ export default {
         caches.open('hydrogen'),
         AppSession.init(request, [env.SESSION_SECRET]),
       ]);
+
+      // 添加 Sanity 配置
+      const sanity = createSanityContext({
+        request,
+        cache,
+        waitUntil,
+        client: {
+          projectId: env.SANITY_PROJECT_ID,
+          dataset: env.SANITY_DATASET || 'production',
+          apiVersion: env.SANITY_API_VERSION || 'v2024-08-08',
+          useCdn: process.env.NODE_ENV === 'production',
+        }
+      });
 
       /**
        * Create Hydrogen's Storefront client.
@@ -86,6 +100,8 @@ export default {
           customerAccount,
           cart,
           env,
+          // 将 sanity 添加到 context 中
+          sanity,
         }),
       });
 
