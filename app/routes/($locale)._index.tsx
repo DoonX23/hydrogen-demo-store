@@ -305,7 +305,7 @@ export const FEATURED_COLLECTIONS_QUERY = `#graphql
   @inContext(country: $country, language: $language) {
     collections(
       first: 4,
-      sortKey: UPDATED_AT
+      sortKey: TITLE
     ) {
       nodes {
         id

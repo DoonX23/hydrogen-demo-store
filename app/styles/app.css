@@ -1,3 +1,8 @@
+/* 首先放置所有 @import 语句 */
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/700.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
