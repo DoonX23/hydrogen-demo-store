@@ -11,3 +11,31 @@
   font-style: italic;
   src: url('./fonts/IBMPlexSerif-TextItalic.woff2') format('woff2');
 }
+/* 添加 Poppins 字体声明 */
+@font-face {
+  font-family: 'Poppins';
+  font-display: swap;
+  font-weight: 400;
+  src: url('./fonts/Poppins-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-display: swap;
+  font-weight: 500;  /* 确保这里的weight和文件名匹配 */
+  src: url('./fonts/Poppins-Medium.woff2') format('woff2');  /* Medium对应500 */
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-display: swap;
+  font-weight: 600;  /* SemiBold对应600 */
+  src: url('./fonts/Poppins-SemiBold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-display: swap;
+  font-weight: 700;  /* Bold对应700 */
+  src: url('./fonts/Poppins-Bold.woff2') format('woff2');
+}
