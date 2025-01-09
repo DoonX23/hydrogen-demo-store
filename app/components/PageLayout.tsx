@@ -44,7 +44,7 @@ export function PageLayout({children, layout}: LayoutProps) {
   const {headerMenu, footerMenu} = layout || {};
   return (
     <>
-      <div className="bg-highlight sticky h-16 text-white xl:h-10 top-0 xl:w-full xl:z-50">
+      <div className="bg-highlight sticky z-10 h-16 text-white xl:h-10 top-0 xl:w-full">
         <div className="container mx-auto px-4 xl:h-full py-2 xl:py-0">
           <div className="flex flex-col items-center xl:flex-row xl:justify-center xl:h-full text-sm gap-1 xl:gap-2">
             <div>Ordering over $199?</div>
@@ -204,7 +204,7 @@ function MobileHeader({
   return (
     <header
       role="banner"
-      className={`bg-brand dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader flex xl:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-16 justify-between w-full leading-none gap-4 px-4 md:px-8`}
+      className={`bg-brand dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader flex xl:hidden items-center h-nav sticky backdrop-blur-lg z-20 top-16 justify-between w-full leading-none gap-4 px-4 md:px-8`}
     >
       <div className="flex items-center justify-start w-full gap-4">
         <button
@@ -274,7 +274,7 @@ function DesktopHeader({
   return (
     <header
       role="banner"
-      className={`bg-brand dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader hidden h-nav xl:flex items-center sticky transition duration-300 backdrop-blur-lg z-50 top-10 justify-between w-full leading-none gap-8 px-12 py-8`}
+      className={`bg-brand dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader hidden h-nav xl:flex items-center sticky transition duration-300 backdrop-blur-lg z-20 top-10 justify-between w-full leading-none gap-8 px-12 py-8`}
     >
       <div className="flex gap-12">
       <Logo />
