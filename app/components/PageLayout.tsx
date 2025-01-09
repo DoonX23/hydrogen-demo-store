@@ -535,7 +535,7 @@ function CustomHeaderMenu({menu, onClose}: {menu?: EnhancedMenu, onClose: () => 
                 </Disclosure.Button>
                   <div
                     className={`${
-                      open ? `max-h-96 h-fit` : `max-h-0 md:max-h-fit`
+                      open ? `h-fit` : `max-h-0 md:max-h-fit`
                     } overflow-hidden transition-all duration-300`}
                   >
                     <Suspense data-comment="This suspense fixes a hydration bug in Disclosure.Panel with static prop">
