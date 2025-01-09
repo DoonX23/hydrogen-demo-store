@@ -44,21 +44,19 @@ export function PageLayout({children, layout}: LayoutProps) {
   const {headerMenu, footerMenu} = layout || {};
   return (
     <>
-<div className="bg-highlight sticky h-16 text-white xl:h-10 top-0 xl:w-full xl:z-50">
-  <div className="container mx-auto px-4 xl:h-full py-2 xl:py-0">
-    <div className="flex flex-col items-center xl:flex-row xl:justify-center xl:h-full text-sm gap-1 xl:gap-2">
-      <div>Ordering over $199?</div>
-      <Link 
-        to="/pages/contact"
-        className="border-b border-transparent hover:border-white transition-colors"
-      >
-        Contact Us for a discounted price
-      </Link>
-    </div>
-  </div>
-</div>
-
-
+      <div className="bg-highlight sticky h-16 text-white xl:h-10 top-0 xl:w-full xl:z-50">
+        <div className="container mx-auto px-4 xl:h-full py-2 xl:py-0">
+          <div className="flex flex-col items-center xl:flex-row xl:justify-center xl:h-full text-sm gap-1 xl:gap-2">
+            <div>Ordering over $199?</div>
+            <Link 
+              to="/pages/contact"
+              className="border-b border-transparent hover:border-white transition-colors"
+            >
+              Contact Us for a discounted price
+            </Link>
+          </div>
+        </div>
+      </div>
       <div className="flex flex-col min-h-screen">
         <div className="">
           <a href="#mainContent" className="sr-only">
@@ -555,7 +553,7 @@ function CustomHeaderMenu({menu, onClose}: {menu?: EnhancedMenu, onClose: () => 
             {({open}) => (
               <>
                 <Disclosure.Button className="text-left md:cursor-default">
-                  <Heading className="flex justify-between items-center" size="lead" as="h3">
+                <Heading className="flex justify-between items-center text-xl" size="lead" as="h3">
                     {item.title}
                     {item?.items?.length > 0 && (
                       <span className="md:hidden">
@@ -572,7 +570,7 @@ function CustomHeaderMenu({menu, onClose}: {menu?: EnhancedMenu, onClose: () => 
                   >
                     <Suspense data-comment="This suspense fixes a hydration bug in Disclosure.Panel with static prop">
                       <Disclosure.Panel static>
-                        <nav className="grid gap-2 pt-4">
+                        <nav className="grid gap-2 pt-4 pl-2">
                           {item.items.map((subItem: ChildEnhancedMenuItem) => (
                             <div key={subItem.id} className="">
                               {subItem.items?.length > 0 ? (
@@ -592,7 +590,7 @@ function CustomHeaderMenu({menu, onClose}: {menu?: EnhancedMenu, onClose: () => 
                                           subOpen ? `max-h-48 h-fit` : `max-h-0 md:max-h-fit`
                                         } overflow-hidden transition-all duration-300`}
                                       >
-                                        <nav className="grid gap-2 pl-4 pt-2">
+                                        <nav className="grid gap-3 pl-2 pt-3">
                                           {subItem.items.map((grandChild: GrandChildEnhancedMenuItem) => (
                                             <CustomHeaderLink
                                               key={grandChild.id}
