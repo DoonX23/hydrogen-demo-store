@@ -44,35 +44,21 @@ export function PageLayout({children, layout}: LayoutProps) {
   const {headerMenu, footerMenu} = layout || {};
   return (
     <>
-      {/* 提醒横栏 - 添加hidden xl:block在手机端隐藏 */}
-      <div className="bg-highlight text-white h-10 fixed w-full z-50 hidden xl:block">
-        <div className="container mx-auto px-4 h-full">
-          <div className="flex flex-col xl:flex-row justify-center items-center h-full text-sm gap-1 xl:gap-2">
-            <div>Ordering over $199?</div>
-            <Link 
-              to="/pages/contact"
-              className="border-b border-transparent hover:border-white transition-colors"
-            >
-              Contact Us for a discounted price
-            </Link>
-          </div>
-        </div>
-      </div>
+<div className="bg-highlight sticky h-16 text-white xl:h-10 top-0 xl:w-full xl:z-50">
+  <div className="container mx-auto px-4 xl:h-full py-2 xl:py-0">
+    <div className="flex flex-col items-center xl:flex-row xl:justify-center xl:h-full text-sm gap-1 xl:gap-2">
+      <div>Ordering over $199?</div>
+      <Link 
+        to="/pages/contact"
+        className="border-b border-transparent hover:border-white transition-colors"
+      >
+        Contact Us for a discounted price
+      </Link>
+    </div>
+  </div>
+</div>
 
-      {/* 手机端的提醒横栏 - 添加xl:hidden在桌面端隐藏 */}
-      <div className="bg-highlight text-white xl:hidden">
-        <div className="container mx-auto px-4 py-2">
-          <div className="flex flex-col items-center text-sm gap-1">
-            <div>Ordering over $199?</div>
-            <Link 
-              to="/pages/contact"
-              className="border-b border-transparent hover:border-white transition-colors"
-            >
-              Contact Us for a discounted price
-            </Link>
-          </div>
-        </div>
-      </div>
+
       <div className="flex flex-col min-h-screen">
         <div className="">
           <a href="#mainContent" className="sr-only">
@@ -83,7 +69,7 @@ export function PageLayout({children, layout}: LayoutProps) {
           <Header title={layout.shop.name} menu={headerMenu} />
         )}
         {/* 主内容区域添加mt-10对应提醒横栏高度 */}
-        <main role="main" id="mainContent" className="flex-grow xl:pt-nav xl:mt-10">
+        <main role="main" id="mainContent" className="flex-grow">
           {children}
         </main>
       </div>
@@ -220,7 +206,7 @@ function MobileHeader({
   return (
     <header
       role="banner"
-      className={`bg-brand dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader flex xl:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-4 px-4 md:px-8`}
+      className={`bg-brand dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader flex xl:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-16 justify-between w-full leading-none gap-4 px-4 md:px-8`}
     >
       <div className="flex items-center justify-start w-full gap-4">
         <button
@@ -290,7 +276,7 @@ function DesktopHeader({
   return (
     <header
       role="banner"
-      className={`bg-brand dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader hidden h-nav xl:flex items-center fixed transition duration-300 backdrop-blur-lg z-50 top-10 justify-between w-full leading-none gap-8 px-12 py-8`}
+      className={`bg-brand dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader hidden h-nav xl:flex items-center sticky transition duration-300 backdrop-blur-lg z-50 top-10 justify-between w-full leading-none gap-8 px-12 py-8`}
     >
       <div className="flex gap-12">
       <Logo />
