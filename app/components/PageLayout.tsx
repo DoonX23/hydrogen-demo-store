@@ -31,6 +31,7 @@ import {useCartFetchers} from '~/hooks/useCartFetchers';
 import type {RootLoader} from '~/root';
 import DeskNavigation from '~/components/Header/DeskNavigation';
 import Logo from './Logo';
+import {MenuLink} from '~/components/MenuLink';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -444,6 +445,7 @@ function Footer({menu}: {menu?: EnhancedMenu}) {
   );
 }
 
+/* 用MenuLink取代了FooterLink
 function FooterLink({item}: {item: ChildEnhancedMenuItem}) {
   if (item.to.startsWith('http')) {
     return (
@@ -459,6 +461,7 @@ function FooterLink({item}: {item: ChildEnhancedMenuItem}) {
     </Link>
   );
 }
+  */
 
 function FooterMenu({menu}: {menu?: EnhancedMenu}) {
   const styles = {
@@ -493,7 +496,7 @@ function FooterMenu({menu}: {menu?: EnhancedMenu}) {
                       <Disclosure.Panel static>
                         <nav className={styles.nav}>
                           {item.items.map((subItem: ChildEnhancedMenuItem) => (
-                            <FooterLink key={subItem.id} item={subItem} />
+                            <MenuLink key={subItem.id} item={subItem}/>
                           ))}
                         </nav>
                       </Disclosure.Panel>
@@ -509,46 +512,14 @@ function FooterMenu({menu}: {menu?: EnhancedMenu}) {
   );
 }
 
-// 1. HeaderLink组件保持不变
-function CustomHeaderLink({
-  item, 
-  onClose,
-  className
-}: {
-  item: ChildEnhancedMenuItem | GrandChildEnhancedMenuItem;
-  onClose: () => void;
-  className?: string;
-}) {
-  if (item.to.startsWith('http')) {
-    return (
-      <a 
-        href={item.to} 
-        target={item.target} 
-        rel="noopener noreferrer"
-        className={className}
-      >
-        {item.title}
-      </a>
-    );
-  }
-  return (
-    <Link 
-      to={item.to} 
-      target={item.target} 
-      onClick={onClose} 
-      prefetch="intent"
-      className={className}
-    >
-      {item.title}
-    </Link>
-  );
-}
 // 2. 修改HeaderMenu组件支持3级菜单
 function CustomHeaderMenu({menu, onClose}: {menu?: EnhancedMenu, onClose: () => void}) {
   return (
     <>
       {(menu?.items || []).map((item) => (
         <section key={item.id} className="grid">
+          {item?.items?.length > 0 ? (
+          // 有子菜单时显示Disclosure
           <Disclosure>
             {({open}) => (
               <>
@@ -562,7 +533,6 @@ function CustomHeaderMenu({menu, onClose}: {menu?: EnhancedMenu, onClose: () => 
                     )}
                   </Heading>
                 </Disclosure.Button>
-                {item?.items?.length > 0 ? (
                   <div
                     className={`${
                       open ? `max-h-96 h-fit` : `max-h-0 md:max-h-fit`
@@ -592,7 +562,7 @@ function CustomHeaderMenu({menu, onClose}: {menu?: EnhancedMenu, onClose: () => 
                                       >
                                         <nav className="grid gap-3 pl-2 pt-3">
                                           {subItem.items.map((grandChild: GrandChildEnhancedMenuItem) => (
-                                            <CustomHeaderLink
+                                            <MenuLink  // 这里改为MenuLink
                                               key={grandChild.id}
                                               item={grandChild}
                                               onClose={onClose}
@@ -604,7 +574,7 @@ function CustomHeaderMenu({menu, onClose}: {menu?: EnhancedMenu, onClose: () => 
                                   )}
                                 </Disclosure>
                               ) : (
-                                <CustomHeaderLink 
+                                <MenuLink 
                                   item={subItem} 
                                   onClose={onClose} 
                                   className="text-lg font-medium"
@@ -616,10 +586,17 @@ function CustomHeaderMenu({menu, onClose}: {menu?: EnhancedMenu, onClose: () => 
                       </Disclosure.Panel>
                     </Suspense>
                   </div>
-                ) : null}
               </>
             )}
           </Disclosure>
+        ) : (
+            // 没有子菜单时显示可点击的MenuLink
+            <MenuLink
+              item={item}
+              onClose={onClose}
+              className="text-xl"
+            />
+          )}
         </section>
       ))}
     </>

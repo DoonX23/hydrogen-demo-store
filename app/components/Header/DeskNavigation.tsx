@@ -8,6 +8,7 @@ import {Popover, Transition, Portal} from '@headlessui/react';
 import {ChevronDownIcon} from '@heroicons/react/24/solid';
 import {Fragment, useState} from 'react';
 import {Link} from '@remix-run/react';
+import {MenuLink} from '~/components/MenuLink';
 
 export default function DeskNavigation({menu}: {menu?: EnhancedMenu}) {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -24,13 +25,11 @@ export default function DeskNavigation({menu}: {menu?: EnhancedMenu}) {
             }}
           />
         ) : (
-          <Link 
-            key={item.id}
-            to={item.to}
-            className="text-sm lg:text-base"
-          >
-            {item.title}
-          </Link>
+          <MenuLink 
+          key={item.id}
+          item={item}
+          className="text-sm lg:text-base"
+        />
         )
       ))}
     </nav>
@@ -133,56 +132,20 @@ function MenuItem({
 }) {
   return (
     <div key={item.id}>
-      {!item.to.startsWith('http') ? (
-        <Link
-          to={item.url?.includes('materials') && !item.url.endsWith('/materials') 
-            ? `/materials${item.to}` 
-            : item.to
-          }
-          target={item.target}
-          prefetch="intent"
-          className="font-medium text-slate-900 dark:text-neutral-200"
-          onClick={close}
-        >
-          {item.title}
-        </Link>
-      ) : (
-        <a
-          href={item.to}
-          target={item.target}
-          className="font-medium text-slate-900 dark:text-neutral-200"
-          onClick={close}
-        >
-          {item.title}
-        </a>
-      )}
+      <MenuLink
+        item={item}
+        onClose={close}
+        className="font-medium text-slate-900 dark:text-neutral-200"
+      />
 
       <ul className="grid space-y-4 mt-4">
         {item.items?.map((subItem:GrandChildEnhancedMenuItem) => (
-          <li key={subItem.id} onClick={close}>
-            {!subItem.to.startsWith('http') ? (
-              <Link
-                className="font-normal text-slate-600 hover:text-black dark:text-slate-400 dark:hover:text-white"
-                to={subItem.url?.includes('materials') && !subItem.url.endsWith('/materials') 
-                  ? `/materials${subItem.to}` 
-                  : subItem.to
-                }
-                target={subItem.target}
-                prefetch="intent"
-                onClick={close}
-              >
-                {subItem.title}
-              </Link>
-            ) : (
-              <a
-                className="font-normal text-slate-600 hover:text-black dark:text-slate-400 dark:hover:text-white"
-                href={subItem.to}
-                target={subItem.target}
-                onClick={close}
-              >
-                {subItem.title}
-              </a>
-            )}
+          <li key={subItem.id}>
+            <MenuLink
+              item={subItem}
+              onClose={close}
+              className="font-normal text-slate-600 hover:text-black dark:text-slate-400 dark:hover:text-white"
+            />
           </li>
         ))}
       </ul>
