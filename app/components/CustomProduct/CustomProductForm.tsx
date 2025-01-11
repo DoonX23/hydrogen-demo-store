@@ -81,7 +81,7 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
           onChange={handleChange}
           disabled={isNavigating}
           className={clsx(
-            "w-full rounded-md border-gray-200 py-2 px-3 text-sm",
+            "w-full rounded-md border-gray-200 py-2 px-3 text-sm dark:text-black",
             isNavigating && "opacity-50 cursor-not-allowed"
           )}
         >
@@ -140,7 +140,7 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
             {formType === 'Film' ? (
               <>
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Width</label>
+                  <label className="block text-sm font-medium">Width</label>
                   <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                     {[450, 1370].map((width) => (
                       <div key={width} className="flex items-center">
@@ -153,7 +153,7 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
                           onChange={(e) => setWidthMm(Number(e.target.value))}
                           className="h-4 w-4 border-gray-300 text-blue-600"
                         />
-                        <label htmlFor={`width${width}`} className="ml-2 text-sm text-gray-700">
+                        <label htmlFor={`width${width}`} className="ml-2 text-sm">
                           {width}mm
                         </label>
                       </div>
@@ -161,7 +161,7 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Length</label>
+                  <label className="block text-sm font-medium">Length</label>
                   <UnitConverter 
                     unitOne="m"
                     unitTwo="yard"
@@ -176,7 +176,7 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
               </>
             ) : formType === 'Rod' ? (
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Length</label>
+                <label className="block text-sm font-medium">Length</label>
                 <UnitConverter 
                   unitOne="mm"
                   unitTwo="inch"
@@ -191,7 +191,7 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
             ) : (
               <>
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Length</label>
+                  <label className="block text-sm font-medium">Length</label>
                   <UnitConverter 
                     unitOne="mm"
                     unitTwo="inch"
@@ -204,7 +204,7 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Width</label>
+                  <label className="block text-sm font-medium">Width</label>
                   <UnitConverter 
                     unitOne="mm"
                     unitTwo="inch"
@@ -220,7 +220,7 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
             )}
             {formType !== 'Film' && (
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium">
                   Machining Precision
                 </label>
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
@@ -241,7 +241,7 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
                         }
                         className="h-4 w-4 border-gray-300 text-brand"
                       />
-                      <label htmlFor={item.id} className="ml-2 text-sm text-gray-700">
+                      <label htmlFor={item.id} className="ml-2 text-sm">
                         {item.value}
                       </label>
                     </div>
@@ -250,7 +250,7 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
               </div>
             )}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium">
                 Additional Instructions
               </label>
               <textarea
