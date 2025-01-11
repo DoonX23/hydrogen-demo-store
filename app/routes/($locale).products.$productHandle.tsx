@@ -39,6 +39,13 @@ import {CustomProductForm} from '~/components/CustomProduct/CustomProductForm';
 import {SlashIcon} from '@heroicons/react/24/solid';
 import {CustomProductGallery} from '~/components/CustomProductGallery';
 import {FeaturedCollections} from '~/components/FeaturedCollections';
+import {
+  COMMON_COLLECTION_ITEM_FRAGMENT,
+  COMMON_PRODUCT_CARD_FRAGMENT,
+  LINK_FRAGMENT,
+  MEDIA_IMAGE_FRAGMENT,
+} from '~/data/commonFragments';
+import {CollectionSlider} from '~/components/CollectionsSlider';
 
 export const headers = routeHeaders;
 
@@ -209,9 +216,9 @@ export default function Product() {
   const collection = product.collections.nodes[0];
   return (
     <>
-      <Section className="px-0 md:px-8 lg:px-12 max-w-custom mx-auto">
+      <section className="container">
       {!!collection && (
-          <nav className="mb-4 px-6 md:px-0" aria-label="Breadcrumb">
+          <nav className="my-4 lg:my-6" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-2">
               <li>
                 <div className="flex items-center text-sm">
@@ -238,13 +245,13 @@ export default function Product() {
             </ol>
           </nav>
         )}
-        <div className="grid items-start md:gap-6 lg:gap-20 md:grid-cols-2 lg:grid-cols-2">
+        <div className="grid items-start lg:gap-20 lg:grid-cols-2">
           <CustomProductGallery
             media={media.nodes}
             className="w-full lg:col-span-1"
           />
-          <div className="sticky md:-mb-nav md:top-nav md:-translate-y-nav md:min-h-screen md:pt-nav hiddenScroll md:overflow-y-scroll">
-            <section className="flex flex-col w-full max-w-xl gap-8 p-6 md:mx-auto md:max-w-full md:px-0">
+          <div className="">
+            <section className="flex flex-col w-full gap-8 md:mx-auto md:px-0 py-4 lg:py-0">
               <div className="grid gap-2">
                 <Heading as="h1" className="whitespace-normal">
                   {title}
@@ -297,22 +304,23 @@ export default function Product() {
             </section>
           </div>
         </div>
-      </Section>
-      <PageHeader heading={"Product Description"} className="flex items-baseline justify-center w-full">
-        {descriptionHtml && (
-          <div className="flex items-baseline justify-between w-full">
-            <div 
-              dangerouslySetInnerHTML={{__html: descriptionHtml}} 
-              className="inline-block prose prose-sm max-w-custom"  // 添加prose类来美化HTML内容
-              />
+      </section>
+      {/* DETAIL AND REVIEW */}
+      <div className="mb-12 sm:mb-16 container mt-4">
+        {/* Product description */}
+        {!!descriptionHtml && (
+          <div className="">
+            <h2 className="text-2xl font-semibold">Product Details</h2>
+            <div
+              className="prose prose-sm sm:prose dark:prose-invert sm:max-w-4xl mt-7"
+              dangerouslySetInnerHTML={{
+                __html: descriptionHtml || '',
+              }}
+            />
           </div>
         )}
-      </PageHeader>
-      <FeaturedCollections
-                  collections={product.collections}
-                  title="Collections"
-                />
-      <Suspense fallback={<Skeleton className="h-32" />}>
+      </div>
+      {/*<Suspense fallback={<Skeleton className="h-32" />}>
         <Await
           errorElement="There was a problem loading related products"
           resolve={recommended}
@@ -321,7 +329,17 @@ export default function Product() {
             <ProductSwimlane title="Related Products" products={products} />
           )}
         </Await>
-      </Suspense>
+      </Suspense>*/}
+      {!!product.related_collections?.references?.nodes && (
+      <CollectionSlider
+        heading_bold="Discover more."
+        heading_light="" 
+        sub_heading=""
+        collections={product.related_collections?.references?.nodes}
+        button_text="See Collection"
+        isSkeleton={false}
+      />
+      )}
       <Analytics.ProductView
         data={{
           products: [
@@ -695,6 +713,15 @@ const PRODUCT_QUERY = `#graphql
         namespace
         key
       }
+      related_collections: metafield(namespace: "custom", key: "related_collections") {
+      references(first: 10) {
+        nodes {
+          ... on Collection {
+            ...CommonCollectionItem
+          }
+        }
+      }
+    }
       options {
         name
         optionValues {
@@ -736,6 +763,7 @@ const PRODUCT_QUERY = `#graphql
   }
   ${MEDIA_FRAGMENT}
   ${PRODUCT_VARIANT_FRAGMENT}
+  ${COMMON_COLLECTION_ITEM_FRAGMENT}
 ` as const;
 
 const VARIANTS_QUERY = `#graphql
