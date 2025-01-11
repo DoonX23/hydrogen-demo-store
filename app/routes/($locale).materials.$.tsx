@@ -104,7 +104,7 @@ export default function Material() {
   const {material} = useLoaderData<typeof loader>();
 const {title, body, image, relativeCollections} = material; // 解构出 image
   return (
-    <>
+    <div className='container'>
       <PageHeader heading={title} variant="blogPost">
       </PageHeader>
         <Section as="article" padding="x">
@@ -128,6 +128,6 @@ const {title, body, image, relativeCollections} = material; // 解构出 image
               />
           )}
         </Section>
-      </>
+      </div>
   );
 }
