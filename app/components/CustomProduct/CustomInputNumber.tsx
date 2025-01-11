@@ -81,7 +81,7 @@ const CustomInputNumber: FC<CustomInputNumberProps> = ({
           name={name}
           value={value}
           onChange={handleInputChange}
-          className="w-24 text-center focus:outline-none" 
+          className="w-24 text-center focus:outline-none dark:text-black" 
           min={min}
           max={max}
         />
