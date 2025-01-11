@@ -139,7 +139,8 @@ shop-pay-button {
   }
 
   .swimlane {
-    @apply grid w-full snap-x snap-mandatory scroll-px-6 grid-flow-col justify-start gap-4 overflow-x-scroll px-6 pb-4;
+        /* @apply grid w-full snap-x snap-mandatory scroll-px-6 grid-flow-col justify-start gap-4 overflow-x-scroll px-6 pb-4; */
+    @apply grid w-full snap-x snap-mandatory scroll-px-6 grid-flow-col justify-start gap-4 overflow-x-scroll;
   }
 }
 
@@ -184,6 +185,73 @@ shop-pay-button {
     }
     img {
       @apply aspect-[inherit] w-full object-cover;
+    }
+  }
+    /* 从ciseco复制而来 */
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .hiddenScrollbar::-webkit-scrollbar {
+      display: none;
+    }
+  
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .hiddenScrollbar {
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+    .nc-p-l-container {
+    padding-left: 16px;
+    @screen sm {
+      padding-left: calc((100vw + 32px - 640px) / 2);
+    }
+    @screen md {
+      padding-left: calc((100vw + 32px - 768px) / 2);
+    }
+    @screen lg {
+      padding-left: calc((100vw + 32px - 1024px) / 2);
+    }
+    @screen xl {
+      padding-left: calc((100vw + 80px - 1280px) / 2);
+    }
+    @screen 2xl {
+      padding-left: calc((100vw + 256px - 1536px) / 2);
+    }
+  }
+
+  .scroll-p-l-container {
+    scroll-padding-left: 16px;
+    @screen sm {
+      scroll-padding-left: calc((100vw + 32px - 640px) / 2);
+    }
+    @screen md {
+      scroll-padding-left: calc((100vw + 32px - 768px) / 2);
+    }
+    @screen lg {
+      scroll-padding-left: calc((100vw + 32px - 1024px) / 2);
+    }
+    @screen xl {
+      scroll-padding-left: calc((100vw + 80px - 1280px) / 2);
+    }
+    @screen 2xl {
+      scroll-padding-left: calc((100vw + 256px - 1536px) / 2);
+    }
+  }
+
+  .nc-p-r-container {
+    padding-right: 16px;
+    @screen sm {
+      padding-right: calc((100vw + 32px - 640px) / 2);
+    }
+    @screen md {
+      padding-right: calc((100vw + 32px - 768px) / 2);
+    }
+    @screen lg {
+      padding-right: calc((100vw + 32px - 1024px) / 2);
+    }
+    @screen xl {
+      padding-right: calc((100vw + 80px - 1280px) / 2);
+    }
+    @screen 2xl {
+      padding-right: calc((100vw + 256px - 1536px) / 2);
     }
   }
 }
