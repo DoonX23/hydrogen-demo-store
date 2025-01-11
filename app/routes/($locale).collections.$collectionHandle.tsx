@@ -148,8 +148,8 @@ export default function Collection() {
   const {ref, inView} = useInView();
 
   return (
-    <>
-      <PageHeader heading={collection.title} className="flex items-baseline justify-center w-full">
+    <div className="container">
+      <PageHeader heading={collection.title} className="px-0 md:px-0 lg:px-0">
         {collection?.description && (
           <div className="flex items-baseline justify-between w-full">
             <div>
@@ -159,13 +159,13 @@ export default function Collection() {
               </Text>*/}
                       <div 
           dangerouslySetInnerHTML={{__html: collection.descriptionHtml}} 
-          className="inline-block prose prose-sm max-w-custom"  // 添加prose类来美化HTML内容
+          className="inline-block prose-sm"  // 添加prose类来美化HTML内容
         />
             </div>
           </div>
         )}
       </PageHeader>
-      <Section className="max-w-custom mx-auto">
+      <section className="max-w-custom mx-auto">
         <SortFilter
           filters={collection.products.filters as Filter[]}
           appliedFilters={appliedFilters}
@@ -208,7 +208,7 @@ export default function Collection() {
             )}
           </Pagination>
         </SortFilter>
-      </Section>
+      </section>
       <Analytics.CollectionView
         data={{
           collection: {
@@ -217,7 +217,7 @@ export default function Collection() {
           },
         }}
       />
-    </>
+    </div>
   );
 }
 
