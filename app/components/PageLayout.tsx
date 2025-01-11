@@ -275,7 +275,7 @@ function DesktopHeader({
   return (
     <header
       role="banner"
-      className={`bg-brand dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader hidden h-nav xl:flex items-center sticky transition duration-300 backdrop-blur-lg z-20 top-10 justify-between w-full leading-none gap-8 px-12 py-8`}
+      className={`bg-brand text-contrast dark:text-primary shadow-darkHeader hidden h-nav xl:flex items-center sticky transition duration-300 backdrop-blur-lg z-20 top-10 justify-between w-full leading-none gap-8 px-12 py-8`}
     >
       <div className="flex gap-12">
       <Logo />
@@ -427,13 +427,11 @@ function Footer({menu}: {menu?: EnhancedMenu}) {
     : [];
 
   return (
-    <Section
-      divider={isHome ? 'none' : 'top'}
-      as="footer"
-      role="contentinfo"
-      className={`grid min-h-[25rem] items-start grid-flow-row w-full gap-6 py-8 px-6 md:px-8 lg:px-12 md:gap-8 lg:gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-${itemsCount}
-        bg-brand dark:bg-contrast dark:text-primary text-contrast overflow-hidden`}
+    <footer
+      className={`min-h-[25rem] w-full pt-8  md:pt-12 lg:pt-16 pb-4
+        bg-brand dark:text-primary text-contrast overflow-hidden`}
     >
+      <div className={`container grid items-start grid-flow-row grid-cols-1 md:grid-cols-2 lg:grid-cols-${itemsCount} gap-6 md:gap-8 lg:gap-12`}>
       <FooterMenu menu={menu} />
       {/*<CountrySelector />*/}
       <div
@@ -441,7 +439,8 @@ function Footer({menu}: {menu?: EnhancedMenu}) {
       >
         &copy; {new Date().getFullYear()} / DoonX, Inc. development by DoonX.
       </div>
-    </Section>
+      </div>
+    </footer>
   );
 }
 
