@@ -1,8 +1,6 @@
 import formsPlugin from '@tailwindcss/forms';
 import typographyPlugin from '@tailwindcss/typography';
 
-//可以基于defaultTheme的预设参数去修改覆盖；
-import defaultTheme from 'tailwindcss/defaultTheme';
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./app/**/*.{js,ts,jsx,tsx}'],
@@ -28,27 +26,17 @@ export default {
       },
       screens: {
         // 引入defaultTheme是因为: hydrogen-demo-store模板把max-width去掉了，导致无论哪种设备左右边距都是固定的。
-        // sm: '32em',
-        // md: '48em',
-        // lg: '64em',
-        // xl: '80em',
-        // '2xl': '96em',
-        // 'sm-max': {max: '48em'},
-        // 'sm-only': {min: '32em', max: '48em'},
-        // 'md-only': {min: '48em', max: '64em'},
-        // 'lg-only': {min: '64em', max: '80em'},
-        // 'xl-only': {min: '80em', max: '96em'},
-        // '2xl-only': {min: '96em'},
-        ...defaultTheme.screens,
-        'sm-max': {max: defaultTheme.screens.md},
-        'sm-only': {min: defaultTheme.screens.sm, max: defaultTheme.screens.md},
-        'md-only': {min: defaultTheme.screens.md, max: defaultTheme.screens.lg},
-        'lg-only': {min: defaultTheme.screens.lg, max: defaultTheme.screens.xl},
-        'xl-only': {
-          min: defaultTheme.screens.xl,
-          max: defaultTheme.screens['2xl'],
-        },
-        '2xl-only': {min: defaultTheme.screens['2xl']},
+       sm: '32em',
+       md: '48em',
+       lg: '64em',
+       xl: '80em',
+       '2xl': '96em',
+       'sm-max': {max: '48em'},
+       'sm-only': {min: '32em', max: '48em'},
+       'md-only': {min: '48em', max: '64em'},
+       'lg-only': {min: '64em', max: '80em'},
+       'xl-only': {min: '80em', max: '96em'},
+       '2xl-only': {min: '96em'},
       },
       spacing: {
         nav: 'var(--height-nav)',
