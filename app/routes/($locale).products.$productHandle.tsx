@@ -825,7 +825,7 @@ export const Collection_Handle_QUERY = `#graphql
           node {
             products(first: 250) {
               nodes {
-                metafields(identifiers: [{key: "opacity", namespace: "custom"},{key: "material", namespace: "custom"},{key: "color", namespace: "custom"},{key: "thickness", namespace: "custom"},{key: "diameter", namespace: "custom"}]) {
+                metafields(identifiers: [{key: "material", namespace: "custom"},{key: "color", namespace: "custom"},{key: "thickness", namespace: "custom"},{key: "diameter", namespace: "custom"}]) {
                   key
                   value
                 }
