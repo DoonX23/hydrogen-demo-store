@@ -1,31 +1,73 @@
 import {Image} from '@shopify/hydrogen';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
+import {PhotoIcon} from '@heroicons/react/24/outline';
 import type {MediaFragment} from 'storefrontapi.generated';
 import type {Image as ImageType} from '@shopify/hydrogen/storefront-api-types';
+
+// 骨架屏组件
+const GallerySkeleton = () => {
+  return (
+    <div className="w-full">
+      <div className="animate-pulse">
+        {/* 移动端骨架屏 */}
+        <div className="md:hidden">
+          <div className="aspect-square bg-gray-200 rounded-lg" />
+        </div>
+        {/* 桌面端骨架屏 */}
+        <div className="hidden md:flex gap-8">
+          <div className="w-16 space-y-3">
+            {[1,2,3,4].map((n) => (
+              <div key={n} className="aspect-square bg-gray-200 rounded" />
+            ))}
+          </div>
+          <div className="flex-1">
+            <div className="aspect-square bg-gray-200 rounded-lg" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// 占位符组件 
+const GalleryPlaceholder = () => {
+  return (
+    <div className="w-full">
+      <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
+        <PhotoIcon className="w-20 h-20 text-gray-400" />
+      </div>
+    </div>
+  );
+};
+
+const getImageData = (med: MediaFragment) => {
+  if (med.__typename === 'MediaImage' && med.image) {
+    return {
+      ...med.image,
+      altText: med.alt || 'Product image'
+    } as ImageType;
+  }
+  return undefined;
+};
 
 export function CustomProductGallery({
   media,
   className,
+  isLoading,
 }: {
   media: MediaFragment[];
   className?: string;
+  isLoading?: boolean;
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  if (!media.length) {
-    return null;
-  }
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [media]);
 
-  const getImageData = (med: MediaFragment) => {
-    if (med.__typename === 'MediaImage' && med.image) {
-      return {
-        ...med.image,
-        altText: med.alt || 'Product image'
-      } as ImageType;
-    }
-    return undefined;
-  };
-
+  if (isLoading) return <GallerySkeleton />;
+  if (!media.length) return <GalleryPlaceholder />;
+  
   return (
     <div
       className={`swimlane md:grid-flow-row hiddenScroll md:p-0 md:overflow-x-auto md:grid-cols-2 ${className}`}
