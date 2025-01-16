@@ -7,7 +7,7 @@ import {PriceDisplay} from '~/components/CustomProduct/PriceDisplay';
 import {CustomVariantSelector, type CustomVariantOption} from '~/components/CustomProduct/CustomVariantSelector';
 import clsx from 'clsx';
 import {Button} from '~/components/Button';
-import {HubspotForm} from '~/components/HubspotForm';
+
 
 interface ApiResponse {
   status: 'success' | 'error';
@@ -284,9 +284,6 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
                     {fetcher.state !== 'idle' ? 'Adding...' : 'Add to Cart'}
                   </span>
                 </Button>
-              </div>
-              <div className="grid mt-4">
-                <HubspotForm buttonText="获取报价" />
               </div>
             </div>
           </div>

@@ -46,6 +46,7 @@ import {
   MEDIA_IMAGE_FRAGMENT,
 } from '~/data/commonFragments';
 import {CollectionSlider} from '~/components/CollectionsSlider';
+import {HubspotForm} from '~/components/HubspotForm';
 
 export const headers = routeHeaders;
 
@@ -280,6 +281,9 @@ export default function Product() {
                 </Suspense>
               )}
               <div className="grid gap-4 py-4">
+              <div className="grid mt-4">
+                <HubspotForm buttonText="获取报价" />
+              </div>
                 {descriptionHtml && (
                   <ProductDetail
                     title="Product Details"
