@@ -248,6 +248,7 @@ export default function Product() {
         )}
         <div className="grid items-start lg:gap-20 lg:grid-cols-2">
           <CustomProductGallery
+            key={product.id}
             media={media.nodes}
             className="w-full lg:col-span-1"
           />
