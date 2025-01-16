@@ -100,7 +100,7 @@ function TemplatesDropdown({
                   >
                     <div className="bg-white dark:bg-neutral-900 shadow-lg">
                       <div className="max-w-[1280px] mx-auto">
-                        <div className="flex text-sm border-t border-slate-200 dark:border-slate-700 py-10 lg:py-14">
+                        <div className="flex text-sm border-t border-slate-200 dark:border-slate-700 py-5 lg:py-7">
                           <div className="flex-1 grid grid-cols-4 gap-6 xl:gap-8 pr-6 xl:pr-8">
                             {menuData.items?.map((item:ChildEnhancedMenuItem) => (
                               <MenuItem
@@ -135,16 +135,16 @@ function MenuItem({
       <MenuLink
         item={item}
         onClose={close}
-        className="font-medium text-slate-900 dark:text-neutral-200"
+        className="font-medium text-brand dark:text-neutral-200"
       />
 
-      <ul className="grid space-y-4 mt-4">
+      <ul className="grid space-y-2 mt-4">
         {item.items?.map((subItem:GrandChildEnhancedMenuItem) => (
           <li key={subItem.id}>
             <MenuLink
               item={subItem}
               onClose={close}
-              className="font-normal text-slate-600 hover:text-black dark:text-slate-400 dark:hover:text-white"
+              className="font-normal text-slate-900 hover:text-highlight dark:text-slate-400 dark:hover:text-white"
             />
           </li>
         ))}
