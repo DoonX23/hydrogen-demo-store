@@ -7,7 +7,7 @@ import {PriceDisplay} from '~/components/CustomProduct/PriceDisplay';
 import {CustomVariantSelector, type CustomVariantOption} from '~/components/CustomProduct/CustomVariantSelector';
 import clsx from 'clsx';
 import {Button} from '~/components/Button';
-
+import { CustomRadioGroup } from '~/components/CustomRadioGroup';
 
 interface ApiResponse {
   status: 'success' | 'error';
@@ -102,6 +102,23 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
     );
   }
 
+    // 对于Width选择
+  const widthOptions = [
+    { id: 'width450', value: '450', label: '450mm' },
+    { id: 'width1370', value: '1370', label: '1370mm' },
+  ];
+
+    // 对于Machining Precision选择
+  const precisionOptions = [
+    { id: 'Normal', value: 'Normal (±2mm)', label: 'Normal (±2mm)' },
+    { 
+      id: 'High', 
+      value: 'High (±0.2mm)', 
+      label: 'High (±0.2mm)',
+      disabled: machiningPrecision === 'Normal (±2mm)'
+    },
+  ];
+
   return (
     <div className="w-full mx-auto">
       <PriceDisplay 
@@ -139,27 +156,13 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
           <div className="space-y-6 max-w-xl">
             {formType === 'Film' ? (
               <>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium">Width</label>
-                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                    {[450, 1370].map((width) => (
-                      <div key={width} className="flex items-center">
-                        <input
-                          type="radio"
-                          id={`width${width}`}
-                          name="widthMm"
-                          value={width}
-                          checked={widthMm === width}
-                          onChange={(e) => setWidthMm(Number(e.target.value))}
-                          className="h-4 w-4 border-gray-300 text-blue-600"
-                        />
-                        <label htmlFor={`width${width}`} className="ml-2 text-sm">
-                          {width}mm
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <CustomRadioGroup
+                  name="widthMm"
+                  label="Width"
+                  options={widthOptions}
+                  selectedValue={widthMm.toString()}
+                  onChange={(value) => setWidthMm(Number(value))}
+                />
                 <div className="space-y-2">
                   <label className="block text-sm font-medium">Length</label>
                   <UnitConverter 
@@ -219,35 +222,13 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
               </>
             )}
             {formType !== 'Film' && (
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">
-                  Machining Precision
-                </label>
-                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                  {[
-                    { id: 'Normal', value: 'Normal (±2mm)' },
-                    { id: 'High', value: 'High (±0.2mm)' }
-                  ].map((item) => (
-                    <div key={item.id} className="flex items-center">
-                      <input
-                        type="radio"
-                        id={item.id}
-                        name="precision" 
-                        value={item.value}
-                        checked={precision === item.value}
-                        onChange={handlePrecisionChange}
-                        disabled={
-                          item.id === 'High' && machiningPrecision === 'Normal (±2mm)'
-                        }
-                        className="h-4 w-4 border-gray-300 text-brand"
-                      />
-                      <label htmlFor={item.id} className="ml-2 text-sm">
-                        {item.value}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <CustomRadioGroup
+                name="precision"
+                label="Machining Precision"
+                options={precisionOptions}
+                selectedValue={precision}
+                onChange={setPrecision}
+              />
             )}
             <div className="space-y-2">
               <label className="block text-sm font-medium">
