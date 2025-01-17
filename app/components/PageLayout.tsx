@@ -34,6 +34,7 @@ import { CustomFooter } from './Footer/CustomFooter';
 import {CustomMenuMobileNav} from './Header/CustomMenuMobileNav';
 import { CustomMobileHeader,CustomDesktopHeader} from './Header/CustomHeader';
 import { Banner } from './Header/Banner';
+import {SiteFeatures} from './SiteFeatures'
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -61,6 +62,7 @@ export function PageLayout({children, layout}: LayoutProps) {
           {children}
         </main>
       </div>
+      <SiteFeatures/>
       {footerMenu && <CustomFooter menu={footerMenu} />}
     </>
   );
