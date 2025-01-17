@@ -2,7 +2,7 @@ import {Disclosure} from '@headlessui/react';
 import {useState, useEffect, useRef} from 'react';
 import {ChevronUpIcon} from '@heroicons/react/20/solid'
 
-export function HubspotForm({buttonText = "联系我们"}) {
+export function HubspotForm({buttonText = "Get Your Quote"}) { // 将函数名改为英文
   const [loadScript, setLoadScript] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const formContainerRef = useRef(null);
@@ -57,7 +57,7 @@ export function HubspotForm({buttonText = "联系我们"}) {
               />
             </Disclosure.Button>
             
-            <div className={`mt-4 ${open ? 'block' : 'hidden'}`}>
+            <div className={`${open ? 'block' : 'hidden'}`}>
               {isLoading && loadScript && (
                 <div className="flex justify-center p-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
@@ -66,7 +66,7 @@ export function HubspotForm({buttonText = "联系我们"}) {
               <div 
                 id="hubspot-form-container" 
                 ref={formContainerRef}
-                className={isLoading ? 'hidden' : ''}
+                className={`${isLoading ? 'hidden' : ''} p-6 bg-gray-100`} // 增加内边距和背景色
               >
               </div>
             </div>
