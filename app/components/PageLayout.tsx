@@ -29,9 +29,11 @@ import {
 import {useIsHydrated} from '~/hooks/useIsHydrated';
 import {useCartFetchers} from '~/hooks/useCartFetchers';
 import type {RootLoader} from '~/root';
-import DeskNavigation from '~/components/Header/DeskNavigation';
-import Logo from './Logo';
-import {MenuLink} from '~/components/MenuLink';
+
+import { CustomFooter } from './Footer/CustomFooter';
+import {CustomMenuMobileNav} from './Header/CustomMenuMobileNav';
+import { CustomMobileHeader,CustomDesktopHeader} from './Header/CustomHeader';
+import { Banner } from './Header/Banner';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -45,19 +47,7 @@ export function PageLayout({children, layout}: LayoutProps) {
   const {headerMenu, footerMenu} = layout || {};
   return (
     <>
-      <div className="bg-highlight sticky z-10 h-16 text-white xl:h-10 top-0 xl:w-full">
-        <div className="container mx-auto px-4 xl:h-full py-2 xl:py-0">
-          <div className="flex flex-col items-center xl:flex-row xl:justify-center xl:h-full text-sm gap-1 xl:gap-2">
-            <div>Ordering over $199?</div>
-            <Link 
-              to="/pages/contact"
-              className="border-b border-transparent hover:border-white transition-colors"
-            >
-              Contact Us for a discounted price
-            </Link>
-          </div>
-        </div>
-      </div>
+    <Banner/>
       <div className="flex flex-col min-h-screen">
         <div className="">
           <a href="#mainContent" className="sr-only">
@@ -67,12 +57,11 @@ export function PageLayout({children, layout}: LayoutProps) {
         {headerMenu && layout?.shop.name && (
           <Header title={layout.shop.name} menu={headerMenu} />
         )}
-        {/* 主内容区域添加mt-10对应提醒横栏高度 */}
         <main role="main" id="mainContent" className="flex-grow">
           {children}
         </main>
       </div>
-      {footerMenu && <Footer menu={footerMenu} />}
+      {footerMenu && <CustomFooter menu={footerMenu} />}
     </>
   );
 }
@@ -106,13 +95,13 @@ function Header({title, menu}: {title: string; menu?: EnhancedMenu}) {
       {menu && (
         <MenuDrawer isOpen={isMenuOpen} onClose={closeMenu} menu={menu} />
       )}
-      <DesktopHeader
+      <CustomDesktopHeader
         isHome={isHome}
         title={title}
         menu={menu}
         openCart={openCart}
       />
-      <MobileHeader
+      <CustomMobileHeader
         isHome={isHome}
         title={title}
         openCart={openCart}
@@ -205,7 +194,11 @@ function MobileHeader({
   return (
     <header
       role="banner"
-      className={`bg-brand dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader flex xl:hidden items-center h-nav sticky backdrop-blur-lg z-20 top-16 justify-between w-full leading-none gap-4 px-4 md:px-8`}
+      className={`${
+        isHome
+          ? 'bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader'
+          : 'bg-contrast/80 text-primary'
+      } flex lg:hidden items-center h-nav sticky backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-4 px-4 md:px-8`}
     >
       <div className="flex items-center justify-start w-full gap-4">
         <button
@@ -225,7 +218,7 @@ function MobileHeader({
           >
             <IconSearch />
           </button>
-          {/*<Input
+          <Input
             className={
               isHome
                 ? 'focus:border-contrast/20 dark:focus:border-primary/20'
@@ -235,11 +228,11 @@ function MobileHeader({
             variant="minisearch"
             placeholder="Search"
             name="q"
-          />*/}
+          />
         </Form>
       </div>
-      <Logo />
-      {/*<Link
+
+      <Link
         className="flex items-center self-stretch leading-[3rem] md:leading-[4rem] justify-center flex-grow w-full h-full"
         to="/"
       >
@@ -249,7 +242,7 @@ function MobileHeader({
         >
           {title}
         </Heading>
-      </Link>*/}
+      </Link>
 
       <div className="flex items-center justify-end w-full gap-4">
         <AccountLink className="relative flex items-center justify-center w-8 h-8" />
@@ -275,15 +268,20 @@ function DesktopHeader({
   return (
     <header
       role="banner"
-      className={`bg-brand text-contrast dark:text-primary shadow-darkHeader hidden h-nav xl:flex items-center sticky transition duration-300 backdrop-blur-lg z-20 top-10 justify-between w-full leading-none gap-8 px-12 py-8`}
+      className={`${
+        isHome
+          ? 'bg-primary/80 dark:bg-contrast/60 text-contrast dark:text-primary shadow-darkHeader'
+          : 'bg-contrast/80 text-primary'
+      } ${
+        !isHome && y > 50 && ' shadow-lightHeader'
+      } hidden h-nav lg:flex items-center sticky transition duration-300 backdrop-blur-lg z-40 top-0 justify-between w-full leading-none gap-8 px-12 py-8`}
     >
       <div className="flex gap-12">
-      <Logo />
-        {/* <Link className="font-bold" to="/" prefetch="intent">
+        <Link className="font-bold" to="/" prefetch="intent">
           {title}
         </Link>
         <nav className="flex gap-8">
-          Top level menu items 
+          {/* Top level menu items */}
           {(menu?.items || []).map((item) => (
             <Link
               key={item.id}
@@ -298,16 +296,14 @@ function DesktopHeader({
             </Link>
           ))}
         </nav>
-        */}
       </div>
-      <DeskNavigation menu={menu} />
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-1">
         <Form
           method="get"
           action={params.locale ? `/${params.locale}/search` : '/search'}
           className="flex items-center gap-2"
         >
-          {/*<Input
+          <Input
             className={
               isHome
                 ? 'focus:border-contrast/20 dark:focus:border-primary/20'
@@ -317,7 +313,7 @@ function DesktopHeader({
             variant="minisearch"
             placeholder="Search"
             name="q"
-          />*/}
+          />
           <button
             type="submit"
             className="relative flex items-center justify-center w-8 h-8 focus:ring-primary/5"
@@ -427,24 +423,25 @@ function Footer({menu}: {menu?: EnhancedMenu}) {
     : [];
 
   return (
-    <footer
-      className={`min-h-[25rem] w-full pt-8  md:pt-12 lg:pt-16 pb-4
-        bg-brand dark:text-primary text-contrast overflow-hidden`}
+    <Section
+      divider={isHome ? 'none' : 'top'}
+      as="footer"
+      role="contentinfo"
+      className={`grid min-h-[25rem] items-start grid-flow-row w-full gap-6 py-8 px-6 md:px-8 lg:px-12 md:gap-8 lg:gap-12 grid-cols-1 md:grid-cols-2 lg:grid-cols-${itemsCount}
+        bg-primary dark:bg-contrast dark:text-primary text-contrast overflow-hidden`}
     >
-      <div className={`container grid items-start grid-flow-row grid-cols-1 md:grid-cols-2 lg:grid-cols-${itemsCount} gap-6 md:gap-8 lg:gap-12`}>
       <FooterMenu menu={menu} />
-      {/*<CountrySelector />*/}
+      <CountrySelector />
       <div
         className={`self-end pt-8 opacity-50 md:col-span-2 lg:col-span-${itemsCount}`}
       >
-        &copy; {new Date().getFullYear()} / DoonX, Inc. development by DoonX.
+        &copy; {new Date().getFullYear()} / Shopify, Inc. Hydrogen is an MIT
+        Licensed Open Source project.
       </div>
-      </div>
-    </footer>
+    </Section>
   );
 }
 
-/* 用MenuLink取代了FooterLink
 function FooterLink({item}: {item: ChildEnhancedMenuItem}) {
   if (item.to.startsWith('http')) {
     return (
@@ -460,7 +457,6 @@ function FooterLink({item}: {item: ChildEnhancedMenuItem}) {
     </Link>
   );
 }
-  */
 
 function FooterMenu({menu}: {menu?: EnhancedMenu}) {
   const styles = {
@@ -495,7 +491,7 @@ function FooterMenu({menu}: {menu?: EnhancedMenu}) {
                       <Disclosure.Panel static>
                         <nav className={styles.nav}>
                           {item.items.map((subItem: ChildEnhancedMenuItem) => (
-                            <MenuLink key={subItem.id} item={subItem}/>
+                            <FooterLink key={subItem.id} item={subItem} />
                           ))}
                         </nav>
                       </Disclosure.Panel>
@@ -508,110 +504,5 @@ function FooterMenu({menu}: {menu?: EnhancedMenu}) {
         </section>
       ))}
     </>
-  );
-}
-
-// 2. 修改HeaderMenu组件支持3级菜单
-function CustomHeaderMenu({menu, onClose}: {menu?: EnhancedMenu, onClose: () => void}) {
-  return (
-    <>
-      {(menu?.items || []).map((item) => (
-        <section key={item.id} className="grid">
-          {item?.items?.length > 0 ? (
-          // 有子菜单时显示Disclosure
-          <Disclosure>
-            {({open}) => (
-              <>
-                <Disclosure.Button className="text-left md:cursor-default">
-                <Heading className="flex justify-between items-center text-xl" size="lead" as="h3">
-                    {item.title}
-                    {item?.items?.length > 0 && (
-                      <span className="md:hidden">
-                        <IconCaret direction={open ? 'up' : 'down'} />
-                      </span>
-                    )}
-                  </Heading>
-                </Disclosure.Button>
-                  <div
-                    className={`${
-                      open ? `h-fit` : `max-h-0 md:max-h-fit`
-                    } overflow-hidden transition-all duration-300`}
-                  >
-                    <Suspense data-comment="This suspense fixes a hydration bug in Disclosure.Panel with static prop">
-                      <Disclosure.Panel static>
-                        <nav className="grid gap-2 pt-4 pl-2">
-                          {item.items.map((subItem: ChildEnhancedMenuItem) => (
-                            <div key={subItem.id} className="">
-                              {subItem.items?.length > 0 ? (
-                                <Disclosure>
-                                  {({open: subOpen}) => (
-                                    <>
-                                      <Disclosure.Button className="text-left md:cursor-default">
-                                        <div className="flex justify-between items-center text-lg font-medium">
-                                          {subItem.title}
-                                          <span className="md:hidden">
-                                            <IconCaret direction={subOpen ? 'up' : 'down'} />
-                                          </span>
-                                        </div>
-                                      </Disclosure.Button>
-                                      <div
-                                        className={`${
-                                          subOpen ? `max-h-48 h-fit` : `max-h-0 md:max-h-fit`
-                                        } overflow-hidden transition-all duration-300`}
-                                      >
-                                        <nav className="grid gap-3 pl-2 pt-3">
-                                          {subItem.items.map((grandChild: GrandChildEnhancedMenuItem) => (
-                                            <MenuLink  // 这里改为MenuLink
-                                              key={grandChild.id}
-                                              item={grandChild}
-                                              onClose={onClose}
-                                            />
-                                          ))}
-                                        </nav>
-                                      </div>
-                                    </>
-                                  )}
-                                </Disclosure>
-                              ) : (
-                                <MenuLink 
-                                  item={subItem} 
-                                  onClose={onClose} 
-                                  className="text-lg font-medium"
-                                />
-                              )}
-                            </div>
-                          ))}
-                        </nav>
-                      </Disclosure.Panel>
-                    </Suspense>
-                  </div>
-              </>
-            )}
-          </Disclosure>
-        ) : (
-            // 没有子菜单时显示可点击的MenuLink
-            <MenuLink
-              item={item}
-              onClose={onClose}
-              className="text-xl"
-            />
-          )}
-        </section>
-      ))}
-    </>
-  );
-}
-// 3. CustomMenuMobileNav保持不变
-function CustomMenuMobileNav({
-  menu,
-  onClose,
-}: {
-  menu: EnhancedMenu;
-  onClose: () => void;
-}) {
-  return (
-    <nav className="grid gap-6 p-6 sm:gap-6 sm:px-12 sm:py-8 overflow-y-auto max-h-screen">
-      <CustomHeaderMenu menu={menu} onClose={onClose} />
-    </nav>
   );
 }
