@@ -283,7 +283,7 @@ export default function Product() {
               )}
               <div className="grid gap-4 py-4">
               <div className="grid mt-4">
-                <HubspotForm buttonText="获取报价" />
+                <HubspotForm buttonText="Get Your Quote" />
               </div>
                 {descriptionHtml && (
                   <ProductDetail
