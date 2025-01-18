@@ -14,6 +14,7 @@ import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
 import {getHeroPlaceholder} from '~/lib/placeholders';
 import {seoPayload} from '~/lib/seo.server';
 import {routeHeaders} from '~/data/cache';
+import CustomHero from '~/components/CustomHero';
 
 export const headers = routeHeaders;
 
@@ -156,10 +157,13 @@ export default function Homepage() {
   return (
     <>
       {primaryHero && (
+        <CustomHero {...primaryHero} height="full" top loading="eager" />
+      )}
+      {/*{primaryHero && (
         <Hero {...primaryHero} height="full" top loading="eager" />
       )}
 
-      {/*{featuredProducts && (
+      {featuredProducts && (
         <Suspense>
           <Await resolve={featuredProducts}>
             {(response) => {
@@ -180,7 +184,7 @@ export default function Homepage() {
             }}
           </Await>
         </Suspense>
-      )}*/}
+      )}
 
       {secondaryHero && (
         <Suspense fallback={<Hero {...skeletons[1]} />}>
@@ -228,7 +232,7 @@ export default function Homepage() {
             }}
           </Await>
         </Suspense>
-      )}
+      )}*/}
     </>
   );
 }
