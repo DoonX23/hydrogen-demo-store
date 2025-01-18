@@ -137,7 +137,7 @@ export function CustomFooter({menu}: {menu?: EnhancedMenu}) {
   function FooterMenu({menu}: {menu?: EnhancedMenu}) {
     const styles = {
       section: 'grid gap-4',
-      nav: 'grid gap-2 pb-6',
+      nav: 'grid gap-2 pb-6 text-sm',
     };
   
     return (
