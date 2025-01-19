@@ -27,7 +27,7 @@ export default function CustomHero({
   return (
     <div className="relative bg-white">
       <div className="mx-auto container py-8 lg:grid lg:grid-cols-2 lg:gap-x-16 lg:px-4">
-      <div className="hidden lg:block relative lg:col-span-1">
+      <div className="relative lg:col-span-1">
           {spread?.reference && (
             <SpreadMedia
               sizes="100vw"
