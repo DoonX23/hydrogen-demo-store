@@ -1,13 +1,12 @@
 import type {ProductQuery} from 'storefrontapi.generated';
 import {useEffect, useState} from 'react';
-import {useFetcher, useNavigate, useNavigation} from '@remix-run/react';
+import {useFetcher} from '@remix-run/react';
 import {UnitConverter} from '~/components/CustomProduct/UnitConverter';
 import CustomInputNumber from '~/components/CustomProduct/CustomInputNumber';
 import {PriceDisplay} from '~/components/CustomProduct/PriceDisplay';
-import {CustomVariantSelector, type CustomVariantOption} from '~/components/CustomProduct/CustomVariantSelector';
-import clsx from 'clsx';
 import {Button} from '~/components/Button';
 import { CustomRadioGroup } from '~/components/CustomRadioGroup';
+import {ProductMetafieldNavigator, type MetafieldNavigatorProps} from '~/components/CustomProduct/ProductMetafieldNavigator';
 
 interface ApiResponse {
   status: 'success' | 'error';
@@ -18,8 +17,8 @@ interface ApiResponse {
 }
 interface CustomProductFormProps {
   product: ProductQuery['product'];
-  facets: any;
-  productMetafields: any;
+  facets: MetafieldNavigatorProps['options'];
+  productMetafields: MetafieldNavigatorProps['variants'];
 }
 export function CustomProductForm({product, facets, productMetafields}: CustomProductFormProps) {
   if (!product?.id) {
@@ -49,58 +48,6 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
   const handlePrecisionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPrecision(e.target.value);
   };
-
-  const CustomProductOption = ({option}: {option: CustomVariantOption}) => {
-    const navigate = useNavigate();
-    const navigation = useNavigation();
-    // 判断是否正在导航中
-    const isNavigating = navigation.state !== 'idle';
-    
-    if (!option.values.length) {
-      return null;
-    }
-  
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const selectedValue = option.values.find(v => v.value === e.target.value);
-      if(!selectedValue) return;
-      
-      selectedValue.onSelect();
-      if(selectedValue.to) {
-        navigate(selectedValue.to);
-      }
-    };
-  
-    return (
-      <div className="mb-4 max-w-xl">
-        <label htmlFor={option.name} className="block font-medium text-sm mb-2">
-          {option.name}
-        </label>
-        <select
-          id={option.name}
-          value={option.value || ''}
-          onChange={handleChange}
-          disabled={isNavigating}
-          className={clsx(
-            "w-full rounded-md border-gray-200 py-2 px-3 text-sm dark:text-black",
-            isNavigating && "opacity-50 cursor-not-allowed"
-          )}
-        >
-          <option value="" disabled>
-            Select {option.name}
-          </option>
-          {option.values.map(({value, isAvailable, isActive}) => (
-            <option 
-              key={option.name + value}
-              value={value}
-              disabled={!isAvailable}
-            >
-              {value}
-            </option>
-          ))}
-        </select>
-      </div>
-    );
-  }
 
     // 对于Width选择
   const widthOptions = [
@@ -133,15 +80,11 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
               quantity={quantity}
               unitPrice={Number(product.unit_price?.value) || 0}
         />
-        <CustomVariantSelector
+      <ProductMetafieldNavigator 
         handle={product.handle}
         options={facets}
         variants={productMetafields}
-      >
-        {({option}) => (
-          <CustomProductOption option={option} />
-        )}
-      </CustomVariantSelector>
+      />
       <fetcher.Form action="/api/custom-add-to-cart" method="post">
         <input type="hidden" name="productId" value={product.id || ''} />
         <input type="hidden" name="formType" value={formType} />
