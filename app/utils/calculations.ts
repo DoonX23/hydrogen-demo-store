@@ -13,7 +13,25 @@ export interface CalculationProps {
   unitPrice: number;
 }
 
-// 计算价格和重量的核心函数 
+// 定义运费阶梯接口
+interface ShippingTier {
+  minWeight: number;
+  maxWeight: number;
+  unitPrice: number;
+}
+
+// 定义运费阶梯数组
+const shippingTiers: ShippingTier[] = [
+  { minWeight: 0, maxWeight: 0.1, unitPrice: 40 },
+  { minWeight: 0.1, maxWeight: 0.5, unitPrice: 30 },
+  { minWeight: 0.5, maxWeight: 1, unitPrice: 20 },
+  { minWeight: 1, maxWeight: 2, unitPrice: 18 },
+  { minWeight: 2, maxWeight: 5, unitPrice: 15 },
+  { minWeight: 5, maxWeight: 10, unitPrice: 12 },
+  { minWeight: 10, maxWeight: Infinity, unitPrice: 12 }
+];
+
+// 计算价格和重量的核心函数
 export const calculatePriceAndWeight = (props: CalculationProps): {
   price: string;
   weight: number;
@@ -73,11 +91,23 @@ export const calculatePriceAndWeight = (props: CalculationProps): {
     }
   }
 
-  const finalPrice = Math.max(0.01, Number((basePrice + precisionPrice).toFixed(2)));
+  // 计算运费
+  const shippingTier = shippingTiers.find(
+    tier => weight > tier.minWeight && weight <= tier.maxWeight
+  );
+  const unitShippingFee = shippingTier ? shippingTier.unitPrice : 15;
+  const shippingFee = weight * unitShippingFee;
+  console.log('运费计算:', {
+    weight,
+    unitShippingFee,
+    shippingFee
+  });
 
-  return {
+  // 计算总价
+  const finalPrice = Math.max(0.01, Number((basePrice + precisionPrice + shippingFee).toFixed(2)));
+  const result = {
     price: finalPrice.toFixed(2),
     weight: Number(weight.toFixed(3))
   };
+  return result;
 };
-
