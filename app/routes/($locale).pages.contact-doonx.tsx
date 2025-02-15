@@ -24,7 +24,7 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
   const {page} = await context.storefront.query(PAGE_QUERY, {
     variables: {
       //handle: params.pageHandle,
-      handle: 'contact',
+      handle: 'contact-doonx',
       language: context.storefront.i18n.language,
     },
   });
