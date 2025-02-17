@@ -8,6 +8,7 @@ import type {
   ProductVariant,
   ShopPolicy,
   Image,
+  
 } from '@shopify/hydrogen/storefront-api-types';
 import type {
   Article as SeoArticle,
@@ -31,7 +32,7 @@ function root({
 }): SeoConfig {
   return {
     title: shop?.name,
-    titleTemplate: '%s | Hydrogen Demo Store',
+    titleTemplate: '%s | DoonX',
     description: truncate(shop?.description ?? ''),
     handle: '@shopify',
     url,
@@ -63,9 +64,9 @@ function root({
 
 function home({url}: {url: Request['url']}): SeoConfig {
   return {
-    title: 'Home',
-    titleTemplate: '%s | Hydrogen Demo Store',
-    description: 'The best place to buy snowboarding products',
+    title: 'DoonX: On-demand Manufacturing For Custom Parts',
+    titleTemplate: '%s | DoonX',
+    description: 'DoonX is your CNC Machining, Sheet Metal, CNC Cutting, Injection Molding and 3D Printing marketplace for custom manufactured parts',
     url,
     robots: {
       noIndex: false,
@@ -317,7 +318,7 @@ function listCollections({
   return {
     title: 'Collections',
     titleTemplate: '%s | Collections',
-    description: 'All hydrogen collections',
+    description: 'All DoonX collections',
     url,
     jsonLd: collectionsJsonLd({collections, url}),
   };
@@ -341,7 +342,7 @@ function article({
   return {
     title: article?.seo?.title ?? article?.title,
     description: truncate(article?.seo?.description ?? ''),
-    titleTemplate: '%s | Journal',
+    titleTemplate: '%s | DoonX',
     url,
     media: {
       type: 'image',
@@ -444,7 +445,7 @@ function policies({
   return {
     title: 'Policies',
     titleTemplate: '%s | Policies',
-    description: 'Hydroge store policies',
+    description: 'DoonX policies',
     jsonLd: [
       {
         '@context': 'https://schema.org',
@@ -454,7 +455,7 @@ function policies({
       {
         '@context': 'https://schema.org',
         '@type': 'WebPage',
-        description: 'Hydrogen store policies',
+        description: 'DoonX policies',
         name: 'Policies',
         url,
       },
