@@ -37,7 +37,7 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
   const [lengthM, setLengthM] = useState(1);
   const [widthMm, setWidthMm] = useState(formType === 'Film' ? 450 : 1);
   const [quantity, setQuantity] = useState(1);
-  const [precision, setPrecision] = useState(machiningPrecision);
+  const [precision, setPrecision] = useState('Normal (±2mm)');
   useEffect(() => {
     if (fetcher.data?.status === 'success') {
         console.error('添加成功');
