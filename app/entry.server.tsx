@@ -26,6 +26,7 @@ export default async function handleRequest(
   styleSrc: [
     "'self'",
     "'unsafe-inline'",
+    'https://*.googletagmanager.com',
     'https://cdn.shopify.com',
     'https://fonts.googleapis.com', // 添加 Google Fonts 样式
   ],
@@ -37,6 +38,7 @@ export default async function handleRequest(
   ],
     scriptSrc: [
       'self',
+      "'unsafe-inline'",
       'https://cdn.shopify.com',
       'https://shopify.com',
       'https://*.google-analytics.com',
@@ -50,7 +52,7 @@ export default async function handleRequest(
       "'self'",
       'https://*.google-analytics.com',
       'https://*.analytics.google.com',
-      
+      'https://*.google.com',
       'https://*.googletagmanager.com',
       // HubSpot - 使用通配符合并多个子域名
       'https://*.hubspot.com',     // 覆盖 forms.hubspot.com, api.hubspot.com
@@ -62,6 +64,7 @@ export default async function handleRequest(
       'https://*.amazonaws.com',    // 覆盖所有 HubSpot 的 S3 存储
     ],
     frameSrc: [
+      'https://*.google-analytics.com',
       'https://forms.hsforms.com',
       'https://app.hubspot.com',     // 添加
     ],
