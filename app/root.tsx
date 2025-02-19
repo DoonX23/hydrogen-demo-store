@@ -149,7 +149,17 @@ function Layout({children}: {children?: React.ReactNode}) {
 
       </head>
       <body>
-
+        <noscript>
+            <iframe
+              src="https://www.googletagmanager.com/ns.html?id=GTM-NT3BGD4"
+              height="0"
+              width="0"
+              style={{
+                display: 'none',
+                visibility: 'hidden'
+              }}
+            ></iframe>
+          </noscript>
         {data ? (
           <Analytics.Provider
             cart={data.cart}
