@@ -45,8 +45,7 @@ export default async function handleRequest(
       'https://*.doubleclick.net',
       'https://*.shopify.com',
       'https://*.google-analytics.com',
-      'https://www.googletagmanager.com',
-      'https://www.googletagmanager.com/debug/badge',
+      'https://*.googletagmanager.com',
       'https://*.hsforms.net', // HubSpot表单域名
       'https://*.googleapis.com',  // 添加这行
       ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
