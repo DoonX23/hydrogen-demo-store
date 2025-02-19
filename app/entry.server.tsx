@@ -39,14 +39,19 @@ export default async function handleRequest(
       'self',
       'https://cdn.shopify.com',
       'https://shopify.com',
-      'https://www.google-analytics.com',
-      'https://www.googletagmanager.com',
+      'https://*.google-analytics.com',
+      'https://*.googletagmanager.com',
       'https://js.hsforms.net', // 添加HubSpot的域名
       'https://forms.hsforms.net', // HubSpot表单域名
       'https://fonts.googleapis.com',  // 添加这行
       ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
     ],
     connectSrc: [
+      "'self'",
+      'https://*.google-analytics.com',
+      'https://*.analytics.google.com',
+      
+      'https://*.googletagmanager.com',
       // HubSpot - 使用通配符合并多个子域名
       'https://*.hubspot.com',     // 覆盖 forms.hubspot.com, api.hubspot.com
       'https://*.hsforms.com',     // 覆盖 forms.hsforms.com
@@ -64,6 +69,8 @@ export default async function handleRequest(
       "'self'",
       'data:',
       'https://cdn.shopify.com',
+      'https://*.google-analytics.com',
+      'https://*.googletagmanager.com',
       'https://forms-na1.hsforms.com',
       'https://*.hsforms.com',
       'https://*.hubspot.com',

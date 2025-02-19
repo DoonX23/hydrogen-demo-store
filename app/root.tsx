@@ -21,6 +21,7 @@ import {
   Analytics,
   getShopAnalytics,
   getSeoMeta,
+  Script,
   type SeoConfig,
 } from '@shopify/hydrogen';
 import invariant from 'tiny-invariant';
@@ -33,6 +34,7 @@ import {seoPayload} from '~/lib/seo.server';
 import styles from '~/styles/app.css?url';
 
 import {DEFAULT_LOCALE, parseMenu} from './lib/utils';
+import {GoogleTagManager} from '~/components/GoogleTagManager';
 
 export type RootLoader = typeof loader;
 
@@ -144,8 +146,26 @@ function Layout({children}: {children?: React.ReactNode}) {
         <meta name="msvalidate.01" content="A352E6A0AF9A652267361BBB572B8468" />
         <Meta />
         <Links />
+        <Script dangerouslySetInnerHTML={{
+          __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-NT3BGD4');`,
+        }}></Script>
       </head>
       <body>
+        <noscript>
+            <iframe
+              src="https://www.googletagmanager.com/ns.html?id=GTM-GTM-NT3BGD4>"
+              height="0"
+              width="0"
+              style={{
+                display: 'none',
+                visibility: 'hidden'
+              }}
+            ></iframe>
+          </noscript>
         {data ? (
           <Analytics.Provider
             cart={data.cart}
@@ -158,6 +178,7 @@ function Layout({children}: {children?: React.ReactNode}) {
             >
               {children}
             </PageLayout>
+            <GoogleTagManager />
           </Analytics.Provider>
         ) : (
           children
