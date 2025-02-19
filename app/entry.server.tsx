@@ -80,6 +80,10 @@ export default async function handleRequest(
       'https://*.googletagmanager.com',
       'https://*.hsforms.com',
       'https://*.hubspot.com',
+      // Google 域名 - 使用有限制的通配符
+      'https://*.google.com',
+      'https://*.google.*',
+      'https://*.doubleclick.net',
     ],
   });
 
