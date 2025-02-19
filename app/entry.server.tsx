@@ -37,6 +37,7 @@ export default async function handleRequest(
     'https://fonts.gstatic.com', // 添加 Google Fonts 字体文件
     'https://cdn.shopify.com', // 添加 Shopify CDN
     'https://*.crisp.chat',
+    'https://www.googletagmanager.com',
   ],
     scriptSrc: [
       'self',
@@ -80,6 +81,7 @@ export default async function handleRequest(
       'https://*.shopify.com',
       'https://*.google-analytics.com',
       'https://*.googletagmanager.com',
+      'https://fonts.gstatic.com',
       'https://*.hsforms.com',
       'https://*.hubspot.com',
       // Google 域名 - 使用有限制的通配符
