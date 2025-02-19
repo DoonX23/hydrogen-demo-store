@@ -26,6 +26,7 @@ export default async function handleRequest(
   styleSrc: [
     "'self'",
     "'unsafe-inline'",
+    'https://*.crisp.chat',
     'https://*.googletagmanager.com',
     'https://cdn.shopify.com',
     'https://fonts.googleapis.com', // 添加 Google Fonts 样式
@@ -35,23 +36,24 @@ export default async function handleRequest(
     "'self'",
     'https://fonts.gstatic.com', // 添加 Google Fonts 字体文件
     'https://cdn.shopify.com', // 添加 Shopify CDN
+    'https://*.crisp.chat',
   ],
     scriptSrc: [
       'self',
-      "'unsafe-inline'",
-      'https://cdn.shopify.com',
-      'https://shopify.com',
+      "'strict-dynamic'",
+      'https://*.doubleclick.net',
+      'https://*.shopify.com',
       'https://*.google-analytics.com',
       'https://*.googletagmanager.com',
-      'https://js.hsforms.net', // 添加HubSpot的域名
-      'https://forms.hsforms.net', // HubSpot表单域名
-      'https://fonts.googleapis.com',  // 添加这行
+      'https://*.hsforms.net', // HubSpot表单域名
+      'https://*.googleapis.com',  // 添加这行
       ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
     ],
     connectSrc: [
       "'self'",
+      'https://*.crisp.chat',
+      'wss://*.crisp.chat',
       'https://*.google-analytics.com',
-      'https://*.analytics.google.com',
       'https://*.google.com',
       'https://*.googletagmanager.com',
       // HubSpot - 使用通配符合并多个子域名
@@ -65,16 +67,17 @@ export default async function handleRequest(
     ],
     frameSrc: [
       'https://*.google-analytics.com',
-      'https://forms.hsforms.com',
-      'https://app.hubspot.com',     // 添加
+      'https://*.googletagmanager.com',
+      'https://*.doubleclick.net',
+      'https://*.hsforms.com',
+      'https://*.hubspot.com',     // 添加
     ],
     imgSrc: [                        // 添加 imgSrc 配置
       "'self'",
       'data:',
-      'https://cdn.shopify.com',
+      'https://*.shopify.com',
       'https://*.google-analytics.com',
       'https://*.googletagmanager.com',
-      'https://forms-na1.hsforms.com',
       'https://*.hsforms.com',
       'https://*.hubspot.com',
     ],
