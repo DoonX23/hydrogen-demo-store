@@ -53,6 +53,7 @@ export default async function handleRequest(
       "'self'",
       'https://*.crisp.chat',
       'wss://*.crisp.chat',
+      'https://*.doubleclick.net',
       'https://*.google-analytics.com',
       'https://*.google.com',
       'https://*.googletagmanager.com',
@@ -75,6 +76,7 @@ export default async function handleRequest(
     imgSrc: [                        // 添加 imgSrc 配置
       "'self'",
       'data:',
+      'https://*.crisp.chat',
       'https://*.shopify.com',
       'https://*.google-analytics.com',
       'https://*.googletagmanager.com',
@@ -82,7 +84,7 @@ export default async function handleRequest(
       'https://*.hubspot.com',
       // Google 域名 - 使用有限制的通配符
       'https://*.google.com',
-      'https://*.google.*',
+      'https://*.google.com.hk',
       'https://*.doubleclick.net',
     ],
   });
