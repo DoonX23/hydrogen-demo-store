@@ -14,27 +14,36 @@ export function GoogleTagManager() {
   useEffect(() => {
     // Standard events
     subscribe('page_viewed', (data) => {
-      console.log('ThirdPartyAnalyticsIntegration - Page viewed:', data);
+      window.dataLayer.push({
+        'event': 'page-viewed',
+        'ecommerceData': {...data}
+      });
     });
     subscribe('product_viewed', (data) => {
-      console.log('ThirdPartyAnalyticsIntegration - Product viewed:', data);
-      // Triggering a custom event in GTM when a product is viewed
-      window.dataLayer.push({'event': 'viewed-product'});
+      window.dataLayer.push({
+        'event': 'product-viewed',
+        'ecommerceData': {...data}
+      });
     });
     subscribe('collection_viewed', (data) => {
-      console.log('ThirdPartyAnalyticsIntegration - Collection viewed:', data);
+      window.dataLayer.push({
+        'event': 'collection-viewed',
+        'ecommerceData': {...data}
+      });
     });
     subscribe('cart_viewed', (data) => {
-      console.log('ThirdPartyAnalyticsIntegration - Cart viewed:', data);
+      window.dataLayer.push({
+        'event': 'cart-viewed',
+        'ecommerceData': {...data}
+      });
     });
     subscribe('cart_updated', (data) => {
-      console.log('ThirdPartyAnalyticsIntegration - Cart updated:', data);
+      window.dataLayer.push({
+        'event': 'cart-updated',
+        'ecommerceData': {...data}
+      });
     });
 
-    // Custom events
-    subscribe('custom_checkbox_toggled', (data) => {
-      console.log('ThirdPartyAnalyticsIntegration - Custom checkbox toggled:', data);
-    });
     ready();
   }, []);
 
