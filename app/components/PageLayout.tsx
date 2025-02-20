@@ -58,11 +58,11 @@ export function PageLayout({children, layout}: LayoutProps) {
         {headerMenu && layout?.shop.name && (
           <Header title={layout.shop.name} menu={headerMenu} />
         )}
+              <SiteFeatures/>
         <main role="main" id="mainContent" className="flex-grow">
           {children}
         </main>
       </div>
-      <SiteFeatures/>
       {footerMenu && <CustomFooter menu={footerMenu} />}
     </>
   );
