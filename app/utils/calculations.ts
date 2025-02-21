@@ -97,11 +97,6 @@ export const calculatePriceAndWeight = (props: CalculationProps): {
   );
   const unitShippingFee = shippingTier ? shippingTier.unitPrice : 15;
   const shippingFee = weight * unitShippingFee;
-  console.log('运费计算:', {
-    weight,
-    unitShippingFee,
-    shippingFee
-  });
 
   // 计算总价
   const finalPrice = Math.max(0.01, Number((basePrice + precisionPrice + shippingFee).toFixed(2)));
