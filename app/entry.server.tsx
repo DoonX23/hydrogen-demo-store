@@ -57,6 +57,7 @@ export default async function handleRequest(
       'https://*.doubleclick.net',
       'https://*.google-analytics.com',
       'https://*.google.com',
+      'https://google.com',
       'https://*.googletagmanager.com',
       // HubSpot - 使用通配符合并多个子域名
       'https://*.hubspot.com',     // 覆盖 forms.hubspot.com, api.hubspot.com
