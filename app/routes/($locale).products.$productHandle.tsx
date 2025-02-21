@@ -255,10 +255,24 @@ export default function Product() {
           <div className="">
             <section className="flex flex-col w-full gap-8 md:mx-auto md:px-0 py-4 lg:py-0">
               <div className="grid gap-2">
-                <Heading as="h1" className="whitespace-normal">
+                <Heading as="h1" className="whitespace-normal text-[1.5rem] md:text-[1.8rem]">
                   {title}
                 </Heading>
               </div>
+              {!!collection && (
+                  <div className="flex">
+                  <div className="relative rounded-xl px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-brand hover:ring-highlight hover:text-highlight">
+                  View All {collection.title.replace(/(<([^>]+)>)/gi, '')} Options{" "}
+                  <Link
+                      to={'/collections/' + collection.handle}
+                      className="font-semibold text-brand"
+                  >
+                      <span aria-hidden="true" className="absolute inset-0" />
+                      Reach Out <span aria-hidden="true">&rarr;</span>
+                      </Link>
+                  </div>
+                </div>
+              )}
               {product.customizable_size?.value === "true" ? (
                 <Suspense fallback={<CustomProductForm product={product} facets={[]} productMetafields={[]} />}>
                   <Await resolve={collectionDataPromise}>
