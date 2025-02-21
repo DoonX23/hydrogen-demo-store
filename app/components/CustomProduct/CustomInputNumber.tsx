@@ -67,31 +67,31 @@ const CustomInputNumber: FC<CustomInputNumberProps> = ({
       className={`custom-input-number flex items-center justify-between gap-5 ${className}`}
     >
       {label && renderLabel()}
-      <div className="custom-input-number__content flex items-center justify-between gap-3 w-[7.5rem] sm:w-32">
+      <div className="custom-input-number__content flex items-center justify-between gap-1 w-[7.5rem] sm:w-32">
         <button
-          className="w-8 h-8 rounded flex items-center justify-center border border-brand bg-brand text-white hover:bg-brand focus:outline-none disabled:opacity-50 disabled:cursor-default"
+          className="rounded flex items-center justify-center border border-brand bg-brand text-white hover:bg-brand focus:outline-none disabled:opacity-50 disabled:cursor-default"
           type="button"
           onClick={handleClickDecrement}
           disabled={min >= value}
         >
-          <MinusIcon className="w-6" />
+          <MinusIcon className="w-8" />
         </button>
         <input
           type="number"
           name={name}
           value={value}
           onChange={handleInputChange}
-          className="w-24 text-center focus:outline-none dark:text-black" 
+          className="rounded w-24 text-center bg-blue-100 border border-blue-100 focus:outline-none focus:border-brand dark:text-black" 
           min={min}
           max={max}
         />
         <button
-          className="w-8 h-8 rounded flex items-center justify-center border border-brand bg-brand text-white hover:bg-brand focus:outline-none disabled:opacity-50 disabled:cursor-default"          
+          className="rounded flex items-center justify-center border border-brand bg-brand text-white hover:bg-brand focus:outline-none disabled:opacity-50 disabled:cursor-default"          
           type="button"
           onClick={handleClickIncrement}
           disabled={max ? max <= value : false}
         >
-          <PlusIcon className="w-6" />
+          <PlusIcon className="w-8" />
         </button>
       </div>
     </div>
