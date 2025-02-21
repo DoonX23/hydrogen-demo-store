@@ -15,8 +15,9 @@ export function PriceDisplay(props: CalculationProps) {
   
   return (
     <div className="mb-4 space-y-1">
-      <div className="text-lg font-medium text-primary" >
-        Price: ${totalPrice}
+      <div className="text-xl font-medium text-primary" >
+        Price:
+        <span className="text-brand" > ${totalPrice}</span>
       </div>
     </div>
   );
