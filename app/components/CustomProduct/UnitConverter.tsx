@@ -115,12 +115,12 @@ export function UnitConverter({
               value={valueOne}
               onChange={handleValueOneChange}
               onBlur={handleValueOneBlur}
-              className="w-full min-w-0 px-2 py-2 border rounded dark:text-black"
+              className="w-full min-w-0 px-2 py-2 bg-blue-100 border border-blue-100 rounded dark:text-black focus:border-brand"
               placeholder={`${unitOne}`}
               min={minValue}
               step="any"
             />
-            <span className="text-lg shrink-0">{unitOne}</span>
+            <span className="text-md shrink-0">{unitOne}</span>
           </div>
         </div>
         <div className="flex-1 min-w-0">
@@ -131,12 +131,12 @@ export function UnitConverter({
               value={valueTwo}
               onChange={handleValueTwoChange}
               onBlur={handleValueTwoBlur}
-              className="w-full min-w-0 px-2 py-2 border rounded dark:text-black"
+              className="w-full min-w-0 px-2 py-2 bg-blue-100 border border-blue-100 rounded dark:text-black focus:border-brand"
               placeholder={`${unitTwo}`}
               min={0}
               step="any"
             />
-            <span className="text-lg shrink-0">{unitTwo}</span>
+            <span className="text-md shrink-0">{unitTwo}</span>
           </div>
         </div>
       </div>
@@ -146,7 +146,7 @@ export function UnitConverter({
           <br />
           Please enter between {minValue} {unitOne} - {maxValue} {unitOne} or for sizes above {maxValue} {unitOne}, please contact our {' '}
           <a 
-            href="/contact" 
+            href="/pages/contact-doonx" 
             target="_BLANK"
             className="text-blue-600 underline"
           >

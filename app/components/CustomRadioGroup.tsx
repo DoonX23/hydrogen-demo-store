@@ -39,10 +39,10 @@ export function CustomRadioGroup({ name, label, options, selectedValue, onChange
               className={classNames(
                 option.disabled ? 'cursor-not-allowed opacity-25' : 'cursor-pointer',
                 'flex items-center justify-center rounded-md px-3 py-3 text-sm font-medium',
-                'ring-1 ring-gray-300 focus-within:ring-2 focus-within:ring-brand focus-within:ring-offset-2',
+                'ring-1 ring-blue-200 focus-within:ring-2 focus-within:ring-brand focus-within:ring-offset-2',
                 selectedValue === option.value 
                   ? 'bg-brand text-white hover:bg-brand/90'  // 选中状态
-                  : 'bg-white text-gray-900 hover:bg-gray-50' // 未选中状态
+                  : 'bg-blue-100 text-gray-900 hover:bg-blue-200' // 未选中状态
               )}
             >
               {option.label}
