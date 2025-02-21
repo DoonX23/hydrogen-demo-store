@@ -295,9 +295,9 @@ export default function Product() {
                   </Await>
                 </Suspense>
               )}
-              <div className="grid gap-4 py-4">
-              <div className="grid mt-4">
-                <HubspotForm buttonText="Get Your Quote" />
+              <div className="grid gap-4">
+              <div className="grid mb-4 text-center">
+                <HubspotForm buttonText="Custom Bulk Quotation" />
               </div>
                 {descriptionHtml && (
                   <ProductDetail
