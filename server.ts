@@ -60,7 +60,14 @@ export default {
       const {storefront} = createStorefrontClient({
         cache,
         waitUntil,
-        i18n: getLocaleFromRequest(request),
+        //i18n: getLocaleFromRequest(request),
+        i18n: {
+                label: "United States (USD $)",  // 字符串需要加引号
+                language: "EN",                // 语言代码需要加引号
+                country: "US",                 // 国家代码需要加引号
+                currency: "USD",               // 货币代码需要加引号
+                pathPrefix: ""          // 路径前缀需要加引号
+              },
         publicStorefrontToken: env.PUBLIC_STOREFRONT_API_TOKEN,
         privateStorefrontToken: env.PRIVATE_STOREFRONT_API_TOKEN,
         storeDomain: env.PUBLIC_STORE_DOMAIN,
