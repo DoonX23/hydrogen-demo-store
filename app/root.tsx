@@ -72,7 +72,26 @@ export const links: LinksFunction = () => {
   ];
 };
 
+// 1. 添加拦截函数
+function interceptLocaleRedirect(request: Request) {
+  const url = new URL(request.url);
+  const firstPathPart = '/' + url.pathname.substring(1).split('/')[0].toLowerCase();
+  
+  if (firstPathPart.match(/^\/[a-z]{2}-[a-z]{2}/i)) {
+    const newPath = url.pathname.replace(/^\/[a-z]{2}-[a-z]{2}/, '');
+    throw new Response(null, {
+      status: 301,
+      headers: {
+        'Location': `${url.origin}${newPath}${url.search}`
+      }
+    });
+  }
+}
+
 export async function loader(args: LoaderFunctionArgs) {
+    // 在加载数据之前进行拦截
+    interceptLocaleRedirect(args.request);
+    
   // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
 
