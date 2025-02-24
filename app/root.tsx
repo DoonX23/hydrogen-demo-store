@@ -165,6 +165,13 @@ function Layout({children}: {children?: React.ReactNode}) {
         <meta name="msvalidate.01" content="A352E6A0AF9A652267361BBB572B8468" />
         <Meta />
         <Links />
+        {/*Script组件限制：
+        1. 外联脚本才能使用waitForHydration属性，内联脚本则不能；
+        2. 先初始化datalayer，再加载gtm.js；
+        3. csp里面还用了"'strict-dynamic'"，所以gtm.js后续动态加载的脚本不需要手动添加 nonce。
+        4. 之所以要分开datalayer和gtm.js, 是因为内联脚本包含了gtm.js会动态加载tag脚本，水合的时候会改变dom，导致水合错误。
+            分开后，在水合的时候加载内联脚本；而gtm.js使用了waitForHydration属性，会等到水合结束再加载动态tag脚本。
+         */}
         <Script
           dangerouslySetInnerHTML={{
             __html: `
