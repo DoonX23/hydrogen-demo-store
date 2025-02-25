@@ -16,6 +16,14 @@ declare global {
   }
 }
 
+// Helper function to extract numeric ID from Shopify GID
+const extractShopifyId = (gid: string): string => {
+  if (!gid) return '';
+  const matches = gid.match(/\/Product\/(\d+)/);
+  return matches ? matches[1] : gid;
+};
+
+
 export function GoogleTagManager() {
   const {subscribe, register} = useAnalytics();
   const {ready} = register('Google Tag Manager');
@@ -35,7 +43,7 @@ export function GoogleTagManager() {
       
       // 转换数据格式
       const items = data.products.map((product, index) => ({
-        item_id: product.id,
+        item_id: extractShopifyId(product.id),
         item_name: product.title,
         index: index,
         item_brand: product.vendor,
@@ -45,7 +53,7 @@ export function GoogleTagManager() {
         currency: data.shop?.currency,
         items: items,
       };
-      console.log('ecommerce:', JSON.stringify(ecommerceData, null, 2));
+      
       window.dataLayer.push({
         'event': 'view_item',
         'ecommerce': ecommerceData
@@ -105,7 +113,7 @@ export function GoogleTagManager() {
       }
     
       const items = [{
-        item_id: data.currentLine.merchandise.product.id ?? '',
+        item_id: extractShopifyId(data.currentLine.merchandise.product.id) ?? '',
         item_name: data.currentLine.merchandise.product.title ?? '',
         item_brand: data.currentLine.merchandise.product.vendor ?? '',
         item_variant: data.currentLine.merchandise.title ?? '',
@@ -135,7 +143,7 @@ export function GoogleTagManager() {
       }
     
       const items = [{
-        item_id: data.prevLine.merchandise.product.id ?? '',
+        item_id: extractShopifyId(data.prevLine.merchandise.product.id) ?? '',
         item_name: data.prevLine.merchandise.product.title ?? '',
         item_brand: data.prevLine.merchandise.product.vendor ?? '',
         item_variant: data.prevLine.merchandise.title ?? '',
