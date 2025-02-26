@@ -261,7 +261,7 @@ function collection({
     description: truncate(
       collection?.seo?.description ?? collection?.description ?? '',
     ),
-    titleTemplate: '%s | Collection',
+    titleTemplate: '%s | DoonX',
     url,
     media: {
       type: 'image',
