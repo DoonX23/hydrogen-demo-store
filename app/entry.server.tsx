@@ -52,6 +52,7 @@ export default async function handleRequest(
     ],
     connectSrc: [
       "'self'",
+      'https://*.clarity.ms',
       'https://*.crisp.chat',
       'wss://*.crisp.chat',
       'https://*.doubleclick.net',
@@ -78,6 +79,7 @@ export default async function handleRequest(
     imgSrc: [                        // 添加 imgSrc 配置
       "'self'",
       'data:',
+      'https://*.clarity.ms',
       'https://*.crisp.chat',
       'https://*.shopify.com',
       'https://*.google-analytics.com',
