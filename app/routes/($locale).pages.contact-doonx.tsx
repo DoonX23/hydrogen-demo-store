@@ -152,6 +152,15 @@ export default function Page() {
               </div>
               <div className="flex gap-x-4">
                 <dt className="flex-none">
+                  <span className="sr-only">Address</span>
+                  <BuildingOffice2Icon aria-hidden="true" className="h-7 w-6 text-gray-400" />
+                </dt>
+                <dd>
+                30 N Gould St Ste 100Sheridan, WY 82801, United State<br />
+                </dd>
+              </div>
+              <div className="flex gap-x-4">
+                <dt className="flex-none">
                   <span className="sr-only">Telephone</span>
                   <PhoneIcon aria-hidden="true" className="h-7 w-6 text-gray-400" />
                 </dt>
