@@ -1,4 +1,4 @@
-import {useRef, Suspense} from 'react';
+import {useRef, Suspense,useState,useEffect} from 'react';
 import {Disclosure, Listbox} from '@headlessui/react';
 import {
   defer,
@@ -47,6 +47,9 @@ import {
 } from '~/data/commonFragments';
 import {CollectionSlider} from '~/components/CollectionsSlider';
 import {HubspotForm} from '~/components/HubspotForm';
+import ProductAnchor from '~/components/ProductAnchor.client';
+import { ProductDescriptionSection } from '~/components/ProductDescriptionSection';
+import ProductSpecifications from '~/components/ProductSpecifications';
 
 export const headers = routeHeaders;
 
@@ -215,6 +218,23 @@ export default function Product() {
   const {media, title, vendor, descriptionHtml} = product;
   const {shippingPolicy, refundPolicy} = shop;
   const collection = product.collections.nodes[0];
+  const specifications = product.specifications?.value
+    ? JSON.parse(product.specifications.value) as Record<string, any[]>
+    : {};
+
+  // 添加一个state来跟踪是否在客户端,在组件挂载后设置isClient为true
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const productSections = [
+    { id: 'description', title: 'Description' },
+    { id: 'specifications', title: 'Specifications' },
+    { id: 'shipping', title: 'Shipping' },
+    { id: 'return', title: 'Return' }
+  ];
+
   return (
     <>
       <section className="container">
@@ -299,6 +319,7 @@ export default function Product() {
               <div className="grid mb-4 text-center">
                 <HubspotForm buttonText="Custom Bulk Quotation" />
               </div>
+                {/*
                 {descriptionHtml && (
                   <ProductDetail
                     title="Product Details"
@@ -319,25 +340,67 @@ export default function Product() {
                     learnMore={`/policies/${refundPolicy.handle}`}
                   />
                 )}
+                  */}
               </div>
             </section>
           </div>
         </div>
       </section>
-      {/* DETAIL AND REVIEW */}
-      <div className="mb-12 sm:mb-16 container mt-4">
-        {/* Product description */}
-        {!!descriptionHtml && (
-          <div className="">
-            <h2 className="text-2xl font-semibold">Product Details</h2>
-            <div
-              className="prose prose-sm sm:prose dark:prose-invert sm:max-w-4xl mt-7"
-              dangerouslySetInnerHTML={{
-                __html: descriptionHtml || '',
-              }}
-            />
+
+      <div className="mb-12 sm:mb-16 mt-4">
+        {/* 仅在客户端渲染ProductAnchor组件，服务端则渲染替代内容 */}
+        {isClient ? (
+          <ProductAnchor sections={productSections} />
+        ) : (
+          <div className="sticky top-[60px] md:top-[80px] w-full bg-white z-10 shadow-sm">
+            <div className="max-w-6xl mx-auto">
+              <div className="overflow-x-auto scrollbar-hide">
+                <nav className="flex gap-4 border-b w-full py-3 min-w-max">
+                  {productSections.map(section => (
+                    <span key={section.id} className="px-2 cursor-pointer whitespace-nowrap">
+                      {section.title}
+                    </span>
+                  ))}
+                </nav>
+              </div>
+            </div>
           </div>
         )}
+
+        {/* 产品详情内容区域 */}
+        <div className="mt-6 container">
+          {/* 原有代码替换为 */}
+          <ProductDescriptionSection product={product} />
+
+          {/* 规格参数部分 - 只有当product.specifications?.value存在时才显示 - 这是第2个锚点 */}
+          {product.specifications?.value && (<ProductSpecifications specifications={specifications}  />)}
+
+          {/* shipping部分 - 这是第3个锚点 */}
+          {!!shippingPolicy?.body && (
+            <div id="shipping" className="py-8">
+              <h2 className="text-2xl font-semibold">Shipping Policy</h2>
+              <div
+                className="prose prose-sm sm:prose dark:prose-invert sm:max-w-4xl mt-7"
+                dangerouslySetInnerHTML={{
+                  __html: getExcerpt(shippingPolicy.body) || '',
+                }}
+              />
+            </div>
+          )}
+
+          {/* return部分 - 这是第4个锚点 */}
+          {!!refundPolicy?.body && (
+            <div id="return" className="py-8">
+              <h2 className="text-2xl font-semibold">Return Policy</h2>
+              <div
+                className="prose prose-sm sm:prose dark:prose-invert sm:max-w-4xl mt-7"
+                dangerouslySetInnerHTML={{
+                  __html: getExcerpt(refundPolicy.body) || '',
+                }}
+              />
+            </div>
+          )}
+        </div>
       </div>
       {/*<Suspense fallback={<Skeleton className="h-32" />}>
         <Await
@@ -671,6 +734,24 @@ const PRODUCT_QUERY = `#graphql
           title
           handle
         }
+      }
+      specifications: metafield(namespace: "custom", key:"specifications") {
+        id
+        value
+        namespace
+        key
+      }
+      applications: metafield(namespace: "custom", key:"applications") {
+        id
+        value
+        namespace
+        key
+      }
+      features: metafield(namespace: "custom", key:"features") {
+        id
+        value
+        namespace
+        key
       }
       customizable_size: metafield(namespace: "custom", key:"customizable_size") {
         id
