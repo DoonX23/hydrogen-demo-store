@@ -32,7 +32,7 @@ export default function ProductAnchor({ sections }: ProductAnchorProps) {
   };
 
   return (
-    <div className="sticky top-[110px] sm:top-[130px] md:top-[160px] lg:top-[160px] xl:top-[135px] w-full bg-white z-0 shadow-sm">
+    <div className="sticky top-[110px] sm:top-[130px] md:top-[160px] lg:top-[160px] xl:top-[135px] w-full bg-white z-30 shadow-sm">
       <div className="container  mx-auto">
         <div className="overflow-x-auto " ref={navContainerRef}          
           style={{
