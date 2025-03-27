@@ -1,12 +1,12 @@
-import {useRef, Suspense,useState,useEffect} from 'react';
-import {Disclosure, Listbox} from '@headlessui/react';
+import { useRef, Suspense, useState, useEffect } from 'react';
+import { Disclosure, Listbox } from '@headlessui/react';
 import {
   defer,
   type MetaArgs,
   redirect,
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
-import {useLoaderData, Await, useNavigate} from '@remix-run/react';
+import { useLoaderData, Await, useNavigate } from '@remix-run/react';
 import {
   getSeoMeta,
   Money,
@@ -22,31 +22,31 @@ import type {
   ProductQuery,
   ProductVariantFragmentFragment,
 } from 'storefrontapi.generated';
-import {PageHeader,Heading, Section, Text} from '~/components/Text';
-import {Link} from '~/components/Link';
-import {Button} from '~/components/Button';
-import {AddToCartButton} from '~/components/AddToCartButton';
-import {Skeleton} from '~/components/Skeleton';
-import {ProductSwimlane} from '~/components/ProductSwimlane';
-import {ProductGallery} from '~/components/ProductGallery';
-import {IconCaret, IconCheck, IconClose} from '~/components/Icon';
-import {getExcerpt} from '~/lib/utils';
-import {seoPayload} from '~/lib/seo.server';
-import type {Storefront} from '~/lib/type';
-import {routeHeaders} from '~/data/cache';
-import {MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT} from '~/data/fragments';
-import {CustomProductForm} from '~/components/CustomProduct/CustomProductForm';
-import {SlashIcon} from '@heroicons/react/24/solid';
-import {CustomProductGallery} from '~/components/CustomProductGallery';
-import {FeaturedCollections} from '~/components/FeaturedCollections';
+import { PageHeader, Heading, Section, Text } from '~/components/Text';
+import { Link } from '~/components/Link';
+import { Button } from '~/components/Button';
+import { AddToCartButton } from '~/components/AddToCartButton';
+import { Skeleton } from '~/components/Skeleton';
+import { ProductSwimlane } from '~/components/ProductSwimlane';
+import { ProductGallery } from '~/components/ProductGallery';
+import { IconCaret, IconCheck, IconClose } from '~/components/Icon';
+import { getExcerpt } from '~/lib/utils';
+import { seoPayload } from '~/lib/seo.server';
+import type { Storefront } from '~/lib/type';
+import { routeHeaders } from '~/data/cache';
+import { MEDIA_FRAGMENT, PRODUCT_CARD_FRAGMENT } from '~/data/fragments';
+import { CustomProductForm } from '~/components/CustomProduct/CustomProductForm';
+import { SlashIcon } from '@heroicons/react/24/solid';
+import { CustomProductGallery } from '~/components/CustomProductGallery';
+import { FeaturedCollections } from '~/components/FeaturedCollections';
 import {
   COMMON_COLLECTION_ITEM_FRAGMENT,
   COMMON_PRODUCT_CARD_FRAGMENT,
   LINK_FRAGMENT,
   MEDIA_IMAGE_FRAGMENT,
 } from '~/data/commonFragments';
-import {CollectionSlider} from '~/components/CollectionsSlider';
-import {HubspotForm} from '~/components/HubspotForm';
+import { CollectionSlider } from '~/components/CollectionsSlider';
+import { HubspotForm } from '~/components/HubspotForm';
 import ProductAnchor from '~/components/ProductAnchor.client';
 import { ProductDescriptionSection } from '~/components/ProductDescriptionSection';
 import ProductSpecifications from '~/components/ProductSpecifications';
@@ -54,7 +54,7 @@ import ProductSpecifications from '~/components/ProductSpecifications';
 export const headers = routeHeaders;
 
 export async function loader(args: LoaderFunctionArgs) {
-  const {productHandle} = args.params;
+  const { productHandle } = args.params;
   invariant(productHandle, 'Missing productHandle param, check route filename');
 
   // Start fetching non-critical data without blocking time to first byte
@@ -63,7 +63,7 @@ export async function loader(args: LoaderFunctionArgs) {
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
 
-  return defer({...deferredData, ...criticalData});
+  return defer({ ...deferredData, ...criticalData });
 }
 
 /**
@@ -75,12 +75,12 @@ async function loadCriticalData({
   request,
   context,
 }: LoaderFunctionArgs) {
-  const {productHandle} = params;
+  const { productHandle } = params;
   invariant(productHandle, 'Missing productHandle param, check route filename');
 
   const selectedOptions = getSelectedProductOptions(request);
 
-  const [{shop, product}] = await Promise.all([
+  const [{ shop, product }] = await Promise.all([
     context.storefront.query(PRODUCT_QUERY, {
       variables: {
         handle: productHandle,
@@ -93,11 +93,11 @@ async function loadCriticalData({
   ]);
 
   if (!product?.id) {
-    throw new Response('product', {status: 404});
+    throw new Response('product', { status: 404 });
   }
 
   if (!product.selectedVariant) {
-    throw redirectToFirstVariant({product, request});
+    throw redirectToFirstVariant({ product, request });
   }
 
   const recommended = getRecommendedProducts(context.storefront, product.id);
@@ -127,8 +127,8 @@ async function loadCriticalData({
  * fetched after the initial page load. If it's unavailable, the page should still 200.
  * Make sure to not throw any errors here, as it will cause the page to 500.
  */
-function loadDeferredData({params, context}: LoaderFunctionArgs) {
-  const {productHandle} = params;
+function loadDeferredData({ params, context }: LoaderFunctionArgs) {
+  const { productHandle } = params;
   invariant(productHandle, 'Missing productHandle param, check route filename');
 
   // In order to show which variants are available in the UI, we need to query
@@ -153,10 +153,10 @@ function loadDeferredData({params, context}: LoaderFunctionArgs) {
     },
   });
   // 处理collection数据的Promise
-  const collectionDataPromise = collectionQueryPromise.then(({product}) => {
+  const collectionDataPromise = collectionQueryPromise.then(({ product }) => {
     const productMetafields = product?.collections?.edges[0]?.node?.products?.nodes || [];
     const beforeFilters = product?.collections?.nodes[0]?.products.filters || [];
-      // 转换filters格式
+    // 转换filters格式
     const filters = beforeFilters
       // 重命名字段
       .map(filter => ({
@@ -182,14 +182,14 @@ function loadDeferredData({params, context}: LoaderFunctionArgs) {
       filteredMetafields
     };
   });
-  
+
   return {
     variants,
     collectionDataPromise,
   };
 }
 
-export const meta = ({matches}: MetaArgs<typeof loader>) => {
+export const meta = ({ matches }: MetaArgs<typeof loader>) => {
   return getSeoMeta(...matches.map((match) => (match.data as any).seo));
 };
 
@@ -214,9 +214,9 @@ function redirectToFirstVariant({
 }
 
 export default function Product() {
-  const {product, shop, recommended, variants, collectionDataPromise } = useLoaderData<typeof loader>();
-  const {media, title, vendor, descriptionHtml} = product;
-  const {shippingPolicy, refundPolicy} = shop;
+  const { product, shop, recommended, variants, collectionDataPromise } = useLoaderData<typeof loader>();
+  const { media, title, vendor, descriptionHtml } = product;
+  const { shippingPolicy, refundPolicy } = shop;
   const collection = product.collections.nodes[0];
   const specifications = product.specifications?.value
     ? JSON.parse(product.specifications.value) as Record<string, any[]>
@@ -238,7 +238,7 @@ export default function Product() {
   return (
     <>
       <section className="container">
-      {!!collection && (
+        {!!collection && (
           <nav className="my-4 lg:my-6" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-2">
               <li>
@@ -280,16 +280,16 @@ export default function Product() {
                 </Heading>
               </div>
               {!!collection && (
-                  <div className="flex">
+                <div className="flex">
                   <div className="relative rounded-xl px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-brand hover:ring-highlight hover:text-highlight">
-                  View All {collection.title.replace(/(<([^>]+)>)/gi, '')} Options{" "}
-                  <Link
+                    View All {collection.title.replace(/(<([^>]+)>)/gi, '')} Options{" "}
+                    <Link
                       to={'/collections/' + collection.handle}
                       className="font-semibold text-brand"
-                  >
+                    >
                       <span aria-hidden="true" className="absolute inset-0" />
                       Reach Out <span aria-hidden="true">&rarr;</span>
-                      </Link>
+                    </Link>
                   </div>
                 </div>
               )}
@@ -297,7 +297,7 @@ export default function Product() {
                 <Suspense fallback={<CustomProductForm product={product} facets={[]} productMetafields={[]} />}>
                   <Await resolve={collectionDataPromise}>
                     {(data) => (
-                      <CustomProductForm 
+                      <CustomProductForm
                         product={product}
                         facets={data.filters}
                         productMetafields={data.filteredMetafields}
@@ -316,9 +316,9 @@ export default function Product() {
                 </Suspense>
               )}
               <div className="grid gap-4">
-              <div className="grid mb-4 text-center">
-                <HubspotForm buttonText="Custom Bulk Quotation" />
-              </div>
+                <div className="grid mb-4 text-center">
+                  <HubspotForm buttonText="Custom Bulk Quotation" />
+                </div>
                 {/*
                 {descriptionHtml && (
                   <ProductDetail
@@ -373,7 +373,7 @@ export default function Product() {
           <ProductDescriptionSection product={product} />
 
           {/* 规格参数部分 - 只有当product.specifications?.value存在时才显示 - 这是第2个锚点 */}
-          {product.specifications?.value && (<ProductSpecifications specifications={specifications}  />)}
+          {product.specifications?.value && (<ProductSpecifications specifications={specifications} />)}
 
           {/* shipping部分 - 这是第3个锚点 */}
           {!!shippingPolicy?.body && (
@@ -413,14 +413,14 @@ export default function Product() {
         </Await>
       </Suspense>*/}
       {!!product.related_collections?.references?.nodes && (
-      <CollectionSlider
-        heading_bold="Discover more."
-        heading_light="" 
-        sub_heading=""
-        collections={product.related_collections?.references?.nodes}
-        button_text="See Collection"
-        isSkeleton={false}
-      />
+        <CollectionSlider
+          heading_bold="Discover more."
+          heading_light=""
+          sub_heading=""
+          collections={product.related_collections?.references?.nodes}
+          button_text="See Collection"
+          isSkeleton={false}
+        />
       )}
       <Analytics.ProductView
         data={{
@@ -446,7 +446,7 @@ export function ProductForm({
 }: {
   variants: ProductVariantFragmentFragment[];
 }) {
-  const {product, storeDomain} = useLoaderData<typeof loader>();
+  const { product, storeDomain } = useLoaderData<typeof loader>();
 
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -475,7 +475,7 @@ export function ProductForm({
           )}
           variants={variants}
         >
-          {({option}) => {
+          {({ option }) => {
             return (
               <div
                 key={option.name}
@@ -498,7 +498,7 @@ export function ProductForm({
                           }
                         }}
                       >
-                        {({open}) => (
+                        {({ open }) => (
                           <>
                             <Listbox.Button
                               ref={closeRef}
@@ -520,12 +520,12 @@ export function ProductForm({
                             >
                               {option.values
                                 .filter((value) => value.isAvailable)
-                                .map(({value, to, isActive}) => (
+                                .map(({ value, to, isActive }) => (
                                   <Listbox.Option
                                     key={`option-${option.name}-${value}`}
                                     value={value}
                                   >
-                                    {({active}) => (
+                                    {({ active }) => (
                                       <Link
                                         to={to}
                                         preventScrollReset
@@ -554,7 +554,7 @@ export function ProductForm({
                       </Listbox>
                     </div>
                   ) : (
-                    option.values.map(({value, isAvailable, isActive, to}) => (
+                    option.values.map(({ value, isAvailable, isActive, to }) => (
                       <Link
                         key={option.name + value}
                         to={to}
@@ -640,7 +640,7 @@ function ProductDetail({
 }) {
   return (
     <Disclosure key={title} as="div" className="grid w-full gap-2">
-      {({open}) => (
+      {({ open }) => (
         <>
           <Disclosure.Button className="text-left">
             <div className="flex justify-between">
@@ -659,7 +659,7 @@ function ProductDetail({
           <Disclosure.Panel className={'pb-4 pt-2 grid gap-2'}>
             <div
               className="prose dark:prose-invert"
-              dangerouslySetInnerHTML={{__html: content}}
+              dangerouslySetInnerHTML={{ __html: content }}
             />
             {learnMore && (
               <div className="">
@@ -944,7 +944,7 @@ async function getRecommendedProducts(
   productId: string,
 ) {
   const products = await storefront.query(RECOMMENDED_PRODUCTS_QUERY, {
-    variables: {productId, count: 12},
+    variables: { productId, count: 12 },
   });
 
   invariant(products, 'No data returned from Shopify API');
@@ -962,5 +962,5 @@ async function getRecommendedProducts(
 
   mergedProducts.splice(originalProduct, 1);
 
-  return {nodes: mergedProducts};
+  return { nodes: mergedProducts };
 }
