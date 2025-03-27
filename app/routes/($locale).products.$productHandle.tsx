@@ -377,7 +377,7 @@ export default function Product() {
 
           {/* shipping部分 - 这是第3个锚点 */}
           {!!shippingPolicy?.body && (
-            <div id="shipping" className="py-8">
+            <div id="shipping" className="pb-8 md:pb-12">
               <h2 className="text-2xl font-semibold">Shipping Policy</h2>
               <div
                 className="prose prose-sm sm:prose dark:prose-invert sm:max-w-4xl mt-7"
@@ -385,12 +385,18 @@ export default function Product() {
                   __html: getExcerpt(shippingPolicy.body) || '',
                 }}
               />
+              <Link
+                  className="pb-px border-b border-primary/30 text-primary/50"
+                  to={`/policies/${shippingPolicy.handle}`}
+                >
+                  Learn more
+              </Link>
             </div>
           )}
 
           {/* return部分 - 这是第4个锚点 */}
           {!!refundPolicy?.body && (
-            <div id="return" className="py-8">
+            <div id="return" className="pb-8 md:pb-12">
               <h2 className="text-2xl font-semibold">Return Policy</h2>
               <div
                 className="prose prose-sm sm:prose dark:prose-invert sm:max-w-4xl mt-7"
@@ -398,6 +404,12 @@ export default function Product() {
                   __html: getExcerpt(refundPolicy.body) || '',
                 }}
               />
+              <Link
+                  className="pb-px border-b border-primary/30 text-primary/50"
+                  to={`/policies/${refundPolicy.handle}`}
+                >
+                  Learn more
+              </Link>
             </div>
           )}
         </div>
