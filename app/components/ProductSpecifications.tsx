@@ -16,20 +16,12 @@ export default function ProductSpecifications({
   description = 'Detailed technical parameters for product quality assurance'
 }: ProductSpecificationsProps) {
   return (
-    <div id="specifications" className={`py-8 scroll-mt-24 ${className}`}>
+    <div id="specifications" className={`pb-8 scroll-mt-24 ${className}`}>
       <h2 className="text-2xl font-bold mb-4">{title}</h2>
       <div className="px-4 sm:px-6 lg:px-8">
-        <div className="sm:flex sm:items-center">
-          <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold text-gray-900">Technical Specifications</h1>
-            <p className="mt-2 text-sm text-gray-700">
-              {description}
-            </p>
-          </div>
-        </div>
         <div className="mt-8 flow-root">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <div className="inline-block min-w-full py-2 align-middle">
               <table className="min-w-full">
                 <thead className="bg-white">
                   <tr>
