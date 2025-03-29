@@ -49,7 +49,7 @@ export default function ProductSpecifications({
                         <th
                           scope="colgroup"
                           colSpan={5}
-                          className="bg-gray-50 py-2 pr-3 pl-4 text-left text-sm font-semibold text-highlight sm:pl-3"
+                          className="bg-gray-50 py-1 pr-3 pl-4 text-left text-md font-semibold text-highlight sm:pl-3"
                         >
                           {type}
                         </th>
@@ -62,19 +62,19 @@ export default function ProductSpecifications({
                             'border-t'
                           )}
                         >
-                          <td className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-3">
+                          <td className="py-2 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-brand sm:pl-3">
                             {property.name}
                           </td>
-                          <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
+                          <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
                             {property.value}
                           </td>
-                          <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
+                          <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
                             {property.unit}
                           </td>
-                          <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
+                          <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
                             {property.parameter}
                           </td>
-                          <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
+                          <td className="px-3 py-2 text-sm whitespace-nowrap text-gray-500">
                             {property.norm}
                           </td>
                         </tr>
