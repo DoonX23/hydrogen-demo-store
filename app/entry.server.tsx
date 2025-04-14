@@ -75,6 +75,7 @@ export default async function handleRequest(
       'https://*.doubleclick.net',
       'https://*.hsforms.com',
       'https://*.hubspot.com',     // 添加
+      'https://www.youtube.com',
     ],
     imgSrc: [                        // 添加 imgSrc 配置
       "'self'",

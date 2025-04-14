@@ -1,5 +1,6 @@
 import { RichText } from '@shopify/hydrogen';
 import type { ProductQuery } from 'storefrontapi.generated';
+import {ExternalVideo} from '@shopify/hydrogen';
 // ProductDescriptionSection组件定义
 export function ProductDescriptionSection({ product }: { product: ProductQuery['product']; }) {
     if (!product) return null;
@@ -21,12 +22,29 @@ export function ProductDescriptionSection({ product }: { product: ProductQuery['
     // 过滤空值属性（原组件中的filteredAttributes）
     const filteredAttributes = productAttributes.filter(attr => attr.value);
 
+      // 筛选出所有 ExternalVideo 类型的媒体
+  const externalVideos = product.media.nodes.filter(
+    mediaItem => mediaItem.__typename === 'ExternalVideo'
+  );
+
+  // 正确的YouTube选项格式 - 使用明确的字面量类型
+  const youtubeOptions = {
+    autoplay: 0 as 0,        
+    controls: 1 as 1,        
+    modest_branding: 1 as 1, 
+    rel: 0 as 0,             
+    fs: 1 as 1,              
+    color: 'white' as 'white',
+    plays_inline: 1 as 1,    
+  };
+
+
     return (
         <div id="description" className="py-8 md:py-12">
             <h2 className="text-2xl font-semibold">Product Details</h2>
             <div className="flex flex-col md:flex-row">
                 {/* 产品属性区块 */}
-                <div className="pb-4 w-full md:w-1/2">
+                <div className="pb-8 w-full md:w-1/2">
                     <div className="mt-6 border-t border-gray-100">
                         <dl className="divide-y divide-gray-100">
                             {filteredAttributes.map((attr, index) => (
@@ -42,6 +60,23 @@ export function ProductDescriptionSection({ product }: { product: ProductQuery['
                     </div>
                 </div>
             </div>
+            {/* 展示所有外部视频 */}
+            {externalVideos.length > 0 && (
+                    <div className="pb-8 md:pb-12">
+                        <h3 className="font-bold pb-4">Product Videos</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {externalVideos.map((video) => (
+                            <div key={video.id} className="video-wrapper rounded overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                            <ExternalVideo 
+                                data={video} 
+                                className="w-full h-auto aspect-video"
+                                options={youtubeOptions}
+                            />
+                            </div>
+                        ))}
+                        </div>
+                    </div>
+                )}
 
             {/* 产品描述 */}
             {!!descriptionHtml && (
