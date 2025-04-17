@@ -65,6 +65,13 @@ export const calculatePriceAndWeight = (props: CalculationProps): {
       weight = (volumeMm3Sheet * density) / 1000000;
       break;
       
+    case 'Flexible Rod':
+      const flexDiameterNum = parseFloat(diameter);
+      const flexLengthMm = (lengthM || 0) * 1000;
+      const flexRodVolume = Math.PI * Math.pow(flexDiameterNum/2, 2) * flexLengthMm;
+      weight = (flexRodVolume * density) / 1000000;
+      break;
+
     case 'Rod':
       const diameterNum = parseFloat(diameter);
       const rodVolume = Math.PI * Math.pow(diameterNum/2, 2) * (lengthMm || 0);
