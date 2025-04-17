@@ -2,8 +2,8 @@ import {useState} from 'react';
 const convertUnits = (value: number, fromUnit: string, toUnit: string): number => {
   if (fromUnit === 'mm' && toUnit === 'inch') return value / 25.4;
   if (fromUnit === 'inch' && toUnit === 'mm') return value * 25.4;
-  if (fromUnit === 'm' && toUnit === 'yard') return value * 1.09361;
-  if (fromUnit === 'yard' && toUnit === 'm') return value / 1.09361;
+  if (fromUnit === 'm' && toUnit === 'ft') return value * 3.2808;
+  if (fromUnit === 'ft' && toUnit === 'm') return value / 3.2808;
   return value;
 };
 const formatNumber = (num: number): string => {
