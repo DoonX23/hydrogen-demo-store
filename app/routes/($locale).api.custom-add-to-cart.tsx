@@ -83,19 +83,19 @@ export const action: ActionFunction = async ({request, context}) => {
           key: 'Thickness',
           value: `${calculationProps.thickness}`
         });
-      } else if (calculationProps.formType === 'Rod') {
+      } else if (calculationProps.formType === 'Rod' || calculationProps.formType === 'Flexible Rod') {
         lineAttributes.push({
           key: 'Diameter',
           value: `${calculationProps.diameter}`
         });
       }
       // 根据formType添加长度显示
-      if (calculationProps.formType === 'Film') {
+      if (calculationProps.formType === 'Film' || calculationProps.formType === 'Flexible Rod') {
         const lengthM = formData.get('lengthM');
-        const lengthYard = formData.get('lengthYard');
+        const lengthFt = formData.get('lengthFt');
         lineAttributes.push({
           key: 'Length',
-          value: `${lengthM}m (${lengthYard}yard)`
+          value: `${lengthM}m (${lengthFt}ft)`
         });
       } else {
         const lengthMm = formData.get('lengthMm');
