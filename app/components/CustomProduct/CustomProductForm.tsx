@@ -32,12 +32,14 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
   const formType = product.form_type?.value || '';
   const machiningPrecision = product.machining_precision?.value || 'Normal (±2mm)';
   
+  // 状态管理
   const [hasError, setHasError] = useState(false);
   const [lengthMm, setLengthMm] = useState(1);
   const [lengthM, setLengthM] = useState(1);
   const [widthMm, setWidthMm] = useState(formType === 'Film' ? 450 : 1);
   const [quantity, setQuantity] = useState(1);
   const [precision, setPrecision] = useState('Normal (±2mm)');
+  // 表单提交后的处理
   useEffect(() => {
     if (fetcher.data?.status === 'success') {
         console.error('添加成功');
@@ -66,26 +68,142 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
     },
   ];
 
+  // 渲染尺寸输入部分
+  const renderDimensionInputs = () => {
+    switch(formType) {
+      case 'Film':
+        return (
+          <>
+            <CustomRadioGroup
+              name="widthMm"
+              label="Width"
+              options={widthOptions}
+              selectedValue={widthMm.toString()}
+              onChange={(value) => setWidthMm(Number(value))}
+            />
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Length</label>
+              <UnitConverter 
+                unitOne="m"
+                unitTwo="ft"
+                maxValue={100}
+                minValue={1}
+                nameOne="lengthM"
+                nameTwo="lengthFt"
+                onError={setHasError}
+                onValueChange={setLengthM}
+              />
+            </div>
+          </>
+        );
+      
+      case 'Flexible Rod':
+        return (
+          <>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Length</label>
+              <UnitConverter 
+                unitOne="m"
+                unitTwo="ft"
+                maxValue={100}
+                minValue={0.1}
+                nameOne="lengthM"
+                nameTwo="lengthFt"
+                onError={setHasError}
+                onValueChange={setLengthM}
+              />
+            </div>
+          </>
+        );
+        
+      case 'Rod':
+        return (
+          <>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Length</label>
+              <UnitConverter 
+                unitOne="mm"
+                unitTwo="inch"
+                maxValue={1000}
+                minValue={1}
+                nameOne="lengthMm"
+                nameTwo="lengthInch"
+                onError={setHasError}
+                onValueChange={setLengthMm}
+              />
+            </div>
+            <CustomRadioGroup
+              name="precision"
+              label="Machining Precision"
+              options={precisionOptions}
+              selectedValue={precision}
+              onChange={setPrecision}
+            />
+          </>
+        );
+        
+      default: // Sheet 或其他类型
+        return (
+          <>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Length</label>
+              <UnitConverter 
+                unitOne="mm"
+                unitTwo="inch"
+                maxValue={600}
+                minValue={1}
+                nameOne="lengthMm"
+                nameTwo="lengthInch"
+                onError={setHasError}
+                onValueChange={setLengthMm}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Width</label>
+              <UnitConverter 
+                unitOne="mm"
+                unitTwo="inch"
+                maxValue={600}
+                minValue={1}
+                nameOne="widthMm"
+                nameTwo="widthInch"
+                onError={setHasError}
+                onValueChange={setWidthMm}
+              />
+            </div>
+            <CustomRadioGroup
+              name="precision"
+              label="Machining Precision"
+              options={precisionOptions}
+              selectedValue={precision}
+              onChange={setPrecision}
+            />
+          </>
+        );
+    }
+  };
+
   return (
     <div className="w-full mx-auto">
       <PriceDisplay 
-              formType={formType}
-              thickness={product.thickness?.value || ''}
-              diameter={product.diameter?.value || ''}
-              density={Number(product.density?.value) || 0}
-              lengthMm={lengthMm}
-              lengthM={lengthM}
-              widthMm={widthMm}
-              precision={precision}
-              quantity={quantity}
-              unitPrice={Number(product.unit_price?.value) || 0}
-        />
+        formType={formType}
+        thickness={product.thickness?.value || ''}
+        diameter={product.diameter?.value || ''}
+        density={Number(product.density?.value) || 0}
+        lengthMm={lengthMm}
+        lengthM={lengthM}
+        widthMm={widthMm}
+        precision={precision}
+        quantity={quantity}
+        unitPrice={Number(product.unit_price?.value) || 0}
+      />
       <ProductMetafieldNavigator 
         handle={product.handle}
         options={facets}
         variants={productMetafields}
       />
       <fetcher.Form action="/api/custom-add-to-cart" method="post">
+        {/* 隐藏字段 */}
         <input type="hidden" name="productId" value={product.id || ''} />
         <input type="hidden" name="formType" value={formType} />
         <input type="hidden" name="material" value={product.material?.value || ''} />
@@ -95,84 +213,13 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
         <input type="hidden" name="diameter" value={product.diameter?.value || ''} />
         <input type="hidden" name="density" value={product.density?.value || ''} />
         <input type="hidden" name="unitPrice" value={product.unit_price?.value || ''} />
+        
         <div className="mt-6 mb-6">
           <div className="space-y-6 max-w-xl">
-            {formType === 'Film' ? (
-              <>
-                <CustomRadioGroup
-                  name="widthMm"
-                  label="Width"
-                  options={widthOptions}
-                  selectedValue={widthMm.toString()}
-                  onChange={(value) => setWidthMm(Number(value))}
-                />
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium">Length</label>
-                  <UnitConverter 
-                    unitOne="m"
-                    unitTwo="yard"
-                    maxValue={100}
-                    minValue={1}
-                    nameOne="lengthM"
-                    nameTwo="lengthYard"
-                    onError={setHasError}
-                    onValueChange={setLengthM}
-                  />
-                </div>
-              </>
-            ) : formType === 'Rod' ? (
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">Length</label>
-                <UnitConverter 
-                  unitOne="mm"
-                  unitTwo="inch"
-                  maxValue={1000}
-                  minValue={1}
-                  nameOne="lengthMm"
-                  nameTwo="lengthInch"
-                  onError={setHasError}
-                  onValueChange={setLengthMm}
-                />
-              </div>
-            ) : (
-              <>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium">Length</label>
-                  <UnitConverter 
-                    unitOne="mm"
-                    unitTwo="inch"
-                    maxValue={600}
-                    minValue={1}
-                    nameOne="lengthMm"
-                    nameTwo="lengthInch"
-                    onError={setHasError}
-                    onValueChange={setLengthMm}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium">Width</label>
-                  <UnitConverter 
-                    unitOne="mm"
-                    unitTwo="inch"
-                    maxValue={600}
-                    minValue={1}
-                    nameOne="widthMm"
-                    nameTwo="widthInch"
-                    onError={setHasError}
-                    onValueChange={setWidthMm}
-                  />
-                </div>
-              </>
-            )}
-            {formType !== 'Film' && (
-              <CustomRadioGroup
-                name="precision"
-                label="Machining Precision"
-                options={precisionOptions}
-                selectedValue={precision}
-                onChange={setPrecision}
-              />
-            )}
+            {/* 使用switch生成的维度输入字段 */}
+            {renderDimensionInputs()}
+            
+            {/* 通用字段 - 附加说明 */}
             <div className="space-y-2">
               <label className="block text-sm font-medium">
                 Additional Instructions
@@ -184,6 +231,7 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
                 placeholder="Please enter any additional instructions here..."
               />
             </div>
+            {/* 通用字段 - 数量和提交 */}
             <div className="flex flex-col gap-4">
               {/* 数量选择 */}
               <div className="flex items-center gap-4">
