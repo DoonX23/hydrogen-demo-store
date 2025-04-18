@@ -23,3 +23,13 @@ export type I18nLocale = Locale & {
 };
 
 export type Storefront = HydrogenStorefront<I18nLocale>;
+
+//为了避免DimensionLimitation 的type重复，所以封装提取到这个地方；
+export type DimensionLimitation =  {
+  maxLength?: number;
+  minLength?: number;
+  maxWidth?: number;
+  minWidth?: number;
+  stockSizes?: string;
+  [key: string]: number | string | any[] | undefined;
+}
