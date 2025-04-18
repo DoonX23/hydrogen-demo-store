@@ -72,7 +72,7 @@ export function CustomProductGallery({
     <div
       className={`swimlane md:grid-flow-row hiddenScroll md:p-0 md:overflow-x-auto md:grid-cols-2 ${className}`}
     >
-      {/* 移动端布局 */}
+      {/* 移动端布局保持不变... */}
       {media.map((med, i) => {
         const image = getImageData(med);
         if (!image) return null;
@@ -94,43 +94,56 @@ export function CustomProductGallery({
 
       {/* 大屏布局 */}
       <div className="hidden md:flex md:gap-8 md:col-span-2">
-      {/* 左侧缩略图列表 - 将宽度从w-24(96px)改为w-20(80px) */}
-      <div className="flex flex-col w-16 gap-3">
+        {/* 左侧缩略图列表 */}
+        <div className="flex flex-col w-16 gap-3">
           {media.map((med, i) => {
-          const image = getImageData(med);
-          if (!image) return null;
+            const image = getImageData(med);
+            if (!image) return null;
 
-          return (
+            return (
               <div 
-              key={med.id}
-              className={`
+                key={med.id}
+                className={`
                   aspect-square cursor-pointer
                   ${currentIndex === i ? 'border-2 border-brand' : ''}
-              `}
-              onMouseEnter={() => setCurrentIndex(i)}
+                `}
+                onMouseEnter={() => setCurrentIndex(i)}
               >
-              <Image
+                <Image
                   data={image}
                   loading="lazy"
-                  sizes="64px" // 修改尺寸从96px到64px
+                  sizes="64px"
                   className="object-cover w-full h-full"
-              />
+                />
               </div>
-          );
+            );
           })}
-      </div>
+        </div>
 
-      {/* 右侧大图 */}
-      <div className="flex-1">
-          {getImageData(media[currentIndex]) && (
-          <Image
-              data={getImageData(media[currentIndex])!}
-              loading="eager" 
-              sizes="(min-width: 48em) 60vw, 90vw"
-              className="object-cover w-full aspect-square"
-          />
-          )}
-      </div>
+        {/* 右侧大图区域 - 修复了大图显示问题 */}
+        <div className="flex-1 relative aspect-square">
+          {/* 预渲染所有大图，通过CSS控制显示/隐藏 */}
+          {media.map((med, i) => {
+            const image = getImageData(med);
+            if (!image) return null;
+            
+            return (
+              <div 
+                key={`main-${med.id}`}
+                className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${
+                  i === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                }`}
+              >
+                <Image
+                  data={image}
+                  loading={i === 0 ? 'eager' : 'lazy'} // 只有第一张是eager
+                  sizes="(min-width: 48em) 60vw, 90vw"
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

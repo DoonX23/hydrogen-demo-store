@@ -250,6 +250,7 @@ export default function Product() {
           <CustomProductGallery
             key={product.id}
             media={media.nodes}
+            isLoading={!product}
             className="w-full lg:col-span-1"
           />
           <div className="">
