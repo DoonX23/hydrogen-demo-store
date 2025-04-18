@@ -744,6 +744,12 @@ const PRODUCT_FRAGMENT = `#graphql
           handle
       }
     }
+    dimension_limitation: metafield(namespace: "custom", key:"dimension_limitation") {
+      id
+      value
+      namespace
+      key
+    }
     specifications: metafield(namespace: "custom", key:"specifications") {
       id
       value
