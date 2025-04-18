@@ -7,6 +7,7 @@ import {PriceDisplay} from '~/components/CustomProduct/PriceDisplay';
 import {Button} from '~/components/Button';
 import { CustomRadioGroup } from '~/components/CustomRadioGroup';
 import {ProductMetafieldNavigator, type MetafieldNavigatorProps} from '~/components/CustomProduct/ProductMetafieldNavigator';
+import type {DimensionLimitation} from '~/lib/type';
 
 interface ApiResponse {
   status: 'success' | 'error';
@@ -31,6 +32,10 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
   
   const formType = product.form_type?.value || '';
   const machiningPrecision = product.machining_precision?.value || 'Normal (±2mm)';
+  const dimensionLimitation = product.dimension_limitation?.value
+  ? JSON.parse(product.dimension_limitation.value) as DimensionLimitation
+  : {};
+  console.log(dimensionLimitation);
   
   // 状态管理
   const [hasError, setHasError] = useState(false);
@@ -86,8 +91,8 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
               <UnitConverter 
                 unitOne="m"
                 unitTwo="ft"
-                maxValue={100}
-                minValue={1}
+                maxValue={dimensionLimitation.maxLength || 100}
+                minValue={dimensionLimitation.minLength || 1}
                 nameOne="lengthM"
                 nameTwo="lengthFt"
                 onError={setHasError}
@@ -105,8 +110,8 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
               <UnitConverter 
                 unitOne="m"
                 unitTwo="ft"
-                maxValue={100}
-                minValue={0.1}
+                maxValue={dimensionLimitation.maxLength || 100}
+                minValue={dimensionLimitation.minLength || 0.1}
                 nameOne="lengthM"
                 nameTwo="lengthFt"
                 onError={setHasError}
@@ -124,8 +129,8 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
               <UnitConverter 
                 unitOne="mm"
                 unitTwo="inch"
-                maxValue={1000}
-                minValue={1}
+                maxValue={dimensionLimitation.maxLength || 1000}
+                minValue={dimensionLimitation.minLength || 1}
                 nameOne="lengthMm"
                 nameTwo="lengthInch"
                 onError={setHasError}
@@ -150,8 +155,8 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
               <UnitConverter 
                 unitOne="mm"
                 unitTwo="inch"
-                maxValue={600}
-                minValue={1}
+                maxValue={dimensionLimitation.maxLength || 600}
+                minValue={dimensionLimitation.minLength || 1}
                 nameOne="lengthMm"
                 nameTwo="lengthInch"
                 onError={setHasError}
@@ -163,8 +168,8 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
               <UnitConverter 
                 unitOne="mm"
                 unitTwo="inch"
-                maxValue={600}
-                minValue={1}
+                maxValue={dimensionLimitation.maxWidth || 600}
+                minValue={dimensionLimitation.minWidth || 1}
                 nameOne="widthMm"
                 nameTwo="widthInch"
                 onError={setHasError}
