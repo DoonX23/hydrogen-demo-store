@@ -1,15 +1,20 @@
 import { RichText } from '@shopify/hydrogen';
 import type { ProductQuery } from 'storefrontapi.generated';
 import {ExternalVideo} from '@shopify/hydrogen';
+import type {DimensionLimitation} from '~/lib/type';
 // ProductDescriptionSection组件定义
 export function ProductDescriptionSection({ product }: { product: ProductQuery['product']; }) {
     if (!product) return null;
     // 从product解析需要的属性
     const { descriptionHtml } = product;
+    const dimensionLimitation = product.dimension_limitation?.value
+    ? JSON.parse(product.dimension_limitation.value) as DimensionLimitation
+    : {};
 
     // 定义产品属性列表（原组件中的productAttributes）
     const productAttributes = [
         { name: "Form Type", value: product.form_type?.value },
+        { name: "Stock Sizes", value: dimensionLimitation.stockSizes },
         { name: "Material", value: product.material?.value },
         { name: "Opacity", value: product.opacity?.value },
         { name: "Color", value: product.color?.value },
