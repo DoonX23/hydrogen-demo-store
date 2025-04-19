@@ -95,7 +95,7 @@ export function ProductDescriptionSection({ product }: { product: ProductQuery['
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* 特色部分 */}
                 {product.features?.value && (
-                    <div className="bg-gray-50 pb-3 rounded">
+                    <div className="bg-gray-50 dark:bg-contrast/60 pb-3 rounded">
                         <h3 className="font-bold pb-4">Features</h3>
                         <RichText
                             data={product.features.value}
@@ -105,7 +105,7 @@ export function ProductDescriptionSection({ product }: { product: ProductQuery['
                                     node.listType === "unordered"
                                         ? <ul className="custom-list">{node.children}</ul>
                                         : <ol className="custom-list">{node.children}</ol>,
-                                listItem: ({ node }) => <li className="relative pl-6 before:content-[''] before:absolute before:left-0 before:top-[0.6em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand">{node.children}</li>
+                                listItem: ({ node }) => <li className="relative pl-6 before:content-[''] before:absolute before:left-0 before:top-[0.6em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand dark:before:bg-gray-50">{node.children}</li>
                             }}
                         />
                     </div>
@@ -113,7 +113,7 @@ export function ProductDescriptionSection({ product }: { product: ProductQuery['
 
                 {/* 应用部分 */}
                 {product.applications?.value && (
-                    <div className="bg-gray-50 pb-3 rounded">
+                    <div className="bg-gray-50 dark:bg-contrast/60 pb-3 rounded">
                         <h3 className="font-bold pb-4">Applications</h3>
                         <RichText
                             data={product.applications.value}
@@ -123,7 +123,7 @@ export function ProductDescriptionSection({ product }: { product: ProductQuery['
                                     node.listType === "unordered"
                                         ? <ul className="custom-list">{node.children}</ul>
                                         : <ol className="custom-list">{node.children}</ol>,
-                                listItem: ({ node }) => <li className="relative pl-6 before:content-[''] before:absolute before:left-0 before:top-[0.6em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand">{node.children}</li>
+                                listItem: ({ node }) => <li className="relative pl-6 before:content-[''] before:absolute before:left-0 before:top-[0.6em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand dark:before:bg-gray-50">{node.children}</li>
                             }}
                         />
                     </div>
