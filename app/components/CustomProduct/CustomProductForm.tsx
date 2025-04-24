@@ -41,7 +41,6 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
   const [hasError, setHasError] = useState(false);
   const [lengthMm, setLengthMm] = useState(1);
   const [lengthM, setLengthM] = useState(1);
-  const [widthMm, setWidthMm] = useState(formType === 'Film' ? 450 : 1);
   const [quantity, setQuantity] = useState(1);
   const [precision, setPrecision] = useState('Normal (±2mm)');
   // 表单提交后的处理
@@ -56,11 +55,20 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
     setPrecision(e.target.value);
   };
 
-    // 对于Width选择
-  const widthOptions = [
-    { id: 'width450', value: '450', label: '450mm' },
-    { id: 'width1370', value: '1370', label: '1370mm' },
-  ];
+// 首先确定 widthOptions
+const widthOptions = dimensionLimitation.widthOptions && dimensionLimitation.widthOptions.length > 0
+  ? dimensionLimitation.widthOptions
+  : [
+      { id: 'width450', value: '450', label: '450mm' },
+      { id: 'width1370', value: '1370', label: '1370mm' },
+    ];
+
+// 然后使用确定后的 widthOptions 的第一个元素的值来初始化 widthMm
+const [widthMm, setWidthMm] = useState(
+  formType === 'Film' 
+    ? Number(widthOptions[0].value)  // 取数组第一个元素的值
+    : 1
+);
 
     // 对于Machining Precision选择
   const precisionOptions = [
