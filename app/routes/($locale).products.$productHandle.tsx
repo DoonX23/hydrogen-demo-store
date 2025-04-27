@@ -256,11 +256,11 @@ export default function Product() {
           <div className="">
             <section className="flex flex-col w-full gap-8 md:mx-auto md:px-0 py-4 lg:py-0">
               <div className="grid gap-2">
-                <Heading as="h1" className="whitespace-normal text-[1.5rem] md:text-[1.8rem]">
+                <Heading as="h1" className="whitespace-normal text-[1.2rem] md:text-[1.5rem]">
                   {title}
                 </Heading>
               </div>
-              <div className="grid gap-4">
+              <div className="grid">
                 <div className="grid text-center">
                   <HubspotForm buttonText="Custom Bulk Quotation" />
                 </div>
