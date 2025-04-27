@@ -260,41 +260,8 @@ export default function Product() {
                   {title}
                 </Heading>
               </div>
-              {!!collection && (
-                <div className="flex">
-                  <div className="relative rounded-xl px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-brand hover:ring-highlight hover:text-highlight">
-                    View All {collection.title.replace(/(<([^>]+)>)/gi, '')} Options{" "}
-                    <Link
-                      to={'/collections/' + collection.handle}
-                      className="font-semibold text-brand"
-                    >
-                      <span aria-hidden="true" className="absolute inset-0" />
-                      Reach Out <span aria-hidden="true">&rarr;</span>
-                    </Link>
-                  </div>
-                </div>
-              )}
-              {product.customizable_size?.value === "true" ? (
-                <Suspense fallback={<CustomProductForm product={product} facets={[]} productMetafields={[]} />}>
-                  <Await resolve={collectionDataPromise}>
-                    {(data) => (
-                      <CustomProductForm
-                        product={product}
-                        facets={data.filters}
-                        productMetafields={data.filteredMetafields}
-                      />
-                    )}
-                  </Await>
-                </Suspense>
-              ) : (
-                <ProductForm
-                productOptions={productOptions}
-                selectedVariant={selectedVariant}
-                storeDomain={storeDomain}
-              />
-              )}
               <div className="grid gap-4">
-                <div className="grid mb-4 text-center">
+                <div className="grid text-center">
                   <HubspotForm buttonText="Custom Bulk Quotation" />
                 </div>
                 {/*
@@ -320,6 +287,41 @@ export default function Product() {
                 )}
                   */}
               </div>
+              {!!collection && (
+                <div className="flex">
+                  <div className="relative rounded-xl px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-brand hover:ring-highlight hover:text-highlight">
+                    View All {collection.title.replace(/(<([^>]+)>)/gi, '')} Options{" "}
+                    <Link
+                      to={'/collections/' + collection.handle}
+                      className="font-semibold text-brand"
+                    >
+                      <span aria-hidden="true" className="absolute inset-0" />
+                      Reach Out <span aria-hidden="true">&rarr;</span>
+                    </Link>
+                  </div>
+                </div>
+              )}
+              {product.customizable_size?.value === "true" ? (
+                <Suspense fallback={<CustomProductForm product={product} facets={[]} productMetafields={[]} />}>
+                  <Await resolve={collectionDataPromise}>
+                    {(data) => (
+                      <CustomProductForm
+                        key={product.id} 
+                        product={product}
+                        facets={data.filters}
+                        productMetafields={data.filteredMetafields}
+                      />
+                    )}
+                  </Await>
+                </Suspense>
+              ) : (
+                <ProductForm
+                productOptions={productOptions}
+                selectedVariant={selectedVariant}
+                storeDomain={storeDomain}
+              />
+              )}
+
             </section>
           </div>
         </div>
