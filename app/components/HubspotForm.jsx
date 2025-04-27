@@ -39,9 +39,9 @@ export function HubspotForm({buttonText = "Get Your Quote"}) { // 将函数名�
           <>
             <Disclosure.Button 
               className={`
-                flex w-full justify-between px-4 py-3 text-white rounded
+                flex w-full justify-between px-4 py-3 text-brand font-semibold rounded hover:text-white
                 
-                ${open ? 'bg-highlight' : 'bg-brand hover:bg-highlight'}
+                ${open ? 'bg-highlight text-white' : 'bg-blue-200 hover:bg-highlight'}
               `}
               onMouseEnter={() => setLoadScript(true)}
               onClick={() => {
