@@ -256,7 +256,7 @@ export default function Product() {
           <div className="">
             <section className="flex flex-col w-full gap-8 md:mx-auto md:px-0 py-4 lg:py-0">
               <div className="grid gap-2">
-                <Heading as="h1" className="whitespace-normal text-[1.2rem] md:text-[1.5rem]">
+                <Heading as="h1" className="whitespace-normal text-[1.3rem] md:text-[1.5rem]">
                   {title}
                 </Heading>
               </div>
@@ -325,6 +325,16 @@ export default function Product() {
             </section>
           </div>
         </div>
+        <Suspense fallback={<Skeleton className="h-32" />}>
+        <Await
+          errorElement="There was a problem loading related products"
+          resolve={recommended}
+        >
+          {(products) => (
+            <ProductSwimlane title="Related Products" products={products} />
+          )}
+        </Await>
+      </Suspense>
       </section>
 
       <div className="mb-12 sm:mb-16 mt-4">
@@ -394,16 +404,6 @@ export default function Product() {
           )}
         </div>
       </div>
-      {/*<Suspense fallback={<Skeleton className="h-32" />}>
-        <Await
-          errorElement="There was a problem loading related products"
-          resolve={recommended}
-        >
-          {(products) => (
-            <ProductSwimlane title="Related Products" products={products} />
-          )}
-        </Await>
-      </Suspense>*/}
       {!!product.related_collections?.references?.nodes && (
         <CollectionSlider
           heading_bold="Discover more."
