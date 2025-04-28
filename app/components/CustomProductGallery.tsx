@@ -79,7 +79,7 @@ export function CustomProductGallery({
 
         return (
           <div
-            className="md:hidden aspect-square snap-center card-image bg-white dark:bg-contrast/10 w-mobileGallery md:w-full"
+            className="md:hidden aspect-square snap-center card-image bg-primary/5 w-mobileGallery md:w-full"
             key={med.id}
           >
             <Image
@@ -104,7 +104,7 @@ export function CustomProductGallery({
               <div 
                 key={med.id}
                 className={`
-                  aspect-square cursor-pointer
+                  aspect-square cursor-pointer bg-primary/5 
                   ${currentIndex === i ? 'border-2 border-brand' : ''}
                 `}
                 onMouseEnter={() => setCurrentIndex(i)}
@@ -130,7 +130,7 @@ export function CustomProductGallery({
             return (
               <div 
                 key={`main-${med.id}`}
-                className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${
+                className={`absolute inset-0 w-full h-full transition-opacity duration-300 bg-primary/5 ${
                   i === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
                 }`}
               >
