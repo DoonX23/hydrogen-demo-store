@@ -256,7 +256,7 @@ export default function Product() {
           <div className="">
             <section className="flex flex-col w-full gap-8 md:mx-auto md:px-0 py-4 lg:py-0">
               <div className="grid gap-2">
-                <Heading as="h1" className="whitespace-normal text-[1.3rem] md:text-[1.5rem]">
+                <Heading as="h1" className="whitespace-normal text-xl md:text-[1.5rem]">
                   {title}
                 </Heading>
               </div>
@@ -289,11 +289,11 @@ export default function Product() {
               </div>
               {!!collection && (
                 <div className="flex">
-                  <div className="relative rounded-xl px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-brand hover:ring-highlight hover:text-highlight">
+                  <div className="relative rounded-xl px-3 py-1 text-sm/6 text-gray-600 dark:text-gray-300 ring-1 ring-brand dark:ring-white hover:ring-highlight hover:text-highlight">
                     View All {collection.title.replace(/(<([^>]+)>)/gi, '')} Options{" "}
                     <Link
                       to={'/collections/' + collection.handle}
-                      className="font-semibold text-brand"
+                      className="font-semibold text-brand dark:text-highlight"
                     >
                       <span aria-hidden="true" className="absolute inset-0" />
                       Reach Out <span aria-hidden="true">&rarr;</span>
