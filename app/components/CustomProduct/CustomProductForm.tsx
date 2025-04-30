@@ -36,11 +36,12 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
   ? JSON.parse(product.dimension_limitation.value) as DimensionLimitation
   : {};
   console.log(dimensionLimitation);
-  
+  const initialValueMm = 10;
+  const initialValueM = 1;  
   // 状态管理
   const [hasError, setHasError] = useState(false);
-  const [lengthMm, setLengthMm] = useState(1);
-  const [lengthM, setLengthM] = useState(1);
+  const [lengthMm, setLengthMm] = useState(initialValueMm);
+  const [lengthM, setLengthM] = useState(initialValueM);
   const [quantity, setQuantity] = useState(1);
   const [precision, setPrecision] = useState('Normal (±2mm)');
   // 表单提交后的处理
@@ -67,7 +68,7 @@ const widthOptions = dimensionLimitation.widthOptions && dimensionLimitation.wid
 const [widthMm, setWidthMm] = useState(
   formType === 'Film' 
     ? Number(widthOptions[0].value)  // 取数组第一个元素的值
-    : 1
+    : initialValueMm
 );
 
     // 对于Machining Precision选择
@@ -105,6 +106,7 @@ const [widthMm, setWidthMm] = useState(
                 nameTwo="lengthFt"
                 onError={setHasError}
                 onValueChange={setLengthM}
+                initialValue={initialValueM}
               />
             </div>
           </>
@@ -124,6 +126,7 @@ const [widthMm, setWidthMm] = useState(
                 nameTwo="lengthFt"
                 onError={setHasError}
                 onValueChange={setLengthM}
+                initialValue={initialValueM}
               />
             </div>
           </>
@@ -143,6 +146,7 @@ const [widthMm, setWidthMm] = useState(
                 nameTwo="lengthInch"
                 onError={setHasError}
                 onValueChange={setLengthMm}
+                initialValue={initialValueMm}
               />
             </div>
             <CustomRadioGroup
@@ -164,11 +168,12 @@ const [widthMm, setWidthMm] = useState(
                 unitOne="mm"
                 unitTwo="inch"
                 maxValue={dimensionLimitation.maxLength || 600}
-                minValue={dimensionLimitation.minLength || 1}
+                minValue={dimensionLimitation.minLength || 10}
                 nameOne="lengthMm"
                 nameTwo="lengthInch"
                 onError={setHasError}
                 onValueChange={setLengthMm}
+                initialValue={initialValueMm}
               />
             </div>
             <div className="space-y-2">
@@ -177,11 +182,12 @@ const [widthMm, setWidthMm] = useState(
                 unitOne="mm"
                 unitTwo="inch"
                 maxValue={dimensionLimitation.maxWidth || 600}
-                minValue={dimensionLimitation.minWidth || 1}
+                minValue={dimensionLimitation.minWidth || 10}
                 nameOne="widthMm"
                 nameTwo="widthInch"
                 onError={setHasError}
                 onValueChange={setWidthMm}
+                initialValue={initialValueMm}
               />
             </div>
             <CustomRadioGroup
