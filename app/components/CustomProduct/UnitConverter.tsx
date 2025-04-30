@@ -18,6 +18,7 @@ interface UnitConverterProps {
   nameTwo: string;
   onError: (hasError: boolean) => void;
   onValueChange?: (value: number) => void;
+  initialValue?: number; // 添加初始值属性
 }
 export function UnitConverter({
   unitOne,
@@ -27,11 +28,13 @@ export function UnitConverter({
   nameOne, 
   nameTwo,
   onError,
-  onValueChange
+  onValueChange,
+  initialValue // 接收初始值
 }: UnitConverterProps) {
-  const [valueOne, setValueOne] = useState<string>("1");
+  // 使用 initialValue 或默认为 1
+  const [valueOne, setValueOne] = useState<string>((initialValue || 1).toString());
   const [valueTwo, setValueTwo] = useState<string>(
-    formatNumber(convertUnits(1, unitOne, unitTwo))
+    formatNumber(convertUnits(initialValue || 1, unitOne, unitTwo))
   );
   const [hasError, setHasError] = useState<boolean>(false);
   const checkError = (value: number): boolean => {
