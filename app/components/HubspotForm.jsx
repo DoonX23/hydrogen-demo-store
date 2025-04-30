@@ -41,7 +41,7 @@ export function HubspotForm({buttonText = "Get Your Quote"}) { // 将函数名�
               className={`
                 flex w-full justify-between px-4 py-3 text-brand font-semibold rounded hover:text-white
                 
-                ${open ? 'bg-highlight text-white' : 'bg-blue-200 hover:bg-highlight'}
+                ${open ? 'bg-highlight text-white' : 'bg-blue-100 hover:bg-highlight'}
               `}
               onMouseEnter={() => setLoadScript(true)}
               onClick={() => {
