@@ -54,7 +54,7 @@ function CustomMobileHeaderMenu({menu, onClose}: {menu?: EnhancedMenu, onClose: 
                                         </Disclosure.Button>
                                         <div
                                           className={`${
-                                            subOpen ? `max-h-48 h-fit` : `max-h-0 md:max-h-fit`
+                                            subOpen ? `h-fit` : `max-h-0 md:max-h-fit`
                                           } overflow-hidden transition-all duration-300`}
                                         >
                                           <nav className="grid gap-3 pl-2 pt-3">
