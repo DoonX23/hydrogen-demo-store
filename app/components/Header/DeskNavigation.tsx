@@ -13,7 +13,7 @@ import {MenuLink} from '~/components/MenuLink';
 export default function DeskNavigation({menu}: {menu?: EnhancedMenu}) {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   return (
-    <nav className="flex items-center gap-8">
+    <nav className="flex items-center gap-9">
       {menu?.items.map((item) => (
         item.items?.length > 0 ? (
           <TemplatesDropdown 
@@ -52,13 +52,13 @@ function TemplatesDropdown({
             <Popover.Button
               className={`
                 ${isOpen ? '' : 'text-opacity-90'}
-                group flex items-center rounded-md text-sm lg:text-base font-medium hover:text-opacity-100 focus:outline-none focus-visible:ring-0`}
+                group flex items-center rounded-md text-sm lg:text-sm font-medium hover:text-opacity-100 focus:outline-none focus-visible:ring-0`}
               onClick={() => setIsOpen(!isOpen)} 
             >
               <span>{menuData.title}</span>
               <ChevronDownIcon
                 className={`${isOpen ? '-rotate-180' : 'text-opacity-70'}
-                  ml-2 h-4 w-4 text-base group-hover:text-opacity-80 transition ease-in-out duration-150`}
+                  ml-1 h-4 w-4 text-base group-hover:text-opacity-80 transition ease-in-out duration-150`}
                 aria-hidden="true"
               />
             </Popover.Button>
