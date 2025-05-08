@@ -463,7 +463,7 @@ export function ProductForm({
               {option.name}
             </Heading>
             <div className="flex flex-wrap items-baseline gap-4">
-              {option.optionValues.length > 7 ? (
+              {option.optionValues.length > 30 ? (
                 <div className="relative w-full">
                   <Listbox>
                     {({open}) => (
