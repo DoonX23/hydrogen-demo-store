@@ -571,7 +571,7 @@ export function ProductForm({
           <div className="grid items-stretch gap-4">
             {isOutOfStock ? (
               <Button variant="secondary" disabled>
-                <Text>Sold out</Text>
+                <Text>Get Custom Quote</Text>
               </Button>
             ) : (
               <AddToCartButton
