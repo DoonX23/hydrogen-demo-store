@@ -1,8 +1,7 @@
 import {
-
-    type MetaArgs,
-    type LoaderFunctionArgs,
-  } from '@shopify/remix-oxygen';
+  type MetaArgs,
+  type LoaderFunctionArgs,
+} from '@shopify/remix-oxygen';
 import {useLoaderData} from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import {getSeoMeta, Image} from '@shopify/hydrogen'; 
@@ -16,12 +15,12 @@ import {RelatedArticles} from '~/components/RelatedArticles'; // 导入新组件
 export const headers = routeHeaders;
 
 export async function loader({request, params, context}: LoaderFunctionArgs) {
-  invariant(params['*'], 'Missing material handle');
+  invariant(params['*'], 'Missing capabilities handle');
   const path = params['*']; // 获取url中的路径参数
 
   // 构建完整路径
-  const fullPath = `materials/${path}`;
-  
+  const fullPath = `capabilities/${path}`;
+
   // 使用GROQ查询语句
   const query = `*[_type == "article" && fullPath == $fullPath][0]{
     title,
@@ -31,14 +30,14 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
     image,
     breadcrumb, // 添加获取面包屑数据
     "relativeCollections": relativeCollections[]->{ 
-        "id": store.gid,
-        "title": store.title,
-        "handle": store.slug.current,
-        "image": {
-          "url": store.imageUrl,
-          "altText": store.title
-        }
-      },
+      "id": store.gid,
+      "title": store.title,
+      "handle": store.slug.current,
+      "image": {
+        "url": store.imageUrl,
+        "altText": store.title
+      }
+    },
     body,
     seo,
     publishedAt,
@@ -55,45 +54,48 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
       image
     }
   }`;
-  
 
   const article = await (context.sanity as any).loadQuery(query, {
     fullPath
   });
-
+  
+  console.log(JSON.stringify(article.data));
+  
   if (!article) {
-      console.log('404');
+    console.log('404');
     throw new Response(null, {status: 404});
   }
 
   const articleData = {
-      title: article.data.title,
-      contentHtml: convertToHtml(article.data.body),
-      seo: {
+    title: article.data.title,
+    contentHtml: convertToHtml(article.data.body),
+    seo: {
       title: article.data.seo.title,
       description: article.data.seo.description,
-      },
-      publishedAt: article.data.updatedAt,
-      excerpt: article.data.excerpt,
-      // 增加 image 字段
-      image: article.data.image ? {
-          url: article.data.image.url,
-          height: article.data.image.height,
-          width: article.data.image.width,
-          altText: article.data.image.altText
-      } : null
+    },
+    publishedAt: article.data.updatedAt,
+    excerpt: article.data.excerpt,
+    // 增加 image 字段
+    image: article.data.image ? {
+      url: article.data.image.url,
+      height: article.data.image.height,
+      width: article.data.image.width,
+      altText: article.data.image.altText
+    } : null
   };
+  
   const seo = seoPayload.article({
     article: articleData,
     url: request.url,
   });
+  
   // 使用 Response.json() 代替弃用的 json 函数
   return Response.json({
-    material: {
+    capability: {
       title: article.data.title,
       body: convertToHtml(article.data.body),
-      image: article.data.image || null, // 添加 image 数据
-      relativeCollections: article.data.relativeCollections || [], // 添加这行
+      image: article.data.image || null,
+      relativeCollections: article.data.relativeCollections || [],
       breadcrumb: article.data.breadcrumb || [], 
       childArticles: article.data.childArticles || []
     },
@@ -105,9 +107,10 @@ export const meta = ({matches}: MetaArgs<typeof loader>) => {
   return getSeoMeta(...matches.map((match) => (match.data as any).seo));
 };
 
-export default function Material() {
-  const {material} = useLoaderData<typeof loader>() as any;
-  const {title, body, image, relativeCollections, breadcrumb, childArticles} = material; // 解构出 image
+export default function Capability() {
+  const {capability} = useLoaderData<typeof loader>() as any;;
+  const {title, body, image, relativeCollections, breadcrumb, childArticles} = capability;
+  
   return (
     <div className='container'>
       {/* 面包屑导航 */}
@@ -148,7 +151,10 @@ export default function Material() {
       {/* 页面标题 */}
       <PageHeader heading={title} variant="blogPost">
       </PageHeader>
+      
+      {/* 正文内容 */}
       <Section as="article" padding="x">
+        {/* 特色图片 */}
         {image && (
           <Image
             data={image}
@@ -157,11 +163,14 @@ export default function Material() {
             loading="eager"
           />
         )}
+        
+        {/* 正文内容 */}
         <div
           dangerouslySetInnerHTML={{__html: body}}
           className="article prose prose-sm sm:prose lg:prose-lg mx-auto mt-8"
         />
-        {/* 添加集合展示部分 */}
+        
+        {/* 相关产品集合 */}
         {relativeCollections && relativeCollections.length > 0 && (
           <div className="mt-12">
             <FeaturedCollections
@@ -175,7 +184,7 @@ export default function Material() {
         {childArticles && childArticles.length > 0 && (
           <RelatedArticles 
             articles={childArticles} 
-            title="Our Capabilities"
+            title="Related Articles"
             readMoreText="Read more →"
           />
         )}
