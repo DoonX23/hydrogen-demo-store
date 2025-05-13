@@ -1,4 +1,5 @@
-import {Image} from '@shopify/hydrogen';
+import { Image } from '@shopify/hydrogen';
+import { Link } from '~/components/Link';
 
 interface RelatedArticlesProps {
   title?: string;
@@ -18,34 +19,34 @@ export function RelatedArticles({
         {articles.map((article) => (
           <div key={article.fullPath} className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
             {article.image && (
-              <a href={`/${article.fullPath}`} className="block">
+              <Link to={`/${article.fullPath}`} className="block">
                 <Image
                   data={article.image}
                   className="w-full h-48 object-cover"
                   sizes="(min-width: 768px) 33vw, 100vw"
                 />
-              </a>
+              </Link>
             )}
             <div className="p-4">
               <h3 className="text-lg font-semibold mb-2">
-                <a 
-                  href={`/${article.fullPath}`}
+                <Link 
+                  to={`/${article.fullPath}`}
                   className="hover:underline"
                 >
                   {article.title}
-                </a>
+                </Link>
               </h3>
               {article.excerpt && (
                 <p className="text-gray-600 text-sm line-clamp-3">
                   {article.excerpt}
                 </p>
               )}
-              <a 
-                href={`/${article.fullPath}`}
+              <Link 
+                to={`/${article.fullPath}`}
                 className="mt-3 inline-block text-blue-600 font-medium text-sm hover:underline"
               >
                 {readMoreText}
-              </a>
+              </Link>
             </div>
           </div>
         ))}
