@@ -10,6 +10,7 @@ import {seoPayload} from '~/lib/seo.server';
 import {FeaturedCollections} from '~/components/FeaturedCollections';
 import {convertToHtml} from '~/utils/portableText';
 import {RelatedArticles} from '~/components/RelatedArticles'; // 导入新组件
+import ArticleBreadcrumb from '~/components/ArticleBreadcrumb';
 
 export const headers = routeHeaders;
 
@@ -104,19 +105,9 @@ export default function CapabilitiesIndex() {
   return (
     <div className='container'>
       {/* 面包屑导航 - 索引页面可能只有首页和当前页面 */}
-      <nav aria-label="Breadcrumb" className="breadcrumbs py-4 px-4 md:px-6">
-        <ol className="flex flex-wrap items-center text-sm text-gray-500">
-          <li className="flex items-center">
-            <a href="/" className="hover:text-gray-700 hover:underline">
-              Home
-            </a>
-            <span className="mx-2">/</span>
-          </li>
-          <li>
-            <span className="font-medium text-gray-900">{title}</span>
-          </li>
-        </ol>
-      </nav>
+      {breadcrumb && breadcrumb.length > 0 && (
+        <ArticleBreadcrumb breadcrumb={breadcrumb} />
+      )}
       
       {/* 页面标题 */}
       <PageHeader heading={title} variant="blogPost">

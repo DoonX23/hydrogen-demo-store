@@ -11,6 +11,7 @@ import {seoPayload} from '~/lib/seo.server';
 import {FeaturedCollections} from '~/components/FeaturedCollections';
 import {convertToHtml} from '~/utils/portableText';
 import {RelatedArticles} from '~/components/RelatedArticles'; // 导入新组件
+import ArticleBreadcrumb from '~/components/ArticleBreadcrumb';
 
 export const headers = routeHeaders;
 
@@ -115,37 +116,7 @@ export default function Capability() {
     <div className='container'>
       {/* 面包屑导航 */}
       {breadcrumb && breadcrumb.length > 0 && (
-        <nav aria-label="Breadcrumb" className="breadcrumbs py-4 px-4 md:px-6">
-          <ol className="flex flex-wrap items-center text-sm text-gray-500">
-            {/* 首页链接 */}
-            <li className="flex items-center">
-              <a href="/" className="hover:text-gray-700 hover:underline">
-                Home
-              </a>
-              <span className="mx-2">/</span>
-            </li>
-            
-            {/* 面包屑项目 */}
-            {(breadcrumb as any[]).map((item: any, index: number) => (
-              <li key={item._key} className="flex items-center">
-                {index < breadcrumb.length - 1 ? (
-                  <>
-                    <a 
-                      href={`/${item.path}`} 
-                      className="hover:text-gray-700 hover:underline"
-                    >
-                      {item.title}
-                    </a>
-                    <span className="mx-2">/</span>
-                  </>
-                ) : (
-                  // 最后一项（当前页面）不可点击
-                  <span className="font-medium text-gray-900">{item.title}</span>
-                )}
-              </li>
-            ))}
-          </ol>
-        </nav>
+        <ArticleBreadcrumb breadcrumb={breadcrumb} />
       )}
       
       {/* 页面标题 */}
