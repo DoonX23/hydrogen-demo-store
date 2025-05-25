@@ -70,7 +70,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           )}
           
           <div className="text-center">
-            <h1 className="text-balance text-2xl font-semibold tracking-tight text-gray-900 sm:text-7xl">
+            <h1 className="text-balance text-2xl font-semibold tracking-tight text-gray-900 sm:text-6xl">
               {finalHeading}
             </h1>
             <p className="mt-8 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
