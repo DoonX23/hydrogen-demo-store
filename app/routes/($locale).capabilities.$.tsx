@@ -12,6 +12,15 @@ import {FeaturedCollections} from '~/components/FeaturedCollections';
 import {convertToHtml} from '~/utils/portableText';
 import {RelatedArticles} from '~/components/RelatedArticles'; // 导入新组件
 import ArticleBreadcrumb from '~/components/ArticleBreadcrumb';
+// 导入新组件
+import ListItems from '~/components/PageBuilder/ListItems';
+import SplitSection from '~/components/PageBuilder/SplitSection';
+import ImageSliderSection from '~/components/PageBuilder/ImageSliderSection';
+import HeroSection from '~/components/PageBuilder/HeroSection';
+import CapabilitiesSection from '~/components/PageBuilder/CapabilitiesSection';
+import StatsSection from '~/components/PageBuilder/StatsSection';
+import AdvantagesSection from '~/components/PageBuilder/AdvantagesSection';
+import FeaturesSection from '~/components/PageBuilder/FeaturesSection';
 
 export const headers = routeHeaders;
 
@@ -30,6 +39,7 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
     excerpt,
     image,
     breadcrumb, // 添加获取面包屑数据
+    pagebuilder[], // 确保包含pagebuilder并指定它是一个数组
     "relativeCollections": relativeCollections[]->{ 
       "id": store.gid,
       "title": store.title,
@@ -60,7 +70,7 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
     fullPath
   });
   
-  console.log(JSON.stringify(article.data));
+
   
   if (!article) {
     console.log('404');
@@ -96,6 +106,7 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
       title: article.data.title,
       body: convertToHtml(article.data.body),
       image: article.data.image || null,
+      pagebuilder: article.data.pagebuilder || [], // 添加pagebuilder数据
       relativeCollections: article.data.relativeCollections || [],
       breadcrumb: article.data.breadcrumb || [], 
       childArticles: article.data.childArticles || []
@@ -110,37 +121,49 @@ export const meta = ({matches}: MetaArgs<typeof loader>) => {
 
 export default function Capability() {
   const {capability} = useLoaderData<typeof loader>() as any;;
-  const {title, body, image, relativeCollections, breadcrumb, childArticles} = capability;
-  
+  const {title, body, image, relativeCollections, breadcrumb, childArticles, pagebuilder} = capability;
+
   return (
-    <div className='container'>
-      {/* 面包屑导航 */}
-      {breadcrumb && breadcrumb.length > 0 && (
-        <ArticleBreadcrumb breadcrumb={breadcrumb} />
+    <>        {/* Page Builder 内容 */}
+    {/* Page Builder 内容 */}
+    {pagebuilder && pagebuilder.length > 0 && (
+        <main className="isolate">
+          {pagebuilder.map((block: any, index: number) => {
+            switch (block._type) {
+              case 'splitSection':
+                return <SplitSection key={index} block={block} />;
+
+              case 'imageSliderSection':
+                return (
+                  <div key={index} className="py-10 lg:py-24">
+                    <ImageSliderSection block={block} />
+                  </div>
+                );
+
+              case 'heroSection':
+                return <HeroSection key={index} block={block} />;
+
+              case 'capabilitiesSection':
+                return <CapabilitiesSection key={index} block={block} />;
+
+              case 'statsSection':
+                return <StatsSection key={index} block={block} />;
+
+              case 'advantagesSection':
+                return <AdvantagesSection key={index} block={block} />;
+
+              case 'featuresSection':
+                return <FeaturesSection key={index} block={block} />;
+                
+              default:
+                return null;
+            }
+          })}
+        </main>
       )}
-      
-      {/* 页面标题 */}
-      <PageHeader heading={title} variant="blogPost">
-      </PageHeader>
-      
+    <div className='container'>
       {/* 正文内容 */}
       <Section as="article" padding="x">
-        {/* 特色图片 */}
-        {image && (
-          <Image
-            data={image}
-            className="w-full mx-auto mt-8 md:mt-16 max-w-7xl"
-            sizes="90vw"
-            loading="eager"
-          />
-        )}
-        
-        {/* 正文内容 */}
-        <div
-          dangerouslySetInnerHTML={{__html: body}}
-          className="article prose prose-sm sm:prose lg:prose-lg mx-auto mt-8"
-        />
-        
         {/* 相关产品集合 */}
         {relativeCollections && relativeCollections.length > 0 && (
           <div className="mt-12">
@@ -150,16 +173,8 @@ export default function Capability() {
             />
           </div>
         )}
-
-        {/* 在父组件中进行条件渲染 */}
-        {childArticles && childArticles.length > 0 && (
-          <RelatedArticles 
-            articles={childArticles} 
-            title="Related Articles"
-            readMoreText="Read more →"
-          />
-        )}
       </Section>
     </div>
+</>
   );
 }
