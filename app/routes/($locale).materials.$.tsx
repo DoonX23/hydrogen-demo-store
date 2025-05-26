@@ -13,7 +13,7 @@ import {FeaturedCollections} from '~/components/FeaturedCollections';
 import {convertToHtml} from '~/utils/portableText';
 import {RelatedArticles} from '~/components/RelatedArticles'; // 导入新组件
 import ArticleBreadcrumb from '~/components/ArticleBreadcrumb';
-
+import { CollectionSlider } from '~/components/CollectionsSlider';
 export const headers = routeHeaders;
 
 export async function loader({request, params, context}: LoaderFunctionArgs) {
@@ -110,6 +110,7 @@ export default function Material() {
   const {material} = useLoaderData<typeof loader>() as any;
   const {title, body, image, relativeCollections, breadcrumb, childArticles} = material; // 解构出 image
   return (
+    <>
     <div className='container'>
       {/* 面包屑导航 */}
       {breadcrumb && breadcrumb.length > 0 && (
@@ -132,7 +133,7 @@ export default function Material() {
           dangerouslySetInnerHTML={{__html: body}}
           className="article prose prose-sm sm:prose lg:prose-lg mx-auto mt-8"
         />
-        {/* 添加集合展示部分 */}
+        {/* 添加集合展示部分 
         {relativeCollections && relativeCollections.length > 0 && (
           <div className="mt-12">
             <FeaturedCollections
@@ -140,7 +141,7 @@ export default function Material() {
               title="Related Collections"
             />
           </div>
-        )}
+        )}*/}
 
         {/* 在父组件中进行条件渲染 */}
         {childArticles && childArticles.length > 0 && (
@@ -152,5 +153,16 @@ export default function Material() {
         )}
       </Section>
     </div>
+    {relativeCollections && relativeCollections.length > 0 && (
+      <CollectionSlider
+        heading_bold="Discover more."
+        heading_light=""
+        sub_heading=""
+        collections={relativeCollections}
+        button_text="See Collection"
+        isSkeleton={false}
+      />
+    )}
+  </>
   );
 }
