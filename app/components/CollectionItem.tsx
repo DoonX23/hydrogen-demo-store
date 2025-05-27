@@ -2,7 +2,6 @@ import {type FC} from 'react';
 import {type CommonCollectionItemFragment} from 'storefrontapi.generated';
 import {Link} from './Link';
 import {Image} from '@shopify/hydrogen';
-import ButtonSecondary from './Button/ButtonSecondary';
 import {type FilterValue} from '@shopify/hydrogen/storefront-api-types';
 import clsx from 'clsx';
 
@@ -38,39 +37,25 @@ const CollectionItem: FC<CollectionItemProps> = ({
       onClick={onClick}
       prefetch="viewport"
     >
-    {/*aspect-w-16 aspect-h-12是旧版写法，新版要写成aspect-[16/9]*/}
-      <div className="relative w-full aspect-[16/9] sm:aspect-h-9 rounded-2xl overflow-hidden bg-slate-100 group">
-        {hImage && (
-          <Image
-            className="absolute inset-0 w-full h-full object-cover rounded-2xl "
-            data={hImage}
-            sizes="(max-width: 640px) 90vw, (max-width: 1200px) 50vw, 40vw"
-          />
-        )}
-
-        <span className="opacity-0 group-hover:opacity-40 absolute inset-0 bg-black/10 transition-opacity"></span>
-
-        <div>
-          <div className="absolute inset-4 lg:inset-8 flex flex-col">
-            <div className="max-w-[18rem]">
-              <span className={`block text-sm text-slate-700`}>Collection</span>
-              {!!title && (
-                <h2
-                  className="text-xl lg:text-2xl text-slate-900 font-semibold mt-0.5 sm:mt-2"
-                  dangerouslySetInnerHTML={{__html: title}}
-                />
-              )}
-            </div>
-            <div className="mt-auto">
-              <ButtonSecondary
-                sizeClass="py-3 px-4 sm:py-3.5 sm:px-6"
-                fontSize="text-sm font-medium"
-                className="nc-shadow-lg"
-              >
-                {button_text || 'Shop now'}
-              </ButtonSecondary>
-            </div>
-          </div>
+      <div className="flex flex-col w-full">
+        <div className="relative w-full aspect-[8/7] rounded-t-2xl overflow-hidden bg-primary/5 group">
+          {hImage && (
+            <Image
+              className="w-full h-full object-cover"
+              data={hImage}
+              sizes="(max-width: 640px) 90vw, (max-width: 1200px) 50vw, 40vw"
+            />
+          )}
+          <span className="opacity-0 group-hover:opacity-40 absolute inset-0 bg-black/10 transition-opacity"></span>
+        </div>
+        
+        <div className="py-3 px-4 bg-primary/10 rounded-b-2xl">
+          {!!title && (
+            <h2
+              className="text-sm md:text-lg text-slate-900 font-semibold"
+              dangerouslySetInnerHTML={{__html: title}}
+            />
+          )}
         </div>
       </div>
     </Link>
@@ -84,28 +69,15 @@ export const CollectionItemSkeleton = ({
 }) => {
   return (
     <div className={clsx(`block w-full`, className)}>
-      <div className="relative w-full aspect-w-16 aspect-h-12 sm:aspect-h-9 rounded-2xl overflow-hidden bg-slate-100 group">
-        <span className="opacity-0 group-hover:opacity-40 absolute inset-0 bg-black/10 transition-opacity"></span>
-
-        <div>
-          <div className="absolute inset-4 md:inset-8 flex flex-col">
-            <div className="max-w-[18rem]">
-              <span className={`block text-sm text-slate-700`}>Collection</span>
-              <h2 className="text-xl md:text-2xl text-slate-900 font-semibold mt-0.5 sm:mt-2">
-                Skeleton Collection
-              </h2>
-            </div>
-            <div className="mt-auto">
-              <ButtonSecondary
-                disabled
-                sizeClass="py-3 px-4 sm:py-3.5 sm:px-6"
-                fontSize="text-sm font-medium"
-                className="nc-shadow-lg"
-              >
-                {'Explore now'}
-              </ButtonSecondary>
-            </div>
-          </div>
+      <div className="flex flex-col w-full">
+        <div className="relative w-full aspect-[8/7] rounded-t-2xl overflow-hidden bg-primary/5 group">
+          <span className="opacity-0 group-hover:opacity-40 absolute inset-0 bg-black/10 transition-opacity"></span>
+        </div>
+        
+        <div className="py-3 px-4 bg-primary/10 rounded-b-2xl">
+          <h2 className="text-lg lg:text-xl text-slate-900 font-semibold">
+            Skeleton Collection
+          </h2>
         </div>
       </div>
     </div>
