@@ -64,9 +64,9 @@ function root({
 
 function home({url}: {url: Request['url']}): SeoConfig {
   return {
-    title: 'DoonX: On-demand Manufacturing For Custom Parts',
+    title: 'DoonX: Custom Plastic Film & CNC Machining Solutions',
     titleTemplate: '%s | DoonX',
-    description: 'DoonX is your CNC Machining, Sheet Metal, CNC Cutting, Injection Molding and 3D Printing marketplace for custom manufactured parts',
+    description: 'DoonX specializes in custom plastic film manufacturing and precision CNC plastic parts production. ISO 9001:2015 certified, 20+ years expertise, Competitive pricing, Worldwide delivery.',
     url,
     robots: {
       noIndex: false,
@@ -375,7 +375,7 @@ function blog({
   return {
     title: blog?.seo?.title,
     description: truncate(blog?.seo?.description || ''),
-    titleTemplate: '%s | Blog',
+    titleTemplate: '%s | DoonX Blog',
     url,
     jsonLd: {
       '@context': 'https://schema.org',
@@ -397,7 +397,7 @@ function page({
   return {
     description: truncate(page?.seo?.description || ''),
     title: page?.seo?.title ?? page?.title,
-    titleTemplate: '%s | Page',
+    titleTemplate: '%s | DoonX',
     url,
     jsonLd: {
       '@context': 'https://schema.org',
@@ -417,7 +417,7 @@ function policy({
   return {
     description: truncate(policy?.body ?? ''),
     title: policy?.title,
-    titleTemplate: '%s | Policy',
+    titleTemplate: '%s | DoonX Policy',
     url,
   };
 }
