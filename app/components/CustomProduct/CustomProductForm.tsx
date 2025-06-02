@@ -140,7 +140,7 @@ const [widthMm, setWidthMm] = useState(
               <UnitConverter 
                 unitOne="mm"
                 unitTwo="inch"
-                maxValue={dimensionLimitation.maxLength || 1000}
+                maxValue={dimensionLimitation.maxLength || 1016}
                 minValue={dimensionLimitation.minLength || 1}
                 nameOne="lengthMm"
                 nameTwo="lengthInch"
@@ -167,7 +167,7 @@ const [widthMm, setWidthMm] = useState(
               <UnitConverter 
                 unitOne="mm"
                 unitTwo="inch"
-                maxValue={dimensionLimitation.maxLength || 1000}
+                maxValue={dimensionLimitation.maxLength || 1016}
                 minValue={dimensionLimitation.minLength || 10}
                 nameOne="lengthMm"
                 nameTwo="lengthInch"
