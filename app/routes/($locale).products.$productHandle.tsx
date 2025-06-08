@@ -54,6 +54,8 @@ import { HubspotForm } from '~/components/HubspotForm';
 import ProductAnchor from '~/components/ProductAnchor.client';
 import { ProductDescriptionSection } from '~/components/ProductDescriptionSection';
 import ProductSpecifications from '~/components/ProductSpecifications';
+import NcInputNumber from '~/components/NcInputNumber';
+import Prices from '~/components/Prices';
 
 export const headers = routeHeaders;
 
@@ -443,7 +445,7 @@ export function ProductForm({
   storeDomain: string;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
-
+  const [quantity, setQuantity] = useState(1);
   const isOutOfStock = !selectedVariant?.availableForSale;
 
   const isOnSale =
@@ -454,6 +456,14 @@ export function ProductForm({
   return (
     <div className="grid gap-10">
       <div className="grid gap-4">
+        <div className="flex flex-wrap items-center mb-1 gap-4 lg:gap-5">
+          <Prices
+            contentClass="py-1 px-2 md:py-1.5 md:px-3 text-lg font-semibold"
+            price={selectedVariant?.price!}
+            compareAtPrice={selectedVariant?.compareAtPrice!}
+          />
+        </div>
+
         {productOptions.map((option, optionIndex) => (
           <div
             key={option.name}
@@ -574,11 +584,20 @@ export function ProductForm({
                 <Text>Get Custom Quote</Text>
               </Button>
             ) : (
+              <div className="flex gap-2 sm:gap-3.5 items-stretch">
+                <div className="flex items-center justify-center bg-blue-100 dark:blue-100 p-2 sm:p-3 rounded-full">
+              <NcInputNumber
+                className=""
+                defaultValue={quantity}
+                onChange={setQuantity}
+              />
+              </div>
+              <div className="flex-1 *:h-full *:flex">
               <AddToCartButton
                 lines={[
                   {
                     merchandiseId: selectedVariant.id!,
-                    quantity: 1,
+                    quantity,
                   },
                 ]}
                 variant="primary"
@@ -588,24 +607,13 @@ export function ProductForm({
                   as="span"
                   className="flex items-center justify-center gap-2"
                 >
-                  <span>Add to Cart</span> <span>·</span>{' '}
-                  <Money
-                    withoutTrailingZeros
-                    data={selectedVariant?.price!}
-                    as="span"
-                    data-test="price"
-                  />
-                  {isOnSale && (
-                    <Money
-                      withoutTrailingZeros
-                      data={selectedVariant?.compareAtPrice!}
-                      as="span"
-                      className="opacity-50 strike"
-                    />
-                  )}
+                  <span>Add to Cart</span>
                 </Text>
               </AddToCartButton>
+              </div>
+            </div>
             )}
+            {/* 
             {!isOutOfStock && (
               <ShopPayButton
                 width="100%"
@@ -613,6 +621,7 @@ export function ProductForm({
                 storeDomain={storeDomain}
               />
             )}
+            */}
           </div>
         )}
       </div>
