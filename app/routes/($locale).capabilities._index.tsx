@@ -15,10 +15,8 @@ import ListItems from '~/components/PageBuilder/ListItems';
 import SplitSection from '~/components/PageBuilder/SplitSection';
 import ImageSliderSection from '~/components/PageBuilder/ImageSliderSection';
 import HeroSection from '~/components/PageBuilder/HeroSection';
-import CapabilitiesSection from '~/components/PageBuilder/CapabilitiesSection';
 import StatsSection from '~/components/PageBuilder/StatsSection';
-import AdvantagesSection from '~/components/PageBuilder/AdvantagesSection';
-import FeaturesSection from '~/components/PageBuilder/FeaturesSection';
+import CardGridSection from '~/components/PageBuilder/CardGridSection';
 
 export const headers = routeHeaders;
 
@@ -132,17 +130,11 @@ export default function CapabilitiesIndex() {
               case 'heroSection':
                 return <HeroSection key={index} block={block} />;
 
-              case 'capabilitiesSection':
-                return <CapabilitiesSection key={index} block={block} />;
+              case 'cardGridSection':
+                return <CardGridSection key={index} block={block} />;
 
               case 'statsSection':
                 return <StatsSection key={index} block={block} />;
-
-              case 'advantagesSection':
-                return <AdvantagesSection key={index} block={block} />;
-
-              case 'featuresSection':
-                return <FeaturesSection key={index} block={block} />;
                 
               default:
                 return null;
