@@ -47,7 +47,7 @@ export async function loader(args: LoaderFunctionArgs) {
 async function loadCriticalData({context, request}: LoaderFunctionArgs) {
   const [{shop, hero}] = await Promise.all([
     context.storefront.query(HOMEPAGE_SEO_QUERY, {
-      variables: {handle: 'polycarbonate-sheet'},
+      variables: {handle: 'plastic-film'},
     }),
     // Add other queries here, so that they are loaded in parallel
   ]);
