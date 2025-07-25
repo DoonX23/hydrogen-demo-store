@@ -16,6 +16,7 @@ export default defineConfig({
         v3_throwAbortReason: true,
         v3_lazyRouteDiscovery: true,
         v3_singleFetch: true,  // add this flag
+        v3_routeConfig: true, // 添加这个新的未来标志
       },
     }),
     tsconfigPaths(),

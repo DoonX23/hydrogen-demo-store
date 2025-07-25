@@ -29,14 +29,13 @@
     "@remix-run/server-runtime": "^2.16.1",
     "@shopify/admin-api-client": "^1.0.4",
     "@shopify/cli": "^3.79.2",
-    "@shopify/hydrogen": "^2025.4.0",
+    "@shopify/hydrogen": "2025.4.0",
     "@shopify/remix-oxygen": "^2.0.12",
     "@types/react-scroll": "^1.8.10",
     "clsx": "^1.2.1",
     "cross-env": "^7.0.3",
     "graphql": "^16.6.0",
     "graphql-tag": "^2.12.6",
-    "hydrogen-sanity": "^4.3.3",
     "isbot": "^3.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -45,7 +44,9 @@
     "react-use": "^17.4.0",
     "schema-dts": "^1.1.0",
     "tiny-invariant": "^1.2.0",
-    "typographic-base": "^1.0.4"
+    "typographic-base": "^1.0.4",
+    "@remix-run/fs-routes": "^2.16.1",
+    "@remix-run/route-config": "^2.16.1"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",
