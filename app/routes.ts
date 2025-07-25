@@ -1,5 +1,9 @@
+import type { RouteConfig } from "@remix-run/route-config";
+import { flatRoutes } from "@remix-run/fs-routes";
+import { hydrogenRoutes } from "@shopify/hydrogen";
+
 export default hydrogenRoutes([
-    ...(await flatRoutes()),
-    // 可以在这个数组中添加手动路由定义，作为文件路由约定的补充或替代
-    // 更多详情请参考 https://remix.run/docs/en/main/guides/routing
-  ]) satisfies RouteConfig;
+  ...(await flatRoutes()),
+  // Manual route definitions can be added to this array, in addition to or instead of using the `flatRoutes` file-based routing convention.
+  // See https://remix.run/docs/en/main/guides/routing for more details
+]) satisfies RouteConfig;
