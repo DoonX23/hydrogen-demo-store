@@ -17,10 +17,7 @@ import ListItems from '~/components/PageBuilder/ListItems';
 import SplitSection from '~/components/PageBuilder/SplitSection';
 import ImageSliderSection from '~/components/PageBuilder/ImageSliderSection';
 import HeroSection from '~/components/PageBuilder/HeroSection';
-import CapabilitiesSection from '~/components/PageBuilder/CapabilitiesSection';
 import StatsSection from '~/components/PageBuilder/StatsSection';
-import AdvantagesSection from '~/components/PageBuilder/AdvantagesSection';
-import FeaturesSection from '~/components/PageBuilder/FeaturesSection';
 import CardGridSection from '~/components/PageBuilder/CardGridSection';
 
 export const headers = routeHeaders;
