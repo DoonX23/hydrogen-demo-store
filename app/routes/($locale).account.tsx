@@ -69,11 +69,12 @@ export async function loader({request, context, params}: LoaderFunctionArgs) {
 }
 
 export default function Authenticated() {
-  const data = useLoaderData<typeof loader>();
+  const loaderData = useLoaderData<typeof loader>();
   const outlet = useOutlet();
   const matches = useMatches();
 
   // routes that export handle { renderInModal: true }
+  //任何时候渲染 <Account /> 组件，都必须给它传递一个 customer 属性。
   const renderOutletInModal = matches.some((match) => {
     const handle = match?.handle as {renderInModal?: boolean};
     return handle?.renderInModal;
@@ -84,17 +85,17 @@ export default function Authenticated() {
       return (
         <>
           <Modal cancelLink="/account">
-            <Outlet context={{customer: data.customer}} />
+            <Outlet context={{customer: loaderData.customer}} />
           </Modal>
-          <Account {...data} />
+          <Account {...loaderData} customer={loaderData.customer}/>
         </>
       );
     } else {
-      return <Outlet context={{customer: data.customer}} />;
+      return <Outlet context={{customer: loaderData.customer}} />;
     }
   }
 
-  return <Account {...data} />;
+  return <Account {...loaderData}  customer={loaderData.customer}/>;
 }
 
 interface AccountType {
