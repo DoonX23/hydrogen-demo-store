@@ -28,18 +28,18 @@ import {
 export const headers = routeHeaders;
 
 export async function loader({request, context, params}: LoaderFunctionArgs) {
-  const {data, errors} = await context.customerAccount.query(
+  const {data: queryData, errors} = await context.customerAccount.query(
     CUSTOMER_DETAILS_QUERY,
   );
 
   /**
    * If the customer failed to load, we assume their access token is invalid.
    */
-  if (errors?.length || !data?.customer) {
+  if (errors?.length || !queryData?.customer) {
     throw await doLogout(context);
   }
 
-  const customer = data?.customer;
+  const customer = queryData?.customer;
 
   const heading = customer
     ? customer.firstName

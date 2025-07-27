@@ -55,4 +55,12 @@ export default defineConfig({
     // withtout inlining assets as base64:
     assetsInlineLimit: 0,
   },
+  // 添加这个配置
+  server: {
+    allowedHosts: [
+      'localhost',
+      '.ngrok-free.app', // 允许所有ngrok免费域名
+      'usually-fleet-jawfish.ngrok-free.app', // 你的具体域名
+    ],
+  },
 });

@@ -68,6 +68,7 @@ export default async function handleRequest(
       
       // Amazon S3 for HubSpot
       'https://*.amazonaws.com',    // 覆盖所有 HubSpot 的 S3 存储
+      "https://usually-fleet-jawfish.ngrok-free.app", // 添加你的ngrok域名
     ],
     frameSrc: [
       'https://*.google-analytics.com',
