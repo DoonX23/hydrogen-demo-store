@@ -13,3 +13,4 @@ node_modules
 /playwright/.cache/
 customer-accountapi.generated.d.ts
 storefrontapi.generated.d.ts
+.react-router

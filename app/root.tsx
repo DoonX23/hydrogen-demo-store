@@ -15,7 +15,7 @@ import {
   useRouteLoaderData,
   useRouteError,
   type ShouldRevalidateFunction,
-} from '@remix-run/react';
+} from 'react-router';
 import {
   useNonce,
   Analytics,

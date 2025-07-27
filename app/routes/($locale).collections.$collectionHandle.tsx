@@ -3,7 +3,7 @@ import {
   type MetaArgs,
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
-import {useLoaderData, useNavigate} from '@remix-run/react';
+import { useLoaderData, useNavigate } from 'react-router';
 import {useInView} from 'react-intersection-observer';
 import type {
   Filter,
@@ -98,7 +98,7 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
         return (
           // This comparison should be okay as long as we're not manipulating the input we
           // get from the API before using it as a URL param.
-          JSON.stringify(valueInput) === JSON.stringify(filter)
+          (JSON.stringify(valueInput) === JSON.stringify(filter))
         );
       });
       if (!foundValue) {

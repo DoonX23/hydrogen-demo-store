@@ -40,7 +40,17 @@ declare global {
   }
 }
 
-declare module '@shopify/remix-oxygen' {
+declare module 'react-router' {
+  
+    // TODO: remove this once we've migrated to `Route.LoaderArgs` for our loaders
+    interface LoaderFunctionArgs {
+      context: AppLoadContext;
+    }
+  
+    // TODO: remove this once we've migrated to `Route.ActionArgs` for our actions
+    interface ActionFunctionArgs {
+      context: AppLoadContext;
+    }
   /**
    * Declare local additions to the Remix loader context.
    */

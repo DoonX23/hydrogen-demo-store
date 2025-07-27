@@ -1,4 +1,4 @@
-import {useParams, Form, Await, useRouteLoaderData} from '@remix-run/react';
+import { useParams, Form, Await, useRouteLoaderData } from 'react-router';
 import useWindowScroll from 'react-use/esm/useWindowScroll';
 import {Suspense, useMemo} from 'react';
 import {Link} from '~/components/Link';

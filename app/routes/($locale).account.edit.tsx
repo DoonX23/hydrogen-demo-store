@@ -1,10 +1,5 @@
 import {data, redirect, type ActionFunction} from '@shopify/remix-oxygen';
-import {
-  useActionData,
-  Form,
-  useOutletContext,
-  useNavigation,
-} from '@remix-run/react';
+import { useActionData, Form, useOutletContext, useNavigation } from 'react-router';
 import type {
   Customer,
   CustomerUpdateInput,

@@ -5,7 +5,7 @@ import {
   type MetaArgs,
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
-import { useLoaderData, Await, useNavigate } from '@remix-run/react';
+import { useLoaderData, Await, useNavigate } from 'react-router';
 import {
   getSeoMeta,
   Money,
@@ -217,224 +217,221 @@ export default function Product() {
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  return (
-    <>
-      <section className="container">
-        {!!collection && (
-          <nav className="my-4 lg:my-6" aria-label="Breadcrumb">
-            <ol className="flex items-center space-x-2">
-              <li>
-                <div className="flex items-center text-sm">
-                  <Link
-                    to={'/'}
-                    className="font-medium text-gray-500 hover:text-gray-900"
-                  >
-                    Home
-                  </Link>
-                  <SlashIcon className="ml-2 h-5 w-5 flex-shrink-0 text-gray-300 " />
-                </div>
-              </li>
-              <li>
-                <div className="flex items-center text-sm">
+  return (<>
+    <section className="container">
+      {!!collection && (
+        <nav className="my-4 lg:my-6" aria-label="Breadcrumb">
+          <ol className="flex items-center space-x-2">
+            <li>
+              <div className="flex items-center text-sm">
+                <Link
+                  to={'/'}
+                  className="font-medium text-gray-500 hover:text-gray-900"
+                >
+                  Home
+                </Link>
+                <SlashIcon className="ml-2 h-5 w-5 flex-shrink-0 text-gray-300 " />
+              </div>
+            </li>
+            <li>
+              <div className="flex items-center text-sm">
+                <Link
+                  to={'/collections/' + collection.handle}
+                  className="font-medium text-gray-500 hover:text-gray-900"
+                >
+                  {/* romove html on title */}
+                  {collection.title.replace(/(<([^>]+)>)/gi, '')}
+                </Link>
+              </div>
+            </li>
+          </ol>
+        </nav>
+      )}
+      <div className="grid items-start lg:gap-20 lg:grid-cols-2">
+        <CustomProductGallery
+          key={product.id}
+          media={media.nodes}
+          isLoading={!product}
+          className="w-full lg:col-span-1"
+        />
+        <div className="">
+          <section className="flex flex-col w-full gap-8 md:mx-auto md:px-0 py-4 lg:py-0">
+            <div className="grid gap-2">
+              <Heading as="h1" className="whitespace-normal text-xl md:text-[1.5rem]">
+                {title}
+              </Heading>
+            </div>
+            <div className="grid">
+              <div className="grid text-center">
+                <HubspotForm buttonText="Custom Bulk Quotation" />
+              </div>
+              {/*
+              {descriptionHtml && (
+                <ProductDetail
+                  title="Product Details"
+                  content={descriptionHtml}
+                />
+              )}
+              {shippingPolicy?.body && (
+                <ProductDetail
+                  title="Shipping"
+                  content={getExcerpt(shippingPolicy.body)}
+                  learnMore={`/policies/${shippingPolicy.handle}`}
+                />
+              )}
+              {refundPolicy?.body && (
+                <ProductDetail
+                  title="Returns"
+                  content={getExcerpt(refundPolicy.body)}
+                  learnMore={`/policies/${refundPolicy.handle}`}
+                />
+              )}
+                */}
+            </div>
+            {!!collection && (
+              <div className="flex">
+                <div className="relative rounded-xl px-3 py-1 text-sm/6 text-gray-600 dark:text-gray-300 ring-1 ring-brand dark:ring-white hover:ring-highlight hover:text-highlight">
+                  View All {collection.title.replace(/(<([^>]+)>)/gi, '')} Options{" "}
                   <Link
                     to={'/collections/' + collection.handle}
-                    className="font-medium text-gray-500 hover:text-gray-900"
+                    className="font-semibold text-brand dark:text-highlight"
                   >
-                    {/* romove html on title */}
-                    {collection.title.replace(/(<([^>]+)>)/gi, '')}
+                    <span aria-hidden="true" className="absolute inset-0" />
+                    Reach Out <span aria-hidden="true">&rarr;</span>
                   </Link>
                 </div>
-              </li>
-            </ol>
-          </nav>
-        )}
-        <div className="grid items-start lg:gap-20 lg:grid-cols-2">
-          <CustomProductGallery
-            key={product.id}
-            media={media.nodes}
-            isLoading={!product}
-            className="w-full lg:col-span-1"
-          />
-          <div className="">
-            <section className="flex flex-col w-full gap-8 md:mx-auto md:px-0 py-4 lg:py-0">
-              <div className="grid gap-2">
-                <Heading as="h1" className="whitespace-normal text-xl md:text-[1.5rem]">
-                  {title}
-                </Heading>
               </div>
-              <div className="grid">
-                <div className="grid text-center">
-                  <HubspotForm buttonText="Custom Bulk Quotation" />
-                </div>
-                {/*
-                {descriptionHtml && (
-                  <ProductDetail
-                    title="Product Details"
-                    content={descriptionHtml}
-                  />
-                )}
-                {shippingPolicy?.body && (
-                  <ProductDetail
-                    title="Shipping"
-                    content={getExcerpt(shippingPolicy.body)}
-                    learnMore={`/policies/${shippingPolicy.handle}`}
-                  />
-                )}
-                {refundPolicy?.body && (
-                  <ProductDetail
-                    title="Returns"
-                    content={getExcerpt(refundPolicy.body)}
-                    learnMore={`/policies/${refundPolicy.handle}`}
-                  />
-                )}
-                  */}
-              </div>
-              {!!collection && (
-                <div className="flex">
-                  <div className="relative rounded-xl px-3 py-1 text-sm/6 text-gray-600 dark:text-gray-300 ring-1 ring-brand dark:ring-white hover:ring-highlight hover:text-highlight">
-                    View All {collection.title.replace(/(<([^>]+)>)/gi, '')} Options{" "}
-                    <Link
-                      to={'/collections/' + collection.handle}
-                      className="font-semibold text-brand dark:text-highlight"
-                    >
-                      <span aria-hidden="true" className="absolute inset-0" />
-                      Reach Out <span aria-hidden="true">&rarr;</span>
-                    </Link>
-                  </div>
-                </div>
-              )}
-              {product.customizable_size?.value === "true" ? (
-                <Suspense fallback={<CustomProductForm product={product} facets={[]} productMetafields={[]} />}>
-                {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，JsonifyObject<>包装后Promise类型会丢失，使用时需手动添加类型断言*/}
-                  <Await resolve={collectionDataPromise as Promise<{filters: [], filteredMetafields: [],}> }>
-                    {(data) => (
-                      <CustomProductForm
-                        key={product.id} 
-                        product={product}
-                        facets={data.filters}
-                        productMetafields={data.filteredMetafields}
-                      />
-                    )}
-                  </Await>
-                </Suspense>
-              ) : (
-                <ProductForm
-                productOptions={productOptions}
-                selectedVariant={selectedVariant}
-                storeDomain={storeDomain}
-              />
-              )}
+            )}
+            {product.customizable_size?.value === "true" ? (
+              <Suspense fallback={<CustomProductForm product={product} facets={[]} productMetafields={[]} />}>
+              {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，JsonifyObject<>包装后Promise类型会丢失，使用时需手动添加类型断言*/}
+                <Await resolve={collectionDataPromise as Promise<{filters: [], filteredMetafields: [],}> }>
+                  {(data) => (
+                    <CustomProductForm
+                      key={product.id} 
+                      product={product}
+                      facets={data.filters}
+                      productMetafields={data.filteredMetafields}
+                    />
+                  )}
+                </Await>
+              </Suspense>
+            ) : (
+              <ProductForm
+              productOptions={productOptions}
+              selectedVariant={selectedVariant}
+              storeDomain={storeDomain}
+            />
+            )}
 
-            </section>
-          </div>
-        </div>
-        <Suspense fallback={<Skeleton className="h-32" />}>
-        {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，JsonifyObject<>包装后Promise类型会丢失，使用时需手动添加类型断言*/}
-        <Await
-          errorElement="There was a problem loading related products"
-          resolve={recommended as Promise<{ nodes: []; }>}
-        >
-          {(products) => (
-            <ProductSwimlane title="Related Products" products={products} />
-          )}
-        </Await>
-      </Suspense>
-      </section>
-
-      <div className="mb-12 sm:mb-16 mt-4">
-        {/* 仅在客户端渲染ProductAnchor组件，服务端则渲染替代内容 */}
-        {isClient ? (
-          <ProductAnchor sections={productSections} />
-        ) : (
-          <div className="sticky top-[60px] md:top-[80px] w-full bg-white z-10 shadow-sm">
-            <div className="max-w-6xl mx-auto">
-              <div className="overflow-x-auto scrollbar-hide">
-                <nav className="flex gap-4 border-b w-full py-3 min-w-max">
-                  {productSections.map(section => (
-                    <span key={section.id} className="px-2 cursor-pointer whitespace-nowrap">
-                      {section.title}
-                    </span>
-                  ))}
-                </nav>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 产品详情内容区域 */}
-        <div className="mt-6 container">
-          {/* 原有代码替换为 */}
-          <ProductDescriptionSection product={product} />
-
-          {/* 规格参数部分 - 只有当product.specifications?.value存在时才显示 - 这是第2个锚点 */}
-          {product.specifications?.value && (<ProductSpecifications specifications={specifications} />)}
-
-          {/* shipping部分 - 这是第3个锚点 */}
-          {!!shippingPolicy?.body && (
-            <div id="shipping" className="pb-8 md:pb-12">
-              <h2 className="text-2xl font-semibold">Shipping Policy</h2>
-              <div
-                className="prose prose-sm sm:prose dark:prose-invert sm:max-w-4xl mt-7"
-                dangerouslySetInnerHTML={{
-                  __html: getExcerpt(shippingPolicy.body) || '',
-                }}
-              />
-              <Link
-                  className="pb-px border-b border-primary/30 text-primary/50"
-                  to={`/policies/${shippingPolicy.handle}`}
-                >
-                  Learn more
-              </Link>
-            </div>
-          )}
-
-          {/* return部分 - 这是第4个锚点 */}
-          {!!refundPolicy?.body && (
-            <div id="return" className="pb-8 md:pb-12">
-              <h2 className="text-2xl font-semibold">Return Policy</h2>
-              <div
-                className="prose prose-sm sm:prose dark:prose-invert sm:max-w-4xl mt-7"
-                dangerouslySetInnerHTML={{
-                  __html: getExcerpt(refundPolicy.body) || '',
-                }}
-              />
-              <Link
-                  className="pb-px border-b border-primary/30 text-primary/50"
-                  to={`/policies/${refundPolicy.handle}`}
-                >
-                  Learn more
-              </Link>
-            </div>
-          )}
+          </section>
         </div>
       </div>
-      {!!product.related_collections?.references?.nodes && (
-        <CollectionSlider
-          heading_bold="Discover more."
-          heading_light=""
-          sub_heading=""
-          collections={product.related_collections?.references?.nodes}
-          button_text="See Collection"
-          isSkeleton={false}
-        />
+      <Suspense fallback={<Skeleton className="h-32" />}>
+      {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，JsonifyObject<>包装后Promise类型会丢失，使用时需手动添加类型断言*/}
+      <Await
+        errorElement="There was a problem loading related products"
+        resolve={recommended as Promise<{ nodes: []; }>}
+      >
+        {(products) => (
+          <ProductSwimlane title="Related Products" products={products} />
+        )}
+      </Await>
+    </Suspense>
+    </section>
+    <div className="mb-12 sm:mb-16 mt-4">
+      {/* 仅在客户端渲染ProductAnchor组件，服务端则渲染替代内容 */}
+      {isClient ? (
+        <ProductAnchor sections={productSections} />
+      ) : (
+        <div className="sticky top-[60px] md:top-[80px] w-full bg-white z-10 shadow-sm">
+          <div className="max-w-6xl mx-auto">
+            <div className="overflow-x-auto scrollbar-hide">
+              <nav className="flex gap-4 border-b w-full py-3 min-w-max">
+                {productSections.map(section => (
+                  <span key={section.id} className="px-2 cursor-pointer whitespace-nowrap">
+                    {section.title}
+                  </span>
+                ))}
+              </nav>
+            </div>
+          </div>
+        </div>
       )}
-      <Analytics.ProductView
-        data={{
-          products: [
-            {
-              id: product.id,
-              title: product.title,
-              price: selectedVariant?.price.amount || '0',
-              vendor: product.vendor,
-              variantId: selectedVariant?.id || '',
-              variantTitle: selectedVariant?.title || '',
-              quantity: 1,
-            },
-          ],
-        }}
+
+      {/* 产品详情内容区域 */}
+      <div className="mt-6 container">
+        {/* 原有代码替换为 */}
+        <ProductDescriptionSection product={product} />
+
+        {/* 规格参数部分 - 只有当product.specifications?.value存在时才显示 - 这是第2个锚点 */}
+        {product.specifications?.value && (<ProductSpecifications specifications={specifications} />)}
+
+        {/* shipping部分 - 这是第3个锚点 */}
+        {!!shippingPolicy?.body && (
+          <div id="shipping" className="pb-8 md:pb-12">
+            <h2 className="text-2xl font-semibold">Shipping Policy</h2>
+            <div
+              className="prose prose-sm sm:prose dark:prose-invert sm:max-w-4xl mt-7"
+              dangerouslySetInnerHTML={{
+                __html: getExcerpt(shippingPolicy.body) || '',
+              }}
+            />
+            <Link
+                className="pb-px border-b border-primary/30 text-primary/50"
+                to={`/policies/${shippingPolicy.handle}`}
+              >
+                Learn more
+            </Link>
+          </div>
+        )}
+
+        {/* return部分 - 这是第4个锚点 */}
+        {!!refundPolicy?.body && (
+          <div id="return" className="pb-8 md:pb-12">
+            <h2 className="text-2xl font-semibold">Return Policy</h2>
+            <div
+              className="prose prose-sm sm:prose dark:prose-invert sm:max-w-4xl mt-7"
+              dangerouslySetInnerHTML={{
+                __html: getExcerpt(refundPolicy.body) || '',
+              }}
+            />
+            <Link
+                className="pb-px border-b border-primary/30 text-primary/50"
+                to={`/policies/${refundPolicy.handle}`}
+              >
+                Learn more
+            </Link>
+          </div>
+        )}
+      </div>
+    </div>
+    {!!product.related_collections?.references?.nodes && (
+      <CollectionSlider
+        heading_bold="Discover more."
+        heading_light=""
+        sub_heading=""
+        collections={product.related_collections?.references?.nodes}
+        button_text="See Collection"
+        isSkeleton={false}
       />
-    </>
-  );
+    )}
+    <Analytics.ProductView
+      data={{
+        products: [
+          {
+            id: product.id,
+            title: product.title,
+            price: selectedVariant?.price.amount || '0',
+            vendor: product.vendor,
+            variantId: selectedVariant?.id || '',
+            variantTitle: selectedVariant?.title || '',
+            quantity: 1,
+          },
+        ],
+      }}
+    />
+  </>);
 }
 
 export function ProductForm({

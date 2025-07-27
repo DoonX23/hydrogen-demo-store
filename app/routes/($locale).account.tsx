@@ -1,11 +1,4 @@
-import {
-  Await,
-  Form,
-  Outlet,
-  useLoaderData,
-  useMatches,
-  useOutlet,
-} from '@remix-run/react';
+import { Await, Form, Outlet, useLoaderData, useMatches, useOutlet } from 'react-router';
 import {Suspense} from 'react';
 import {data, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {flattenConnection} from '@shopify/hydrogen';
@@ -69,7 +62,7 @@ export async function loader({request, context, params}: LoaderFunctionArgs) {
 }
 
 export default function Authenticated() {
-  const loaderData = useLoaderData<typeof loader>();
+  const loaderData = useLoaderData<typeof loader>() as any;
   const outlet = useOutlet();
   const matches = useMatches();
 

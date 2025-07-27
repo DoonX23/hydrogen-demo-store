@@ -1,6 +1,6 @@
 // ~/components/PageBuilder/CardGridSection.tsx
 import React from 'react';
-import { Link } from '@remix-run/react';
+import { Link } from 'react-router';
 import { Image } from '@shopify/hydrogen';
 import ListItems, { ListItem } from './ListItems';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from './Link';
 import {Image} from '@shopify/hydrogen';
-import {useRouteLoaderData} from '@remix-run/react';
+import { useRouteLoaderData } from 'react-router';
 import type {RootLoader} from '~/root';
 
 export interface LogoProps {

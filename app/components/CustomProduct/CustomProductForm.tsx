@@ -1,6 +1,6 @@
 import type {ProductQuery} from 'storefrontapi.generated';
 import {useEffect, useState} from 'react';
-import {useFetcher} from '@remix-run/react';
+import { useFetcher } from 'react-router';
 import {UnitConverter} from '~/components/CustomProduct/UnitConverter';
 import CustomInputNumber from '~/components/CustomProduct/CustomInputNumber';
 import {PriceDisplay} from '~/components/CustomProduct/PriceDisplay';

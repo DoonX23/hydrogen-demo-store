@@ -3,7 +3,7 @@ import {
   type MetaArgs,
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
-import {Await, Form, useLoaderData} from '@remix-run/react';
+import { Await, Form, useLoaderData } from 'react-router';
 import {Suspense} from 'react';
 import {
   Pagination,

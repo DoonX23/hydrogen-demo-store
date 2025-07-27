@@ -1,4 +1,4 @@
-import {useNavigate, useNavigation} from '@remix-run/react';
+import { useNavigate, useNavigation } from 'react-router';
 import {CustomVariantSelector, type CustomVariantOption} from '~/components/CustomProduct/CustomVariantSelector';
 import clsx from 'clsx';
 

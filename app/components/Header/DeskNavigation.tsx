@@ -7,7 +7,7 @@ import {
 import {Popover, Transition, Portal} from '@headlessui/react';
 import {ChevronDownIcon} from '@heroicons/react/24/solid';
 import {Fragment, useState} from 'react';
-import {Link} from '@remix-run/react';
+import { Link } from 'react-router';
 import {MenuLink} from '~/components/MenuLink';
 
 export default function DeskNavigation({menu}: {menu?: EnhancedMenu}) {

@@ -3,7 +3,7 @@ import {
   type MetaArgs,
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
-import {useLoaderData} from '@remix-run/react';
+import { useLoaderData } from 'react-router';
 import {getSeoMeta} from '@shopify/hydrogen';
 import {routeHeaders} from '~/data/cache';
 import {seoPayload} from '~/lib/seo.server';
