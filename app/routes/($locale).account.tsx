@@ -7,7 +7,7 @@ import {
   useOutlet,
 } from '@remix-run/react';
 import {Suspense} from 'react';
-import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
+import {data, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {flattenConnection} from '@shopify/hydrogen';
 
 import type {
@@ -54,7 +54,7 @@ export async function loader({request, context, params}: LoaderFunctionArgs) {
       : `Welcome to your account.`
     : 'Account Details';
 
-  return defer(
+  return data(
     {
       customer,
       heading,

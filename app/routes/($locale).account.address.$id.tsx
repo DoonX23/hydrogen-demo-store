@@ -1,5 +1,5 @@
 import {
-  json,
+  data,
   redirect,
   type ActionFunction,
   type AppLoadContext,
@@ -66,7 +66,7 @@ export const action: ActionFunction = async ({request, context, params}) => {
         params?.locale ? `${params?.locale}/account` : '/account',
       );
     } catch (error: any) {
-      return json(
+      return data(
         {formError: error.message},
         {
           status: 400,
@@ -124,7 +124,7 @@ export const action: ActionFunction = async ({request, context, params}) => {
         params?.locale ? `${params?.locale}/account` : '/account',
       );
     } catch (error: any) {
-      return json(
+      return data(
         {formError: error.message},
         {
           status: 400,
@@ -155,7 +155,7 @@ export const action: ActionFunction = async ({request, context, params}) => {
         params?.locale ? `${params?.locale}/account` : '/account',
       );
     } catch (error: any) {
-      return json(
+      return data(
         {formError: error.message},
         {
           status: 400,

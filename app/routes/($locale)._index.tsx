@@ -1,5 +1,4 @@
 import {
-  defer,
   type MetaArgs,
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
@@ -37,7 +36,7 @@ export async function loader(args: LoaderFunctionArgs) {
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
 
-  return defer({...deferredData, ...criticalData});
+  return {...deferredData, ...criticalData};
 }
 
 /**

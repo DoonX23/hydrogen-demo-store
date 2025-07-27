@@ -1,5 +1,5 @@
 import {
-
+    data,
     type MetaArgs,
     type LoaderFunctionArgs,
   } from '@shopify/remix-oxygen';
@@ -89,7 +89,7 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
     url: request.url,
   });
   // 使用 Response.json() 代替弃用的 json 函数
-  return Response.json({
+  return {
     material: {
       title: article.data.title,
       body: convertToHtml(article.data.body),
@@ -99,7 +99,7 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
       childArticles: article.data.childArticles || []
     },
     seo
-  });
+  };
 }
 
 export const meta = ({matches}: MetaArgs<typeof loader>) => {
@@ -107,7 +107,7 @@ export const meta = ({matches}: MetaArgs<typeof loader>) => {
 };
 
 export default function Material() {
-  const {material} = useLoaderData<typeof loader>() as any;
+  const {material} = useLoaderData<typeof loader>();
   const {title, body, image, relativeCollections, breadcrumb, childArticles} = material; // 解构出 image
   return (
     <>

@@ -35,6 +35,9 @@ import {CustomMenuMobileNav} from './Header/CustomMenuMobileNav';
 import { CustomMobileHeader,CustomDesktopHeader} from './Header/CustomHeader';
 import { Banner } from './Header/Banner';
 import {SiteFeatures} from './SiteFeatures'
+import {
+  type CartReturn,        // 新增
+} from '@shopify/hydrogen';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -121,7 +124,8 @@ function CartDrawer({isOpen, onClose}: {isOpen: boolean; onClose: () => void}) {
     <Drawer open={isOpen} onClose={onClose} heading="Cart" openFrom="right">
       <div className="grid">
         <Suspense fallback={<CartLoading />}>
-          <Await resolve={rootData?.cart}>
+        {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，在使用时手动添加类型断言*/}
+          <Await resolve={rootData?.cart as Promise<CartReturn | null>}>
             {(cart) => <Cart layout="drawer" onClose={onClose} cart={cart} />}
           </Await>
         </Suspense>
@@ -357,7 +361,8 @@ function CartCount({
 
   return (
     <Suspense fallback={<Badge count={0} dark={isHome} openCart={openCart} />}>
-      <Await resolve={rootData?.cart}>
+    {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，在使用时手动添加类型断言*/}
+      <Await resolve={rootData?.cart as Promise<CartReturn | null>}>
         {(cart) => (
           <Badge
             dark={isHome}

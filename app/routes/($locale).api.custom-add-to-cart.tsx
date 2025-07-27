@@ -1,5 +1,5 @@
 // routes/api.create-variant.ts
-import {json} from '@shopify/remix-oxygen';
+import {data} from '@shopify/remix-oxygen';
 import type {ActionFunction} from '@shopify/remix-oxygen';
 import {calculatePriceAndWeight, type CalculationProps} from '~/utils/calculations';
 import {createAdminApiClient} from '@shopify/admin-api-client';
@@ -140,7 +140,7 @@ export const action: ActionFunction = async ({request, context}) => {
         });
         
       const headers = context.cart.setCartId(cartResult.cart.id);
-      return json(
+      return data(
         {
           status: 'success',
           //variantCreation: data,
@@ -155,7 +155,7 @@ export const action: ActionFunction = async ({request, context}) => {
     }
   } catch (error: unknown) {
     if (error instanceof Error) {
-      return json(
+      return data(
         {
           status: 'error',
           error: error.message,
@@ -164,7 +164,7 @@ export const action: ActionFunction = async ({request, context}) => {
         {status: 500}
       );
     }
-    return json(
+    return data(
       {
         status: 'error',
         error: 'An unknown error occurred',

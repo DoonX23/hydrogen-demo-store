@@ -1,4 +1,4 @@
-import {json, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
+import {data, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import invariant from 'tiny-invariant';
 
 import {
@@ -7,7 +7,7 @@ import {
 } from '~/data/fragments';
 
 export async function loader({context: {storefront}}: LoaderFunctionArgs) {
-  return json(await getFeaturedData(storefront));
+  return await getFeaturedData(storefront);
 }
 
 export async function getFeaturedData(

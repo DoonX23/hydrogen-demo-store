@@ -1,7 +1,7 @@
 import { useRef, Suspense, useState, useEffect } from 'react';
 import { Disclosure, Listbox } from '@headlessui/react';
 import {
-  defer,
+  data,
   type MetaArgs,
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
@@ -69,7 +69,7 @@ export async function loader(args: LoaderFunctionArgs) {
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
 
-  return defer({ ...deferredData, ...criticalData });
+  return { ...deferredData, ...criticalData };
 }
 
 /**
@@ -305,7 +305,8 @@ export default function Product() {
               )}
               {product.customizable_size?.value === "true" ? (
                 <Suspense fallback={<CustomProductForm product={product} facets={[]} productMetafields={[]} />}>
-                  <Await resolve={collectionDataPromise}>
+                {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，JsonifyObject<>包装后Promise类型会丢失，使用时需手动添加类型断言*/}
+                  <Await resolve={collectionDataPromise as Promise<{filters: [], filteredMetafields: [],}> }>
                     {(data) => (
                       <CustomProductForm
                         key={product.id} 
@@ -328,9 +329,10 @@ export default function Product() {
           </div>
         </div>
         <Suspense fallback={<Skeleton className="h-32" />}>
+        {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，JsonifyObject<>包装后Promise类型会丢失，使用时需手动添加类型断言*/}
         <Await
           errorElement="There was a problem loading related products"
-          resolve={recommended}
+          resolve={recommended as Promise<{ nodes: []; }>}
         >
           {(products) => (
             <ProductSwimlane title="Related Products" products={products} />

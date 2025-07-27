@@ -1,5 +1,5 @@
 import {
-  json,
+  data,
   type MetaArgs,
   type LinksFunction,
   type LoaderFunctionArgs,
@@ -49,7 +49,7 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
 
   const seo = seoPayload.article({article, url: request.url});
 
-  return json({article, formattedDate, seo});
+  return {article, formattedDate, seo};
 }
 
 export const meta = ({matches}: MetaArgs<typeof loader>) => {

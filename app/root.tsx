@@ -1,5 +1,5 @@
 import {
-  defer,
+ 
   type LinksFunction,
   type LoaderFunctionArgs,
   type AppLoadContext,
@@ -23,6 +23,8 @@ import {
   getSeoMeta,
   Script,
   type SeoConfig,
+  type CartReturn,        // 新增
+  type ShopAnalytics,     // 新增
 } from '@shopify/hydrogen';
 import invariant from 'tiny-invariant';
 
@@ -106,10 +108,10 @@ export async function loader(args: LoaderFunctionArgs) {
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
 
-  return defer({
+  return {
     ...deferredData,
     ...criticalData,
-  });
+  };
 }
 
 /**
@@ -209,10 +211,12 @@ function Layout({children}: {children?: React.ReactNode}) {
               }}
             ></iframe>
           </noscript>
+        {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，在使用时手动添加类型断言
+        */}
         {data ? (
           <Analytics.Provider
-            cart={data.cart}
-            shop={data.shop}
+            cart={data.cart as Promise<CartReturn | null>}
+            shop={data.shop as Promise<ShopAnalytics | null>}
             consent={data.consent}
           >
             <PageLayout

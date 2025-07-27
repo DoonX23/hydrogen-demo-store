@@ -98,8 +98,9 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
     url: request.url,
   });
   
-  // 使用 Response.json() 代替弃用的 json 函数
-  return Response.json({
+  // 1. json()和defer()方法在新版本中已废弃，需升级为data()
+  // 2. 使用data()会导致类型被多层包装：先被DataWithResponseInit<T>包装，再被useLoaderData的JsonifyObject<>包装，最终类型为JsonifyObject<DataWithResponseInit<T>>，造成严重类型丢失
+  return {
     capability: {
       title: article.data.title,
       body: convertToHtml(article.data.body),
@@ -110,7 +111,7 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
       childArticles: article.data.childArticles || []
     },
     seo
-  });
+  };
 }
 
 export const meta = ({matches}: MetaArgs<typeof loader>) => {
@@ -118,7 +119,7 @@ export const meta = ({matches}: MetaArgs<typeof loader>) => {
 };
 
 export default function Capability() {
-  const {capability} = useLoaderData<typeof loader>() as any;;
+  const {capability} = useLoaderData<typeof loader>();
   const {title, body, image, relativeCollections, breadcrumb, childArticles, pagebuilder} = capability;
 
   return (

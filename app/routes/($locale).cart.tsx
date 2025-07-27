@@ -3,7 +3,7 @@ import invariant from 'tiny-invariant';
 import {
   type LoaderFunctionArgs,
   type ActionFunctionArgs,
-  json,
+  data,
 } from '@shopify/remix-oxygen';
 import {CartForm, type CartQueryDataReturn, Analytics} from '@shopify/hydrogen';
 
@@ -67,7 +67,7 @@ export async function action({request, context}: ActionFunctionArgs) {
 
   const {cart: cartResult, errors, userErrors} = result;
 
-  return json(
+  return data(
     {
       cart: cartResult,
       userErrors,
@@ -79,7 +79,7 @@ export async function action({request, context}: ActionFunctionArgs) {
 
 export async function loader({context}: LoaderFunctionArgs) {
   const {cart} = context;
-  return json(await cart.get());
+  return await cart.get();
 }
 
 export default function CartRoute() {

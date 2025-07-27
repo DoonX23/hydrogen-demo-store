@@ -16,6 +16,7 @@ import {useIsHydrated} from '~/hooks/useIsHydrated';
 import type {RootLoader} from '~/root';
 import DeskNavigation from '~/components/Header/DeskNavigation';
 import Logo from '../Logo';
+import {type CartReturn} from '@shopify/hydrogen';
 
 export function CustomMobileHeader({
     title,
@@ -189,7 +190,8 @@ export function CustomDesktopHeader({
   
     return (
       <Suspense fallback={<Badge count={0} dark={isHome} openCart={openCart} />}>
-        <Await resolve={rootData?.cart}>
+        {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，在使用时手动添加类型断言*/}
+        <Await resolve={rootData?.cart as Promise<CartReturn | null>}>
           {(cart) => (
             <Badge
               dark={isHome}

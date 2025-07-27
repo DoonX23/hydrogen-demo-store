@@ -1,6 +1,5 @@
 import {useEffect} from 'react';
 import {
-  json,
   type MetaArgs,
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
@@ -129,12 +128,12 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
     })
     .filter((filter): filter is NonNullable<typeof filter> => filter !== null);
 
-  return json({
+  return {
     collection,
     appliedFilters,
     collections: flattenConnection(collections),
     seo,
-  });
+  };
 }
 
 export const meta = ({matches}: MetaArgs<typeof loader>) => {

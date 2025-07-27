@@ -1,4 +1,5 @@
 import {
+    data,
     type MetaArgs,
     type LoaderFunctionArgs,
   } from '@shopify/remix-oxygen';
@@ -82,7 +83,7 @@ import {
     });
     
     // 使用 Response.json() 代替弃用的 json 函数
-    return Response.json({
+    return {
       material: {
         title: article.data.title,
         body: convertToHtml(article.data.body),
@@ -92,7 +93,7 @@ import {
         childArticles: article.data.childArticles || []
       },
       seo
-    });
+    };
   }
   
   export const meta = ({matches}: MetaArgs<typeof loader>) => {
@@ -100,7 +101,7 @@ import {
   };
   
   export default function MaterialsIndex() {
-    const {material} = useLoaderData<typeof loader>() as any;
+    const {material} = useLoaderData<typeof loader>();
     const {title, body, image, relativeCollections, breadcrumb, childArticles} = material;
     
     return (
