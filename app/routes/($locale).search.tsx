@@ -102,11 +102,10 @@ export default function Search() {
           </button>
         </Form>
       </PageHeader>
-      {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，JsonifyObject<>包装后Promise类型会丢失，使用时需手动添加类型断言*/}
       {!searchTerm || noResults ? (
         <NoResults
           noResults={noResults}
-          recommendations={noResultRecommendations as Promise<null | FeaturedData>}
+          recommendations={noResultRecommendations}
         />
       ) : (
         <Section>

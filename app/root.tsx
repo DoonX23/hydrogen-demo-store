@@ -23,8 +23,6 @@ import {
   getSeoMeta,
   Script,
   type SeoConfig,
-  type CartReturn,        // 新增
-  type ShopAnalytics,     // 新增
 } from '@shopify/hydrogen';
 import invariant from 'tiny-invariant';
 
@@ -227,8 +225,7 @@ function Layout({children}: {children?: React.ReactNode}) {
               }}
             ></iframe>
           </noscript>
-        {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，在使用时手动添加类型断言
-        */}
+
         {data ? (
            /* --- 修改代码开始 --- */
           /*
@@ -251,8 +248,8 @@ function Layout({children}: {children?: React.ReactNode}) {
           nonce={nonce}
           >
           <Analytics.Provider
-            cart={data.cart as Promise<CartReturn | null>}
-            shop={data.shop as Promise<ShopAnalytics | null>}
+            cart={data.cart}
+            shop={data.shop}
             consent={data.consent}
           >
             <PageLayout

@@ -313,8 +313,7 @@ export default function Product() {
             )}
             {product.customizable_size?.value === "true" ? (
               <Suspense fallback={<CustomProductForm product={product} facets={[]} productMetafields={[]} />}>
-              {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，JsonifyObject<>包装后Promise类型会丢失，使用时需手动添加类型断言*/}
-                <Await resolve={collectionDataPromise as Promise<{filters: [], filteredMetafields: [],}> }>
+                <Await resolve={collectionDataPromise}>
                   {(data) => (
                     <CustomProductForm
                       key={product.id} 
@@ -337,10 +336,9 @@ export default function Product() {
         </div>
       </div>
       <Suspense fallback={<Skeleton className="h-32" />}>
-      {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，JsonifyObject<>包装后Promise类型会丢失，使用时需手动添加类型断言*/}
       <Await
         errorElement="There was a problem loading related products"
-        resolve={recommended as Promise<{ nodes: []; }>}
+        resolve={recommended}
       >
         {(products) => (
           <ProductSwimlane title="Related Products" products={products} />
