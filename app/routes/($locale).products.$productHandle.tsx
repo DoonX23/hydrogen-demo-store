@@ -201,8 +201,8 @@ export default function Product() {
     { id: 'description', title: 'Description' },
     { id: 'specifications', title: 'Specifications' },
     { id: 'reviews', title: 'Reviews' },
-    { id: 'shipping', title: 'Shipping' },
-    { id: 'return', title: 'Return' }
+    //{ id: 'shipping', title: 'Shipping' },
+    //{ id: 'return', title: 'Return' }
   ];
 
   // Optimistically selects a variant with given available variant information
@@ -383,7 +383,7 @@ export default function Product() {
           okendoReviewsSnippet={product.okendoReviewsSnippet}
         /></div>
         
-        {/* shipping部分 - 这是第3个锚点 */}
+        {/* shipping部分 - 这是第3个锚点
         {!!shippingPolicy?.body && (
           <div id="shipping" className="pb-8 md:pb-12">
             <h2 className="text-2xl font-semibold">Shipping Policy</h2>
@@ -400,9 +400,9 @@ export default function Product() {
                 Learn more
             </Link>
           </div>
-        )}
+        )} */}
 
-        {/* return部分 - 这是第4个锚点 */}
+        {/* return部分 - 这是第4个锚点
         {!!refundPolicy?.body && (
           <div id="return" className="pb-8 md:pb-12">
             <h2 className="text-2xl font-semibold">Return Policy</h2>
@@ -419,7 +419,7 @@ export default function Product() {
                 Learn more
             </Link>
           </div>
-        )}
+        )} */}
       </div>
     </div>
     {!!product.related_collections?.references?.nodes && (
