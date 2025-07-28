@@ -20,6 +20,12 @@ export default async function handleRequest(
       "'self'",
       'localhost:*',
       'https://cdn.shopify.com',
+      'https://d3hw6dc1ow8pp2.cloudfront.net', // Okendo
+      'https://d3g5hqndtiniji.cloudfront.net', // Okendo
+      'https://dov7r31oq5dkj.cloudfront.net',  // Okendo
+      'https://cdn-static.okendo.io',         // Okendo
+      'https://surveys.okendo.io',             // Okendo
+      'https://api.okendo.io',                 // Okendo
       'data:',
     ],
       // 添加 styleSrc
@@ -30,6 +36,9 @@ export default async function handleRequest(
     'https://*.googletagmanager.com',
     'https://cdn.shopify.com',
     'https://fonts.googleapis.com', // 添加 Google Fonts 样式
+    'https://d3hw6dc1ow8pp2.cloudfront.net', // Okendo
+    'https://cdn-static.okendo.io',         // Okendo
+    'https://surveys.okendo.io',             // Okendo
   ],
   // 添加 fontSrc
   fontSrc: [
@@ -38,6 +47,10 @@ export default async function handleRequest(
     'https://cdn.shopify.com', // 添加 Shopify CDN
     'https://*.crisp.chat',
     'https://www.googletagmanager.com',
+    'https://d3hw6dc1ow8pp2.cloudfront.net', // Okendo
+    'https://dov7r31oq5dkj.cloudfront.net',  // Okendo
+    'https://cdn-static.okendo.io',         // Okendo
+    'https://surveys.okendo.io',             // Okendo
   ],
     scriptSrc: [
       'self',
@@ -48,6 +61,11 @@ export default async function handleRequest(
       'https://*.googletagmanager.com',
       'https://*.hsforms.net', // HubSpot表单域名
       'https://*.googleapis.com',  // 添加这行
+      'https://d3hw6dc1ow8pp2.cloudfront.net', // Okendo
+      'https://dov7r31oq5dkj.cloudfront.net',  // Okendo
+      'https://cdn-static.okendo.io',         // Okendo
+      'https://surveys.okendo.io',             // Okendo
+      'https://api.okendo.io',                 // Okendo
       ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
     ],
     connectSrc: [
@@ -69,6 +87,10 @@ export default async function handleRequest(
       // Amazon S3 for HubSpot
       'https://*.amazonaws.com',    // 覆盖所有 HubSpot 的 S3 存储
       "https://usually-fleet-jawfish.ngrok-free.app", // 添加你的ngrok域名
+      'https://api.okendo.io',                 // Okendo
+      'https://cdn-static.okendo.io',         // Okendo
+      'https://surveys.okendo.io',             // Okendo
+      'https://api.raygun.com',                // Okendo (Error Reporting)
     ],
     frameSrc: [
       'https://*.google-analytics.com',
@@ -77,6 +99,8 @@ export default async function handleRequest(
       'https://*.hsforms.com',
       'https://*.hubspot.com',     // 添加
       'https://www.youtube.com',
+      'https://www.google.com',
+      'https://www.gstatic.com'
     ],
     imgSrc: [                        // 添加 imgSrc 配置
       "'self'",
@@ -93,6 +117,18 @@ export default async function handleRequest(
       'https://*.google.com',
       'https://*.google.com.hk',
       'https://*.doubleclick.net',
+      'https://d3hw6dc1ow8pp2.cloudfront.net', // Okendo
+      'https://d3g5hqndtiniji.cloudfront.net', // Okendo
+      'https://dov7r31oq5dkj.cloudfront.net',  // Okendo
+      'https://cdn-static.okendo.io',         // Okendo
+      'https://surveys.okendo.io',             // Okendo
+    ],
+    mediaSrc: [
+      "'self'",
+      'https://d3hw6dc1ow8pp2.cloudfront.net', // Okendo
+      'https://d3g5hqndtiniji.cloudfront.net', // Okendo
+      'https://dov7r31oq5dkj.cloudfront.net',  // Okendo
+      'https://cdn-static.okendo.io',         // Okendo
     ],
   });
 

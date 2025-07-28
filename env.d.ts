@@ -20,6 +20,8 @@ declare global {
    * Declare expected Env parameter in fetch handler.
    */
   interface Env {
+    //OKENDO
+    PUBLIC_OKENDO_SUBSCRIBER_ID: string;
     // ...other environment variables
     SANITY_PROJECT_ID: string;
     SANITY_DATASET?: string;

@@ -38,6 +38,7 @@ import styles from '~/styles/app.css?url';
 import {DEFAULT_LOCALE, parseMenu} from './lib/utils';
 import {GoogleTagManager} from '~/components/GoogleTagManager';
 
+import {OkendoProvider,getOkendoProviderData} from '@okendo/shopify-hydrogen';
 export type RootLoader = typeof loader;
 
 // This is important to avoid re-fetching root queries on sub-navigations
@@ -150,11 +151,16 @@ async function loadCriticalData({request, context}: LoaderFunctionArgs) {
  * Make sure to not throw any errors here, as it will cause the page to 500.
  */
 function loadDeferredData({context}: LoaderFunctionArgs) {
-  const {cart, customerAccount} = context;
+  const {cart, customerAccount, env} = context;
 
   return {
     isLoggedIn: customerAccount.isLoggedIn(),
     cart: cart.get(),
+    // 新增的部分
+    okendoProviderData: getOkendoProviderData({
+      context,
+      subscriberId: env.PUBLIC_OKENDO_SUBSCRIBER_ID,
+  }),
   };
 }
 
@@ -173,6 +179,16 @@ function Layout({children}: {children?: React.ReactNode}) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <meta name="msvalidate.01" content="A352E6A0AF9A652267361BBB572B8468" />
+        {/* --- 新增代码开始 --- */}
+        {/*
+        * 语句解释：
+        * 1. <meta ... />: 这是一个HTML元数据标签，用于向浏览器或搜索引擎提供关于页面的信息。
+        * 2. name="oke:subscriber_id": 这个 `name` 属性是 Okendo 的脚本专门识别的。它告诉脚本当前商家的订阅者ID是什么。
+        * 3. content="413a7610-9d4f-4b8e-b54b-5a1e274c6228": 这个 `content` 属性的值就是您的 Okendo 订阅者ID。
+        *    我已经从您代码的`loader`函数中提取了这个值。这个标签能让 Okendo 的功能更快地初始化。
+        */}
+        <meta name="oke:subscriber_id" content="413a7610-9d4f-4b8e-b54b-5a1e274c6228" />
+        {/* --- 新增代码结束 --- */}
         <link rel="stylesheet" href={styles}></link>
         <Meta />
         <Links />
@@ -214,6 +230,26 @@ function Layout({children}: {children?: React.ReactNode}) {
         {/*处理Promise类型丢失：对于loader返回对象中包含Promise的属性，在使用时手动添加类型断言
         */}
         {data ? (
+           /* --- 修改代码开始 --- */
+          /*
+          * 语句解释：
+          * 1. <OkendoProvider ...>: 我们在这里使用从 `@okendo/shopify-hydrogen` 包导入的 OkendoProvider 组件。
+          *    Provider 是一种特殊的React组件，它利用React的Context API，将数据或功能“提供”给它内部的所有子组件。
+          *    把它放在这里，意味着您网站的所有页面都能访问到Okendo提供的配置和数据。
+          *
+          * 2. okendoProviderData={data.okendoProviderData}: 这是一个prop（属性）。
+          *    - `data`: 这是通过 `useRouteLoaderData` hook 从 `loader` 函数获取的数据对象。
+          *    - `data.okendoProviderData`: 我们将 `loader` 中通过 `getOkendoProviderData` 函数获取到的数据，传递给 OkendoProvider。
+          *      您已经在 `loadDeferredData` 函数中正确添加了这一部分。
+          *
+          * 3. nonce={nonce}: 这是另一个prop，用于内容安全策略（CSP）。
+          *    - `nonce`: 这个值是通过 `useNonce()` hook 生成的唯一随机字符串。
+          *    - 将 `nonce` 传递给 OkendoProvider，可以确保如果 OkendoProvider 需要在页面上动态插入脚本或样式，这些资源能够符合CSP规则，从而被浏览器安全地执行。
+          */
+          <OkendoProvider
+          okendoProviderData={data.okendoProviderData}
+          nonce={nonce}
+          >
           <Analytics.Provider
             cart={data.cart as Promise<CartReturn | null>}
             shop={data.shop as Promise<ShopAnalytics | null>}
@@ -227,6 +263,8 @@ function Layout({children}: {children?: React.ReactNode}) {
             </PageLayout>
             <GoogleTagManager />
           </Analytics.Provider>
+          </OkendoProvider>
+          /* --- 修改代码结束 --- */
         ) : (
           children
         )}

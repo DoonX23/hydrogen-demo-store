@@ -48,6 +48,8 @@ import {
   COMMON_PRODUCT_CARD_FRAGMENT,
   LINK_FRAGMENT,
   MEDIA_IMAGE_FRAGMENT,
+  OKENDO_PRODUCT_REVIEWS_FRAGMENT,
+  OKENDO_PRODUCT_STAR_RATING_FRAGMENT,
 } from '~/data/commonFragments';
 import { CollectionSlider } from '~/components/CollectionsSlider';
 import { HubspotForm } from '~/components/HubspotForm';
@@ -56,6 +58,7 @@ import { ProductDescriptionSection } from '~/components/ProductDescriptionSectio
 import ProductSpecifications from '~/components/ProductSpecifications';
 import NcInputNumber from '~/components/NcInputNumber';
 import Prices from '~/components/Prices';
+import { OkendoReviews, OkendoStarRating } from '@okendo/shopify-hydrogen';
 
 export const headers = routeHeaders;
 
@@ -197,6 +200,7 @@ export default function Product() {
   const productSections = [
     { id: 'description', title: 'Description' },
     { id: 'specifications', title: 'Specifications' },
+    { id: 'reviews', title: 'Reviews' },
     { id: 'shipping', title: 'Shipping' },
     { id: 'return', title: 'Return' }
   ];
@@ -260,6 +264,11 @@ export default function Product() {
               <Heading as="h1" className="whitespace-normal text-xl md:text-[1.5rem]">
                 {title}
               </Heading>
+              <OkendoStarRating
+                className="mb-4"
+                productId={product.id}
+                okendoStarRatingSnippet={product.okendoStarRatingSnippet}
+              />
             </div>
             <div className="grid">
               <div className="grid text-center">
@@ -366,7 +375,14 @@ export default function Product() {
 
         {/* 规格参数部分 - 只有当product.specifications?.value存在时才显示 - 这是第2个锚点 */}
         {product.specifications?.value && (<ProductSpecifications specifications={specifications} />)}
-
+        
+        <div id="reviews">
+        <h2 className="text-2xl font-bold mb-4">Reviews</h2>
+        <OkendoReviews
+          productId={product.id}
+          okendoReviewsSnippet={product.okendoReviewsSnippet}
+        /></div>
+        
         {/* shipping部分 - 这是第3个锚点 */}
         {!!shippingPolicy?.body && (
           <div id="shipping" className="pb-8 md:pb-12">
@@ -739,6 +755,8 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
 `;
 
 const PRODUCT_FRAGMENT = `#graphql
+  ${OKENDO_PRODUCT_STAR_RATING_FRAGMENT}
+  ${OKENDO_PRODUCT_REVIEWS_FRAGMENT}
   fragment Product on Product {
     id
     title
@@ -880,6 +898,8 @@ const PRODUCT_FRAGMENT = `#graphql
         ...Media
       }
     }
+    ...OkendoStarRatingSnippet
+    ...OkendoReviewsSnippet
   }
   ${PRODUCT_VARIANT_FRAGMENT}
 ` as const;
