@@ -146,8 +146,8 @@ export default function Page() {
                   <BuildingOffice2Icon aria-hidden="true" className="h-7 w-6 text-gray-400" />
                 </dt>
                 <dd>
-                Xitou Industrial zone, Longsheng Road, Longhua<br />
-                Shenzhen City, Guangdong Province, China
+                Building 1, Xitou Industrial Zone, Longhua<br />
+                Shenzhen, Guangdong, China
                 </dd>
               </div>
               <div className="flex gap-x-4">
@@ -156,7 +156,7 @@ export default function Page() {
                   <BuildingOffice2Icon aria-hidden="true" className="h-7 w-6 text-gray-400" />
                 </dt>
                 <dd>
-                30 N Gould St Ste 100Sheridan, WY 82801, United State<br />
+                30 N Gould St Ste 100,<br />Sheridan, WY 82801, United State<br />
                 </dd>
               </div>
               <div className="flex gap-x-4">
