@@ -3,13 +3,6 @@ import { Link } from '~/components/Link'; // 假设Link组件位于这个路径
 import ListItems, { ListItem } from './ListItems';
 
 interface HeroSectionProps {
-  tagline?: string;
-  taglineLink?: string;
-  taglineLinkText?: string;
-  heading?: string;
-  description?: string;
-  list?: ListItem[];
-  // 保留 block 属性以保持向后兼容性
   block?: {
     tagline?: string;
     taglineLink?: string;
@@ -20,23 +13,7 @@ interface HeroSectionProps {
   };
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ 
-  tagline,
-  taglineLink,
-  taglineLinkText,
-  heading,
-  description,
-  list,
-  block 
-}) => {
-  // 优先使用直接传递的属性，如果没有则使用 block 中的属性
-  const finalTagline = tagline || block?.tagline;
-  const finalTaglineLink = taglineLink || block?.taglineLink;
-  const finalTaglineLinkText = taglineLinkText || block?.taglineLinkText;
-  const finalHeading = heading || block?.heading;
-  const finalDescription = description || block?.description;
-  const finalList = list || block?.list;
-
+const HeroSection: React.FC<HeroSectionProps> = ({ block }) => {
   return (
     <div className="bg-white">
       <div className="relative isolate px-6 py-14 lg:px-8">
@@ -55,14 +32,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
         
         <div className="mx-auto max-w-2xl py-32">
-          {finalTagline && (
+          {block?.tagline && (
             <div className="hidden sm:mb-8 sm:flex sm:justify-center">
               <div className="relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
-                {finalTagline}{" "}
-                {finalTaglineLinkText && finalTaglineLink && (
-                  <Link to={finalTaglineLink} className="font-semibold text-brand">
+                {block.tagline}{" "}
+                {block.taglineLinkText && block.taglineLink && (
+                  <Link to={block.taglineLink} className="font-semibold text-brand">
                     <span aria-hidden="true" className="absolute inset-0" />
-                    {finalTaglineLinkText} <span aria-hidden="true">&rarr;</span>
+                    {block.taglineLinkText} <span aria-hidden="true">&rarr;</span>
                   </Link>
                 )}
               </div>
@@ -71,16 +48,16 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           
           <div className="text-center">
             <h1 className="text-balance text-2xl font-semibold tracking-tight text-gray-900 sm:text-6xl">
-              {finalHeading}
+              {block?.heading}
             </h1>
             <p className="mt-8 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
-              {finalDescription}
+              {block?.description}
             </p>
 
             {/* 渲染列表项目 */}
             <div className="mt-8 flex justify-center">
               <div className="mx-auto max-w-lg">
-                <ListItems list={finalList} />
+                <ListItems list={block?.list} />
               </div>
             </div>
           </div>

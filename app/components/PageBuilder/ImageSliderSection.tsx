@@ -19,10 +19,6 @@ export interface ImageItem {
 
 // 定义组件属性类型
 export interface ImageSliderSectionProps {
-  heading?: string;
-  subheading?: string;
-  items?: ImageItem[];
-  // 保留 block 属性以保持向后兼容性
   block?: {
     heading?: string;
     subheading?: string;
@@ -30,17 +26,7 @@ export interface ImageSliderSectionProps {
   };
 }
 
-const ImageSliderSection: React.FC<ImageSliderSectionProps> = ({ 
-  heading,
-  subheading,
-  items,
-  block 
-}) => {
-  // 优先使用直接传递的属性，如果没有则使用 block 中的属性
-  const finalHeading = heading || block?.heading;
-  const finalSubheading = subheading || block?.subheading;
-  const finalItems = items || block?.items;
-
+const ImageSliderSection: React.FC<ImageSliderSectionProps> = ({ block }) => {
   const sliderRef = useRef<HTMLDivElement>(null);
   const { scrollToNextSlide, scrollToPrevSlide } = useSnapSlider({ sliderRef });
   
@@ -48,21 +34,21 @@ const ImageSliderSection: React.FC<ImageSliderSectionProps> = ({
     <>
       <div className="max-w-2xl text-center mx-auto mb-8">
         <h2 className="text-3xl font-bold md:text-4xl md:leading-tight text-gray-900">
-          {finalHeading}
+          {block?.heading}
         </h2>
         <p className="mt-3 text-lg text-gray-600">
-          {finalSubheading}
+          {block?.subheading}
         </p>
       </div>
 
-      {finalItems && finalItems.length > 0 && (
+      {block?.items && block.items.length > 0 && (
         <div className="relative px-4">
           <div 
             ref={sliderRef}
             className="relative w-full flex gap-4 lg:gap-8 snap-x snap-mandatory overflow-x-auto hiddenScrollbar"
           >
             <div className="w-0"></div>
-            {finalItems.map((item, itemIndex) => (
+            {block.items.map((item, itemIndex) => (
               <div
                 key={itemIndex}
                 className="mySnapItem snap-start shrink-0 last:pr-4 lg:last:pr-10"
