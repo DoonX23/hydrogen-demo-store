@@ -131,7 +131,7 @@ export default function Material() {
         )}
         <div
           dangerouslySetInnerHTML={{__html: body}}
-          className="article prose prose-sm sm:prose lg:prose-lg mx-auto mt-8"
+          className="article prose prose-sm sm:prose lg:prose mx-auto mt-8 lg:max-w-none"
         />
         {/* 添加集合展示部分 
         {relativeCollections && relativeCollections.length > 0 && (
