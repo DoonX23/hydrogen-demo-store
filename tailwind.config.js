@@ -4,11 +4,11 @@ import typographyPlugin from '@tailwindcss/typography';
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./app/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'false',
   theme: {
     //修改container的预设，注意它不单是个类名
     container: {
       center: true,
-      darkMode: 'false',
       padding: {
         DEFAULT: '1rem',
         xl: '40px',
