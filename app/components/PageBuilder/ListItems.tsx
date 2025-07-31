@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckIcon } from "@heroicons/react/20/solid";
+import { ChevronRightIcon } from "@heroicons/react/20/solid";
 
 export interface ListItem {
   text?: string;
@@ -18,9 +18,10 @@ const ListItems: React.FC<ListItemsProps> = ({ list }) => {
       {list.map((item, idx) => (
         <li 
           key={idx} 
-          className={`flex items-start gap-x-2 ${item.highlighted ? 'font-medium text-brand' : 'text-gray-600'}`}
+          className={`flex items-start gap-x-2 text-sm ${item.highlighted ? 'font-medium text-brand' : 'text-gray-600'}`}
         >
-          <CheckIcon className="h-5 w-5 flex-none text-brand" aria-hidden="true" />
+          {/* 修改：使用ArrowRightIcon，颜色为highlight */}
+          <ChevronRightIcon className="h-5 w-5 flex-none text-brand" aria-hidden="true" />
           <span>{item.text}</span>
         </li>
       ))}

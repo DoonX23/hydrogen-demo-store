@@ -158,7 +158,7 @@ export default function Collection() {
               </Text>*/}
                       <div 
           dangerouslySetInnerHTML={{__html: collection.descriptionHtml}} 
-          className="inline-block prose-sm"  // 添加prose类来美化HTML内容
+          className="inline-block prose prose-sm max-w-none"  // 添加prose类来美化HTML内容 取消宽度限制
         />
             </div>
           </div>

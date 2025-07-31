@@ -47,13 +47,15 @@ const CardItem: React.FC<{
 
   // 根据区块级布局确定卡片布局样式
   const cardLayoutClass = layout === 'imageLeft'
-    ? 'flex flex-col md:flex-row gap-6'
-    : 'flex flex-col gap-6';
+    ? 'flex flex-col md:flex-row' // 移动端垂直排列，桌面端水平排列
+    : 'flex flex-col'; // 始终垂直排列
 
+  // 图片容器样式 - 移除间距和圆角
   const imageWrapperClass = layout === 'imageLeft'
-    ? 'shrink-0 relative rounded-xl overflow-hidden w-full md:w-2/5 aspect-video' // 左图右内容时的图片容器
-    : 'shrink-0 relative rounded-xl overflow-hidden w-full aspect-video'; // 上图下内容时的图片容器，固定宽高比
+    ? 'shrink-0 relative overflow-hidden w-full md:w-2/5 aspect-video' // 桌面端占2/5宽度
+    : 'shrink-0 relative overflow-hidden w-full aspect-video'; // 全宽度
 
+  // 内容包装器组件，根据是否有链接决定渲染Link还是div
   const ContentWrapper = href 
     ? ({ children }: { children: React.ReactNode }) => (
         <Link to={href} className="group h-full block focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg">
@@ -64,21 +66,22 @@ const CardItem: React.FC<{
 
   return (
     <ContentWrapper>
-      <div className="h-full rounded-lg border border-gray-200 p-6 shadow-sm transition-shadow hover:shadow-md">
+      {/* 设置灰色背景，hover时添加滤镜效果，移除阴影和transform */}
+      <div className="h-full bg-gray-100 transition-all duration-300 ease-out hover:brightness-95 overflow-hidden rounded-lg">
         <div className={cardLayoutClass}>
-          {/* 图片部分 */}
+          {/* 图片部分 - 无间距贴边 */}
           {image?.url && (
             <div className={imageWrapperClass}>
               <Image
                 src={image.url}
                 alt={image.alt || title || ''}
-                className="w-full h-full object-cover rounded-lg group-hover:scale-105 group-focus:scale-105 transition-transform duration-500 ease-in-out"
+                className="w-full h-full object-cover"
               />
             </div>
           )}
           
-          {/* 内容部分 */}
-          <div className="flex flex-1 flex-col">
+          {/* 内容部分 - 添加padding */}
+          <div className="flex flex-1 flex-col p-6">
             {title && <h3 className="text-xl font-semibold group-hover:text-primary-600 group-focus:text-primary-600 transition-colors text-balance">{title}</h3>}
             {description && <p className="mt-2 text-gray-600">{description}</p>}
             
@@ -88,7 +91,7 @@ const CardItem: React.FC<{
             {/* 阅读更多链接 */}
             {href && readMore && (
               <div className="mt-auto pt-4">
-                <span className="text-primary-600 font-medium group-hover:text-primary-500 group-focus:text-primary-500 transition-colors inline-flex items-center gap-x-1">
+                <span className="text-highlight font-bold group-hover:text-brand group-focus:text-brand transition-colors inline-flex items-center gap-x-1">
                   {readMore}
                   <svg 
                     className="shrink-0 size-4" 

@@ -170,7 +170,7 @@ export default function Material() {
         )}
         <div
           dangerouslySetInnerHTML={{__html: body}}
-          className="article prose prose-sm sm:prose lg:prose mx-auto mt-8 lg:max-w-none"
+          className="prose prose-sm mx-auto mt-8 max-w-none"
         />
         {/* 添加集合展示部分 
         {relativeCollections && relativeCollections.length > 0 && (
@@ -186,12 +186,13 @@ export default function Material() {
         {childArticles && childArticles.length > 0 && (
           <RelatedArticles 
             articles={childArticles} 
-            title="Our Capabilities"
+            title="Related Materials"
             readMoreText="Read more →"
           />
         )}
       </Section>
     </div>
+    {/* 
     {relativeCollections && relativeCollections.length > 0 && (
       <CollectionSlider
         heading_bold="Discover more."
@@ -202,6 +203,7 @@ export default function Material() {
         isSkeleton={false}
       />
     )}
+    */}
   </>
   );
 }
