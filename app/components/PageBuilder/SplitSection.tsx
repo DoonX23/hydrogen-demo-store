@@ -50,13 +50,13 @@ const SplitSection: React.FC<SplitSectionProps> = ({ block }) => {
                 )}
 
                 {block.heading && (
-                  <h1 className="mt-10 text-pretty text-5xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
+                  <h1 className="mt-10 text-pretty text-3xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
                     {block.heading}
                   </h1>
                 )}
 
                 {block.byline && (
-                  <p className="mt-8 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
+                  <p className="mt-8 text-pretty text-lg font-medium text-gray-600">
                     {block.byline}
                   </p>
                 )}
@@ -130,13 +130,13 @@ const SplitSection: React.FC<SplitSectionProps> = ({ block }) => {
                 )}
 
                 {block?.heading && (
-                  <h1 className="mt-10 text-pretty text-5xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
+                  <h1 className="mt-10 text-pretty text-3xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
                     {block.heading}
                   </h1>
                 )}
 
                 {block?.byline && (
-                  <p className="mt-8 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
+                  <p className="mt-8 text-pretty text-lg font-medium text-gray-600">
                     {block.byline}
                   </p>
                 )}
