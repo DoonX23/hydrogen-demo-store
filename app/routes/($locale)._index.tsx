@@ -15,6 +15,13 @@ import {seoPayload} from '~/lib/seo.server';
 import {routeHeaders} from '~/data/cache';
 import CustomHero from '~/components/CustomHero';
 
+// 【新增】导入 PageBuilder 组件
+import SplitSection from '~/components/PageBuilder/SplitSection';
+import ImageSliderSection from '~/components/PageBuilder/ImageSliderSection';
+import HeroSection from '~/components/PageBuilder/HeroSection';
+import StatsSection from '~/components/PageBuilder/StatsSection';
+import CardGridSection from '~/components/PageBuilder/CardGridSection';
+
 export const headers = routeHeaders;
 
 export async function loader(args: LoaderFunctionArgs) {
@@ -44,16 +51,25 @@ export async function loader(args: LoaderFunctionArgs) {
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  */
 async function loadCriticalData({context, request}: LoaderFunctionArgs) {
-  const [{shop, hero}] = await Promise.all([
+  // 【新增】添加Sanity查询获取首页PageBuilder数据
+  const sanityQuery = `*[_type == "article" && slug.current == "homepage"][0]{
+    pagebuilder[]
+  }`;
+  // 【修改】直接在解构赋值中获取shop和hero
+  const [{shop, hero}, sanityData] = await Promise.all([
     context.storefront.query(HOMEPAGE_SEO_QUERY, {
       variables: {handle: 'plastic-film'},
     }),
+    // 【新增】查询Sanity首页数据
+    (context.sanity as any).loadQuery(sanityQuery),
     // Add other queries here, so that they are loaded in parallel
   ]);
 
   return {
     shop,
     primaryHero: hero,
+    // 【新增】添加pagebuilder数据
+    pagebuilder: sanityData?.data?.pagebuilder || [],
     seo: seoPayload.home({url: request.url}),
   };
 }
@@ -148,6 +164,8 @@ export default function Homepage() {
     tertiaryHero,
     featuredCollections,
     featuredProducts,
+    // 【新增】从useLoaderData中解构pagebuilder
+    pagebuilder,
   } = useLoaderData<typeof loader>();
 
   // TODO: skeletons vs placeholders
@@ -155,10 +173,42 @@ export default function Homepage() {
 
   return (
     <>
+      {/* 【新增】添加 PageBuilder 内容渲染 */}
+      {pagebuilder && pagebuilder.length > 0 && (
+        <main className="isolate">
+          {pagebuilder.map((block: any, index: number) => {
+            switch (block._type) {
+              case 'splitSection':
+                return <SplitSection key={index} block={block} />;
+
+              case 'imageSliderSection':
+                return (
+                  <div key={index} className="py-10 lg:py-24">
+                    <ImageSliderSection block={block} />
+                  </div>
+                );
+
+              case 'heroSection':
+                return <HeroSection key={index} block={block} />;
+
+              case 'cardGridSection':
+                return <CardGridSection key={index} block={block} />;
+
+              case 'statsSection':
+                return <StatsSection key={index} block={block} />;
+                
+              default:
+                return null;
+            }
+          })}
+        </main>
+      )}
+
+      {/*
       {primaryHero && (
         <CustomHero {...primaryHero} height="full" top loading="eager" />
       )}
-      {/*{primaryHero && (
+      {primaryHero && (
         <Hero {...primaryHero} height="full" top loading="eager" />
       )}
 
