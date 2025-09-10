@@ -4,7 +4,7 @@ import typographyPlugin from '@tailwindcss/typography';
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./app/**/*.{js,ts,jsx,tsx}'],
-  darkMode: false,
+  darkMode: ['class', '.this-class-will-never-exist'], // 使用一个永远不存在的类
   theme: {
     //修改container的预设，注意它不单是个类名
     container: {
