@@ -21,7 +21,7 @@ export function CustomRadioGroup({ name, label, options, selectedValue, onChange
   return (
     <div className="space-y-2">
       <label className="block text-sm font-medium">{label}</label>
-      <div className="mt-2 grid grid-cols-3 gap-3 sm:grid-cols-6">
+      <div className="mt-2 grid grid-cols-3 gap-3 sm:grid-cols-3">
         {options.map((option) => (
           <div key={option.id}>
             <input
