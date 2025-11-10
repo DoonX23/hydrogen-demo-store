@@ -272,7 +272,7 @@ export default function Product() {
             </div>
             <div className="grid">
               <div className="grid text-center">
-                <HubspotForm buttonText="Custom Bulk Quotation" />
+                <HubspotForm buttonText="Free Sample & Bulk Quotation" />
               </div>
               {/*
               {descriptionHtml && (
