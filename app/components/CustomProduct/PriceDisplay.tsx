@@ -58,16 +58,16 @@ export function PriceDisplay(props: CalculationProps) {
         Price:
         <span className="text-brand dark:text-highlight"> ${formattedPrice}</span>
       </div>
-      
+      {/*
       <div className="mt-4 p-3 border border-blue-100 rounded bg-blue-100 text-highlight">
         {applicableDiscount ? (
           <div className="flex items-center">
-            {/* 第一列：折扣数值 - 正方形区域 */}
+            {/* 第一列：折扣数值 - 正方形区域 
             <div className="flex-none w-12 h-12 flex items-center justify-center rounded-lg hidden md:flex mx-2">
               <span className="text-3xl font-bold text-center">{applicableDiscount.discountPercent}</span>
             </div>
             
-            {/* 第二列：优惠码和描述 */}
+            {/* 第二列：优惠码和描述 
             <div className="flex-grow ml-0 md:ml-3">
               <div className="flex items-center">
                 <span className="text-sm font-medium text-brand uppercase tracking-wide mr-2">Code:</span>
@@ -76,7 +76,7 @@ export function PriceDisplay(props: CalculationProps) {
               <p className="text-xs text-brand ">{applicableDiscount.description}</p>
             </div>
             
-            {/* 第三列：复制按钮 */}
+            {/* 第三列：复制按钮 
             <div className="flex-none">
               <button 
                 onClick={() => handleCopyCode(applicableDiscount.code)}
@@ -96,7 +96,7 @@ export function PriceDisplay(props: CalculationProps) {
             <p className="mt-1 text-xs">Orders over $99 qualify for special offers.</p>
           </div>
         )}
-      </div>
+      </div>*/}
     </div>
   );
 }
