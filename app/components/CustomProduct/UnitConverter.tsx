@@ -118,12 +118,12 @@ export function UnitConverter({
               value={valueOne}
               onChange={handleValueOneChange}
               onBlur={handleValueOneBlur}
-              className="w-full min-w-0 px-2 py-2 bg-blue-100 border border-blue-100 rounded dark:text-black focus:border-brand"
+              className="w-full min-w-0 px-2 py-2 text-sm text-black bg-blue-100 border border-blue-100 rounded dark:text-black focus:border-brand"
               placeholder={`${unitOne}`}
               min={minValue}
               step="any"
             />
-            <span className="text-md shrink-0">{unitOne}</span>
+            <span className="text-sm text-black shrink-0">{unitOne}</span>
           </div>
         </div>
         <div className="flex-1 min-w-0">
@@ -134,12 +134,12 @@ export function UnitConverter({
               value={valueTwo}
               onChange={handleValueTwoChange}
               onBlur={handleValueTwoBlur}
-              className="w-full min-w-0 px-2 py-2 bg-blue-100 border border-blue-100 rounded dark:text-black focus:border-brand"
+              className="w-full min-w-0 px-2 py-2 text-sm text-black bg-blue-100 border border-blue-100 rounded dark:text-black focus:border-brand"
               placeholder={`${unitTwo}`}
               min={0}
               step="any"
             />
-            <span className="text-md shrink-0">{unitTwo}</span>
+            <span className="text-sm text-black shrink-0">{unitTwo}</span>
           </div>
         </div>
       </div>

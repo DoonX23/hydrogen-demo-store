@@ -246,7 +246,7 @@ const [widthMm, setWidthMm] = useState(
               <textarea
                 name="instructions"
                 rows={2}
-                className="w-full max-w-xl rounded-md border-blue-100 shadow-sm bg-blue-100 focus:border-brand"
+                className="w-full max-w-xl text-sm rounded-md border-blue-100 shadow-sm bg-blue-100 focus:border-brand"
                 placeholder="Please enter any additional instructions here..."
               />
             </div>

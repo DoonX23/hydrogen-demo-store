@@ -39,7 +39,7 @@ export function ProductMetafieldNavigator({handle, options, variants}: Metafield
           onChange={handleChange}
           disabled={isNavigating}
           className={clsx(
-            "w-full rounded-md bg-blue-100 border-gray-200 focus:border-brand py-2 px-3 text-md dark:text-black",
+            "w-full rounded-md bg-blue-100 border-gray-200 focus:border-brand py-2 px-3 text-sm text-black dark:text-black",
             isNavigating && "opacity-50 cursor-not-allowed"
           )}
         >
