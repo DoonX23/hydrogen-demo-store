@@ -57,10 +57,10 @@ interface ShippingTier {
   }
   
   // 计算精度费用
-  export function calculatePrecisionFee(precision: string): number {
+  export function calculatePrecisionFee(precision: string, quantity: number): number {
     switch(precision) {
       case 'High (±0.2mm)':
-        return 1.5;
+        return 0.5 + MACHINING_BASE_FEE / quantity;
       case 'Normal (±2mm)':
         return 0.5;
       default:

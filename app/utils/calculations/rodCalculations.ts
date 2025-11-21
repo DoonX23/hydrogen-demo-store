@@ -27,7 +27,7 @@ import {
     const basePrice = weight * unitPrice;
     
     // 精度费用
-    const precisionPrice = calculatePrecisionFee(precision);
+    const precisionPrice = calculatePrecisionFee(precision,quantity);
     
     // 超长附加费（只检查长度）
     const oversizeFee = calculateOversizeFee(lengthMm, quantity);
