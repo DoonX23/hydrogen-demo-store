@@ -13,8 +13,11 @@ export function PriceDisplay(props: CalculationProps) {
   
   // 计算当前价格和重量
   const result = calculatePriceAndWeight(props);
-  const totalPrice = Number(result.price) * quantity;
-  const formattedPrice = totalPrice.toFixed(2);
+  const unitPrice = Number(result.price);
+  const formattedPrice = unitPrice.toFixed(2);
+  
+  // 计算总价（用于判断优惠码门槛）
+  const totalPrice = unitPrice * quantity;
   
   // 定义优惠码门槛和相应折扣
   const discountTiers = [
@@ -57,6 +60,7 @@ export function PriceDisplay(props: CalculationProps) {
       <div className="text-xl font-medium text-primary">
         Price:
         <span className="text-brand dark:text-highlight"> ${formattedPrice}</span>
+        <span className="text-brand dark:text-highlight text-sm font-normal ml-2">/each</span>
       </div>
       {/*
       <div className="mt-4 p-3 border border-blue-100 rounded bg-blue-100 text-highlight">

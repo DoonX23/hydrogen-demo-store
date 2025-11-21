@@ -1,13 +1,15 @@
+// ~/components/CustomProduct/CustomProductForm.tsx
 import type {ProductQuery} from 'storefrontapi.generated';
-import {useEffect, useState} from 'react';
-import { useFetcher } from 'react-router';
-import {UnitConverter} from '~/components/CustomProduct/UnitConverter';
-import CustomInputNumber from '~/components/CustomProduct/CustomInputNumber';
-import {PriceDisplay} from '~/components/CustomProduct/PriceDisplay';
+import {useState} from 'react';
+import {useFetcher} from 'react-router';
+import {SheetForm} from './SheetForm';
+import {FilmForm} from './FilmForm';
+import {RodForm} from './RodForm';
+import {FlexibleRodForm} from './FlexibleRodForm';
+import {GasketForm} from './GasketForm';  // 导入新组件
+import {DiscForm} from './DiscForm';  // 新增导入
 import {Button} from '~/components/Button';
-import { CustomRadioGroup } from '~/components/CustomRadioGroup';
-import {ProductMetafieldNavigator, type MetafieldNavigatorProps} from '~/components/CustomProduct/ProductMetafieldNavigator';
-import type {DimensionLimitation} from '~/lib/type';
+import type {MetafieldNavigatorProps} from './ProductMetafieldNavigator';
 
 interface ApiResponse {
   status: 'success' | 'error';
@@ -16,268 +18,74 @@ interface ApiResponse {
   cartOperation?: any;
   timestamp?: string;
 }
+
 interface CustomProductFormProps {
   product: ProductQuery['product'];
   facets: MetafieldNavigatorProps['options'];
   productMetafields: MetafieldNavigatorProps['variants'];
 }
+
 export function CustomProductForm({product, facets, productMetafields}: CustomProductFormProps) {
   if (!product?.id) {
     throw new Response('product', {status: 404});
   }
   
   const fetcher = useFetcher<ApiResponse>();
-
-  const collection = product.collections.nodes[0];
-  
   const formType = product.form_type?.value || '';
-  const machiningPrecision = product.machining_precision?.value || 'Normal (±2mm)';
-  const dimensionLimitation = product.dimension_limitation?.value
-  ? JSON.parse(product.dimension_limitation.value) as DimensionLimitation
-  : {};
-  console.log(dimensionLimitation);
-  const initialValueMm = 10;
-  const initialValueM = 1;  
-  // 状态管理
+  
+  // 只提升hasError状态到父组件
   const [hasError, setHasError] = useState(false);
-  const [lengthMm, setLengthMm] = useState(initialValueMm);
-  const [lengthM, setLengthM] = useState(initialValueM);
-  const [quantity, setQuantity] = useState(1);
-  const [precision, setPrecision] = useState('Normal (±2mm)');
-  // 表单提交后的处理
-  useEffect(() => {
-    if (fetcher.data?.status === 'success') {
-        console.error('添加成功');
-    } else if (fetcher.data?.error) {
-      console.error('添加失败:', fetcher.data.error);
-    }
-  }, [fetcher.data]);
-  const handlePrecisionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPrecision(e.target.value);
-  };
 
-// 首先确定 widthOptions
-const widthOptions = dimensionLimitation.widthOptions && dimensionLimitation.widthOptions.length > 0
-  ? dimensionLimitation.widthOptions
-  : [
-      { id: 'width450', value: '450', label: '450mm' },
-      { id: 'width1370', value: '1370', label: '1370mm' },
-    ];
+  // 根据formType渲染对应的表单组件
+  const renderForm = () => {
+    const commonProps = {
+      product,
+      facets,
+      productMetafields,
+      onError: setHasError,
+    };
 
-// 然后使用确定后的 widthOptions 的第一个元素的值来初始化 widthMm
-const [widthMm, setWidthMm] = useState(
-  formType === 'Film' 
-    ? Number(widthOptions[0].value)  // 取数组第一个元素的值
-    : initialValueMm
-);
-
-    // 对于Machining Precision选择
-  const precisionOptions = [
-    { id: 'Normal', value: 'Normal (±2mm)', label: 'Normal (±2mm)' },
-    { 
-      id: 'High', 
-      value: 'High (±0.2mm)', 
-      label: 'High (±0.2mm)',
-      disabled: machiningPrecision === 'Normal (±2mm)'
-    },
-  ];
-
-  // 渲染尺寸输入部分
-  const renderDimensionInputs = () => {
     switch(formType) {
+      case 'Sheet':
+        return <SheetForm {...commonProps} />;
       case 'Film':
-        return (
-          <>
-            <CustomRadioGroup
-              name="widthMm"
-              label="Width"
-              options={widthOptions}
-              selectedValue={widthMm.toString()}
-              onChange={(value) => setWidthMm(Number(value))}
-            />
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">Length</label>
-              <UnitConverter 
-                unitOne="m"
-                unitTwo="ft"
-                maxValue={dimensionLimitation.maxLength || 100}
-                minValue={dimensionLimitation.minLength || 1}
-                nameOne="lengthM"
-                nameTwo="lengthFt"
-                onError={setHasError}
-                onValueChange={setLengthM}
-                initialValue={initialValueM}
-              />
-            </div>
-          </>
-        );
-      
-      case 'Flexible Rod':
-        return (
-          <>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">Length</label>
-              <UnitConverter 
-                unitOne="m"
-                unitTwo="ft"
-                maxValue={dimensionLimitation.maxLength || 100}
-                minValue={dimensionLimitation.minLength || 0.1}
-                nameOne="lengthM"
-                nameTwo="lengthFt"
-                onError={setHasError}
-                onValueChange={setLengthM}
-                initialValue={initialValueM}
-              />
-            </div>
-          </>
-        );
-        
+        return <FilmForm {...commonProps} />;
       case 'Rod':
-        return (
-          <>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">Length</label>
-              <UnitConverter 
-                unitOne="mm"
-                unitTwo="inch"
-                maxValue={dimensionLimitation.maxLength || 1016}
-                minValue={dimensionLimitation.minLength || 1}
-                nameOne="lengthMm"
-                nameTwo="lengthInch"
-                onError={setHasError}
-                onValueChange={setLengthMm}
-                initialValue={initialValueMm}
-              />
-            </div>
-            <CustomRadioGroup
-              name="precision"
-              label="Machining Precision"
-              options={precisionOptions}
-              selectedValue={precision}
-              onChange={setPrecision}
-            />
-          </>
-        );
-        
-      default: // Sheet 或其他类型
-        return (
-          <>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">Length</label>
-              <UnitConverter 
-                unitOne="mm"
-                unitTwo="inch"
-                maxValue={dimensionLimitation.maxLength || 1016}
-                minValue={dimensionLimitation.minLength || 10}
-                nameOne="lengthMm"
-                nameTwo="lengthInch"
-                onError={setHasError}
-                onValueChange={setLengthMm}
-                initialValue={initialValueMm}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">Width</label>
-              <UnitConverter 
-                unitOne="mm"
-                unitTwo="inch"
-                maxValue={dimensionLimitation.maxWidth || 1000}
-                minValue={dimensionLimitation.minWidth || 10}
-                nameOne="widthMm"
-                nameTwo="widthInch"
-                onError={setHasError}
-                onValueChange={setWidthMm}
-                initialValue={initialValueMm}
-              />
-            </div>
-            <CustomRadioGroup
-              name="precision"
-              label="Machining Precision"
-              options={precisionOptions}
-              selectedValue={precision}
-              onChange={setPrecision}
-            />
-          </>
-        );
+        return <RodForm {...commonProps} />;
+      case 'Flexible Rod':
+        return <FlexibleRodForm {...commonProps} />;
+      case 'Gasket':  // 新增case
+      return <GasketForm {...commonProps} />;
+      case 'Disc':  // 新增case
+      return <DiscForm {...commonProps} />;
+      default:
+        return null;
     }
   };
 
   return (
     <div className="w-full mx-auto">
-      <PriceDisplay 
-        formType={formType}
-        thickness={product.thickness?.value || ''}
-        diameter={product.diameter?.value || ''}
-        density={Number(product.density?.value) || 0}
-        lengthMm={lengthMm}
-        lengthM={lengthM}
-        widthMm={widthMm}
-        precision={precision}
-        quantity={quantity}
-        unitPrice={Number(product.unit_price?.value) || 0}
-      />
-      <ProductMetafieldNavigator 
-        handle={product.handle}
-        options={facets}
-        variants={productMetafields}
-      />
       <fetcher.Form action="/api/custom-add-to-cart" method="post">
-        {/* 隐藏字段 */}
+        {/* 公共隐藏字段 */}
         <input type="hidden" name="productId" value={product.id || ''} />
         <input type="hidden" name="formType" value={formType} />
         <input type="hidden" name="material" value={product.material?.value || ''} />
         <input type="hidden" name="opacity" value={product.opacity?.value || ''} />
         <input type="hidden" name="color" value={product.color?.value || ''} />
-        <input type="hidden" name="thickness" value={product.thickness?.value || ''} />
-        <input type="hidden" name="diameter" value={product.diameter?.value || ''} />
-        <input type="hidden" name="density" value={product.density?.value || ''} />
-        <input type="hidden" name="unitPrice" value={product.unit_price?.value || ''} />
         
-        <div className="mt-6 mb-6">
-          <div className="space-y-6 max-w-xl">
-            {/* 使用switch生成的维度输入字段 */}
-            {renderDimensionInputs()}
-            
-            {/* 通用字段 - 附加说明 */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">
-                Additional Instructions
-              </label>
-              <textarea
-                name="instructions"
-                rows={2}
-                className="w-full max-w-xl text-sm rounded-md border-blue-100 shadow-sm bg-blue-100 focus:border-brand"
-                placeholder="Please enter any additional instructions here..."
-              />
-            </div>
-            {/* 通用字段 - 数量和提交 */}
-            <div className="flex flex-col gap-4">
-              {/* 数量选择 */}
-              <div className="flex items-center gap-4">
-                <span className="font-medium text-neutral-800 dark:text-neutral-200">
-                  Quantity
-                </span>
-                <CustomInputNumber
-                  name="quantity" 
-                  defaultValue={1}
-                  min={1}
-                  max={10000}
-                  onChange={(value) => setQuantity(value)}
-                />
-              </div>
-              {/* 加购按钮 - 注意保留flex-1和h-full */}
-              <div className="grid items-stretch gap-4">
-                <Button
-                  type="submit"
-                  disabled={fetcher.state !== 'idle' || hasError}
-                >
-                  <span>
-                    {fetcher.state !== 'idle' ? 'Adding...' : 'Add to Cart'}
-                  </span>
-                </Button>
-              </div>
-            </div>
-          </div>
+        {/* 渲染对应的表单组件 */}
+        {renderForm()}
+        
+        {/* 公共提交按钮 */}
+        <div className="grid items-stretch gap-4">
+          <Button
+            type="submit"
+            disabled={fetcher.state !== 'idle' || hasError}
+          >
+            <span>
+              {fetcher.state !== 'idle' ? 'Adding...' : 'Add to Cart'}
+            </span>
+          </Button>
         </div>
       </fetcher.Form>
     </div>
