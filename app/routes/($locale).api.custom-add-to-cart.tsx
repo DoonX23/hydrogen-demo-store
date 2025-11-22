@@ -54,10 +54,13 @@ export const action: ActionFunction = async ({request, context}) => {
       thickness: formData.get('thickness') as string,
       diameter: formData.get('diameter') as string,
       density: parseFloat(formData.get('density') as string),
-      lengthM: parseFloat(formData.get('lengthM') as string),
-      lengthMm: parseFloat(formData.get('lengthMm') as string),
-      widthMm: parseFloat(formData.get('widthMm') as string),
-      precision: formData.get('precision') as string,
+      lengthM: parseFloat(formData.get('lengthM') as string) || 0,
+      lengthMm: parseFloat(formData.get('lengthMm') as string) || 0,
+      widthMm: parseFloat(formData.get('widthMm') as string) || 0,
+      diameterMm: parseFloat(formData.get('diameterMm') as string) || 0,
+      innerDiameterMm: parseFloat(formData.get('innerDiameterMm') as string) || 0,
+      outerDiameterMm: parseFloat(formData.get('outerDiameterMm') as string) || 0,
+      precision: formData.get('precision') as string || '',
       quantity: parseInt(formData.get('quantity') as string),
       unitPrice: parseFloat(formData.get('unitPrice') as string)
     };
@@ -77,50 +80,59 @@ export const action: ActionFunction = async ({request, context}) => {
 
     try {
       const lineAttributes = [];
-      // 根据formType添加thickness或diameter
-      if (calculationProps.formType === 'Sheet' || calculationProps.formType === 'Film') {
-        lineAttributes.push({
-          key: 'Thickness',
-          value: `${calculationProps.thickness}`
-        });
-      } else if (calculationProps.formType === 'Rod' || calculationProps.formType === 'Flexible Rod') {
-        lineAttributes.push({
-          key: 'Diameter',
-          value: `${calculationProps.diameter}`
-        });
+      
+      // 修改：按产品特征分类处理属性
+      // 1. 厚度类产品 (Thickness-based)
+      switch (calculationProps.formType) {
+        case 'Sheet':
+          lineAttributes.push(
+            {key: 'Thickness', value: `${calculationProps.thickness}`},
+            {key: 'Length', value: `${formData.get('lengthMm')}mm (${formData.get('lengthInch')}")`},
+            {key: 'Width', value: `${calculationProps.widthMm}mm (${formData.get('widthInch')}")`},
+            {key: 'Precision', value: calculationProps.precision}
+          );
+          break;
+          
+        case 'Film':
+          lineAttributes.push(
+            {key: 'Thickness', value: `${calculationProps.thickness}`},
+            {key: 'Length', value: `${formData.get('lengthM')}m (${formData.get('lengthFt')}ft)`},
+            {key: 'Width', value: `${calculationProps.widthMm}mm (${formData.get('widthInch')}")`}
+          );
+          break;
+          
+        // 2. 直径类产品 (Diameter-based)
+        case 'Rod':
+          lineAttributes.push(
+            {key: 'Diameter', value: `${calculationProps.diameter}`},
+            {key: 'Length', value: `${formData.get('lengthMm')}mm (${formData.get('lengthInch')}")`}
+          );
+          break;
+          
+        case 'Flexible Rod':
+          lineAttributes.push(
+            {key: 'Diameter', value: `${calculationProps.diameter}`},
+            {key: 'Length', value: `${formData.get('lengthM')}m (${formData.get('lengthFt')}ft)`}
+          );
+          break;
+          
+        // 3. 圆形类产品 (Circular-based)
+        case 'Gasket':
+          lineAttributes.push(
+            {key: 'Thickness', value: `${calculationProps.thickness}`},
+            {key: 'Inner Diameter', value: `${calculationProps.innerDiameterMm}mm (${formData.get('innerDiameterInch')}")`},
+            {key: 'Outer Diameter', value: `${calculationProps.outerDiameterMm}mm (${formData.get('outerDiameterInch')}")`}
+          );
+          break;
+          
+        case 'Disc':
+          lineAttributes.push(
+            {key: 'Thickness', value: `${calculationProps.thickness}`},
+            {key: 'Diameter', value: `${calculationProps.diameterMm}mm (${formData.get('diameterInch')}")`}
+          );
+          break;
       }
-      // 根据formType添加长度显示
-      if (calculationProps.formType === 'Film' || calculationProps.formType === 'Flexible Rod') {
-        const lengthM = formData.get('lengthM');
-        const lengthFt = formData.get('lengthFt');
-        lineAttributes.push({
-          key: 'Length',
-          value: `${lengthM}m (${lengthFt}ft)`
-        });
-      } else {
-        const lengthMm = formData.get('lengthMm');
-        const lengthInch = formData.get('lengthInch');
-        lineAttributes.push({
-          key: 'Length',
-          value: `${lengthMm}mm (${lengthInch}")`
-        });
-      }
-      // 添加宽度（同时显示mm和inch）
-      if (calculationProps.widthMm) {
-        const widthInch = formData.get('widthInch');
-        lineAttributes.push({
-          key: 'Width',
-          value: `${calculationProps.widthMm}mm (${widthInch}")`
-        });
-      }
-      // 添加精度
-      if (calculationProps.precision) {
-        lineAttributes.push({
-          key: 'Precision',
-          value: calculationProps.precision
-        });
-      }
-      // 添加说明信息
+      // 添加说明信息（所有表单类型通用）
       const instructions = formData.get('instructions');
       if (instructions) {
         lineAttributes.push({
