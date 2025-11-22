@@ -23,7 +23,7 @@ export function GasketForm({product, facets, productMetafields, onError}: Custom
     dimensionLimitation.minOuterDiameter || 20
   );
   
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(10);
   
   // 统一的错误状态
   const [hasError, setHasError] = useState(false);
