@@ -771,6 +771,12 @@ const PRODUCT_FRAGMENT = `#graphql
           handle
       }
     }
+    navigation_cards: metafield(namespace: "custom", key:"navigation_cards") {
+      id
+      value
+      namespace
+      key
+    }
     dimension_limitation: metafield(namespace: "custom", key:"dimension_limitation") {
       id
       value
