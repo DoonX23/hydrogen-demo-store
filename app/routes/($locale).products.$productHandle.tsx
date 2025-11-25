@@ -59,6 +59,7 @@ import ProductSpecifications from '~/components/ProductSpecifications';
 import NcInputNumber from '~/components/NcInputNumber';
 import Prices from '~/components/Prices';
 import { OkendoReviews, OkendoStarRating } from '@okendo/shopify-hydrogen';
+import NavigationCardGrid, { type NavigationCard } from '~/components/CustomProduct/NavigationCardGrid';
 
 export const headers = routeHeaders;
 
@@ -191,6 +192,20 @@ export default function Product() {
     ? JSON.parse(product.specifications.value) as Record<string, any[]>
     : {};
 
+  // 更简洁的导航卡片解析 - 不需要添加 isActive
+  const navigationCards: NavigationCard[] = (() => {
+    try {
+      const value = product.navigation_cards?.value;
+      if (!value) return [];
+      
+      const { cards = [] } = JSON.parse(value) as { cards?: NavigationCard[] };
+      return cards; // 直接返回，不需要 map 添加 isActive
+    } catch (error) {
+      console.error('Failed to parse navigation_cards:', error);
+      return [];
+    }
+  })();
+
   // 添加一个state来跟踪是否在客户端,在组件挂载后设置isClient为true
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
@@ -310,6 +325,10 @@ export default function Product() {
                   </Link>
                 </div>
               </div>
+            )}
+            {/* 在产品图片和表单之前添加导航卡片 */}
+            {navigationCards.length > 0 && (
+              <NavigationCardGrid cards={navigationCards} />
             )}
             {product.customizable_size?.value === "true" ? (
               <Suspense fallback={<CustomProductForm product={product} facets={[]} productMetafields={[]} />}>

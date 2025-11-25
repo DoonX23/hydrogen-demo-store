@@ -13,19 +13,19 @@ export type NavigationCard = {
   description?: string;
   image?: ImageType;
   href?: string;
-  formType?: string;
-  isActive?: boolean;
+  formType?: string; // 可以保留用于其他用途，但不用于激活判断
 };
 
 type NavigationCardGridProps = {
   cards: NavigationCard[];
 };
 
-// 单个卡片组件 - 简化版本
+// 单个卡片组件
 const NavigationCardItem: React.FC<{ card: NavigationCard }> = ({ card }) => {
-  const { title, description, image, href, isActive } = card;
-
-  // 卡片内容 - 提取为独立组件避免重复
+  const { title, description, image, href } = card;
+  // 直接用 href 判断是否激活
+  const isActive = href === '#';
+  // 卡片内容组件
   const CardContent = () => (
     <div className="flex flex-col h-full">
       {/* 图片部分 */}
@@ -70,7 +70,7 @@ const NavigationCardItem: React.FC<{ card: NavigationCard }> = ({ card }) => {
       : 'bg-blue-100 transition-all duration-300 hover:brightness-95'
   }`;
 
-  // 激活状态渲染为div
+  // 激活状态渲染为 div
   if (isActive) {
     return (
       <div className={cardClassName}>
@@ -79,7 +79,7 @@ const NavigationCardItem: React.FC<{ card: NavigationCard }> = ({ card }) => {
     );
   }
 
-  // 非激活状态渲染为Link
+  // 非激活状态渲染为 Link
   return (
     <Link 
       to={href || '#'} 
@@ -98,7 +98,10 @@ const NavigationCardGrid: React.FC<NavigationCardGridProps> = ({ cards }) => {
     <div className="w-full mb-8">
       <div className="grid grid-cols-5 lg:grid-cols-6 gap-3 lg:gap-4">
         {cards.map((card, index) => (
-          <NavigationCardItem key={card.formType || index} card={card} />
+          <NavigationCardItem 
+            key={card.href || index} 
+            card={card} 
+          />
         ))}
       </div>
     </div>
