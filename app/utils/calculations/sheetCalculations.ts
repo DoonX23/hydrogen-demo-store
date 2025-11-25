@@ -36,7 +36,7 @@ import {
     const oversizeFee = Math.max(lengthFee, widthFee);
     
     // 运费
-    const shippingFee = calculateShipping(weight);
+    const shippingFee = calculateShipping(weight,quantity);
     
     // 总价
     const finalPrice = Math.max(0.01, basePrice + precisionPrice + shippingFee + oversizeFee);

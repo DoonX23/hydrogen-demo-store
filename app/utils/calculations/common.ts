@@ -39,14 +39,21 @@ interface ShippingTier {
     weight: number;
   }
   
-  // 计算运费
-  export function calculateShipping(weight: number): number {
-    const tier = shippingTiers.find(
-      tier => weight > tier.minWeight && weight <= tier.maxWeight
-    );
-    const unitShippingFee = tier ? tier.unitPrice : 15;
-    return weight * unitShippingFee;
-  }
+// 修改后的计算运费函数
+export function calculateShipping(weight: number, quantity: number): number {
+  // 计算总重量
+  const totalWeight = weight * quantity;
+  // 根据总重量找到对应的运费阶梯
+  const tier = shippingTiers.find(
+    tier => totalWeight > tier.minWeight && totalWeight <= tier.maxWeight
+  );
+  // 获取单位运费价格，如果找不到对应阶梯，默认使用15
+  const unitShippingFee = tier ? tier.unitPrice : 15;
+  // 计算总运费
+  const totalShippingFee = totalWeight * unitShippingFee;
+  // 将总运费平摊到每个产品上
+  return totalShippingFee / quantity;
+}
   
   // 计算超长附加费
   export function calculateOversizeFee(dimension: number, quantity: number): number {

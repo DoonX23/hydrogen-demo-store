@@ -42,7 +42,7 @@ export function calculateDiscPriceAndWeight(props: DiscCalculationProps): Calcul
   const machiningBaseFee = calculateMachiningBaseFee(quantity);
 
   // 6. 运费
-  const shippingFee = calculateShipping(weight);
+  const shippingFee = calculateShipping(weight,quantity);
   
   // 7. 总价 = 材料成本 + 运费 + 超大尺寸附加运费 + 加工起始费 + 加工费
   const finalPrice = Math.max(0.01, materialCost + shippingFee + oversizeFee + machiningBaseFee + machiningFee);

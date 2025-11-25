@@ -25,7 +25,7 @@ import {
     const basePrice = weight * unitPrice;
     
     // 运费（Flexible Rod不收取超长附加费和精度费用）
-    const shippingFee = calculateShipping(weight);
+    const shippingFee = calculateShipping(weight,quantity);
     
     // 总价
     const finalPrice = Math.max(0.01, basePrice + shippingFee);
