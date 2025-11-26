@@ -16,7 +16,7 @@ export function RodForm({product, facets, productMetafields, onError}: CustomFor
   const machiningPrecision = product.machining_precision?.value || 'Normal (±2mm)';
   
   // Rod表单专属状态
-  const [lengthMm, setLengthMm] = useState(dimensionLimitation.minLength || 20);
+  const [lengthMm, setLengthMm] = useState(dimensionLimitation.minLength || 30);
   const [precision, setPrecision] = useState(machiningPrecision);
   const [quantity, setQuantity] = useState(1);
   
