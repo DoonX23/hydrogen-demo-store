@@ -16,8 +16,8 @@ export function SheetForm({product, facets, productMetafields, onError}: CustomF
   const machiningPrecision = product.machining_precision?.value || 'Normal (±2mm)';
   
   // Sheet表单专属状态
-  const [lengthMm, setLengthMm] = useState(dimensionLimitation.minLength || 10);
-  const [widthMm, setWidthMm] = useState(dimensionLimitation.minWidth || 10);
+  const [lengthMm, setLengthMm] = useState(dimensionLimitation.minLength || 50);
+  const [widthMm, setWidthMm] = useState(dimensionLimitation.minWidth || 50);
   const [precision, setPrecision] = useState('Normal (±2mm)');
   const [quantity, setQuantity] = useState(1);
   
@@ -29,9 +29,23 @@ export function SheetForm({product, facets, productMetafields, onError}: CustomF
     onError(hasError);
   }, [hasError, onError]);
 
+  // 检查是否需要强制高精度
+  const requiresHighPrecision = lengthMm < 50 || widthMm < 50;
+  // 当尺寸小于50mm时，自动切换到高精度
+  useEffect(() => {
+    if (requiresHighPrecision && machiningPrecision !== 'Normal (±2mm)') {
+      setPrecision('High (±0.2mm)');
+    }
+  }, [requiresHighPrecision, machiningPrecision]);
+
   // 加工精度选项
   const precisionOptions = [
-    { id: 'Normal', value: 'Normal (±2mm)', label: 'Normal (±2mm)' },
+    { 
+      id: 'Normal', 
+      value: 'Normal (±2mm)', 
+      label: 'Normal (±2mm)',
+      disabled: requiresHighPrecision
+    },
     { 
       id: 'High', 
       value: 'High (±0.2mm)', 
