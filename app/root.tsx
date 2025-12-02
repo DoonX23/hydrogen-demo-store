@@ -77,6 +77,9 @@ export const links: LinksFunction = () => {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
+    // 语句 1: 添加 .ico 格式 - Google 搜索引擎会优先使用这个
+    {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
+    // 语句 2: 保留 .svg 格式 - 现代浏览器会优先使用这个更清晰的矢量图标
     {rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg'},
   ];
 };
