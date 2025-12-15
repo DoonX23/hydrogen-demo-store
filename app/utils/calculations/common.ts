@@ -39,18 +39,34 @@ interface ShippingTier {
     weight: number;
   }
   
-// 修改后的计算运费函数
+// 修改后的计算运费函数 - 使用阶梯叠加方式
 export function calculateShipping(weight: number, quantity: number): number {
   // 计算总重量
   const totalWeight = weight * quantity;
-  // 根据总重量找到对应的运费阶梯
-  const tier = shippingTiers.find(
-    tier => totalWeight > tier.minWeight && totalWeight <= tier.maxWeight
-  );
-  // 获取单位运费价格，如果找不到对应阶梯，默认使用15
-  const unitShippingFee = tier ? tier.unitPrice : 15;
-  // 计算总运费
-  const totalShippingFee = totalWeight * unitShippingFee;
+  
+  // 初始化总运费为0
+  let totalShippingFee = 0;
+  
+  // 遍历每个运费阶梯，累加计算
+  for (const tier of shippingTiers) {
+    // 如果总重量小于等于当前阶梯的最小重量，跳过
+    if (totalWeight <= tier.minWeight) {
+      break;
+    }
+    
+    // 计算在当前阶梯内的重量
+    // 取总重量和阶梯最大重量中的较小值，减去阶梯最小重量
+    const weightInTier = Math.min(totalWeight, tier.maxWeight) - tier.minWeight;
+    
+    // 累加当前阶梯的运费
+    totalShippingFee += weightInTier * tier.unitPrice;
+    
+    // 如果总重量在当前阶梯内，结束计算
+    if (totalWeight <= tier.maxWeight) {
+      break;
+    }
+  }
+  
   // 将总运费平摊到每个产品上
   return totalShippingFee / quantity;
 }
