@@ -287,7 +287,7 @@ export default function Product() {
             </div>
             <div className="grid">
               <div className="grid text-center">
-                <HubspotForm buttonText="Free Sample & Bulk Quotation" />
+                <HubspotForm buttonText="Get Exclusive Custom & Bulk Quote" />
               </div>
               {/*
               {descriptionHtml && (
