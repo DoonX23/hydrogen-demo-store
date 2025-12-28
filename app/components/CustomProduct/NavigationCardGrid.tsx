@@ -104,7 +104,7 @@ const NavigationCardItem: React.FC<{ card: NavigationCard }> = ({ card }) => {
 // 主组件
 const NavigationCardGrid: React.FC<NavigationCardGridProps> = ({ cards }) => {
   return (
-    <div className="w-full mb-8">
+    <div className="w-full">
       <div className="grid grid-cols-5 lg:grid-cols-6 gap-3 lg:gap-4">
         {cards.map((card, index) => (
           <NavigationCardItem 
