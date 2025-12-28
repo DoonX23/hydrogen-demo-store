@@ -16,6 +16,14 @@ export type NavigationCard = {
   formType?: string; // 可以保留用于其他用途，但不用于激活判断
 };
 
+// 导出容器类型
+export type NavigationCardsData = {
+  product_cards?: NavigationCard[];
+  capabilities_cards?: NavigationCard[];
+  // 未来可以添加其他类型
+  // features_cards?: NavigationCard[];
+};
+
 type NavigationCardGridProps = {
   cards: NavigationCard[];
 };
@@ -25,6 +33,7 @@ const NavigationCardItem: React.FC<{ card: NavigationCard }> = ({ card }) => {
   const { title, description, image, href } = card;
   // 直接用 href 判断是否激活
   const isActive = href === '#';
+  
   // 卡片内容组件
   const CardContent = () => (
     <div className="flex flex-col h-full">

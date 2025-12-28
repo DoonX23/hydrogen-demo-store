@@ -59,7 +59,7 @@ import ProductSpecifications from '~/components/ProductSpecifications';
 import NcInputNumber from '~/components/NcInputNumber';
 import Prices from '~/components/Prices';
 import { OkendoReviews, OkendoStarRating } from '@okendo/shopify-hydrogen';
-import NavigationCardGrid, { type NavigationCard } from '~/components/CustomProduct/NavigationCardGrid';
+import NavigationCardGrid, { type NavigationCardsData } from '~/components/CustomProduct/NavigationCardGrid';
 
 export const headers = routeHeaders;
 
@@ -192,19 +192,22 @@ export default function Product() {
     ? JSON.parse(product.specifications.value) as Record<string, any[]>
     : {};
 
-  // 更简洁的导航卡片解析 - 不需要添加 isActive
-  const navigationCards: NavigationCard[] = (() => {
+  // 2. 修改解析逻辑
+  const navigationCardsData: NavigationCardsData = (() => {
     try {
       const value = product.navigation_cards?.value;
-      if (!value) return [];
+      if (!value) return {};
       
-      const { cards = [] } = JSON.parse(value) as { cards?: NavigationCard[] };
-      return cards; // 直接返回，不需要 map 添加 isActive
+      const parsed = JSON.parse(value) as NavigationCardsData;
+      return parsed;
     } catch (error) {
       console.error('Failed to parse navigation_cards:', error);
-      return [];
+      return {};
     }
   })();
+
+  const productCards = navigationCardsData.product_cards || [];
+  const capabilitiesCards = navigationCardsData.capabilities_cards || [];
 
   // 添加一个state来跟踪是否在客户端,在组件挂载后设置isClient为true
   const [isClient, setIsClient] = useState(false);
@@ -273,6 +276,9 @@ export default function Product() {
           isLoading={!product}
           className="w-full lg:col-span-1"
         />
+        {capabilitiesCards.length > 0 && (
+          <NavigationCardGrid cards={capabilitiesCards} />
+        )}
         <div className="">
           <section className="flex flex-col w-full gap-8 md:mx-auto md:px-0 py-4 lg:py-0">
             <div className="grid gap-2">
@@ -327,8 +333,8 @@ export default function Product() {
               </div>
             )}*/}
             {/* 在产品图片和表单之前添加导航卡片 */}
-            {navigationCards.length > 0 && (
-              <NavigationCardGrid cards={navigationCards} />
+            {productCards.length > 0 && (
+              <NavigationCardGrid cards={productCards} />
             )}
             {product.customizable_size?.value === "true" ? (
               <Suspense fallback={<CustomProductForm product={product} facets={[]} productMetafields={[]} />}>
