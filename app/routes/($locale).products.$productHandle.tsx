@@ -312,7 +312,7 @@ export default function Product() {
               )}
                 */}
             </div>
-            {!!collection && (
+             {/*{!!collection && (
               <div className="flex">
                 <div className="relative rounded-xl px-3 py-1 text-sm/6 text-gray-600 dark:text-gray-300 ring-1 ring-brand dark:ring-white hover:ring-highlight hover:text-highlight">
                   View All {collection.title.replace(/(<([^>]+)>)/gi, '')} Options{" "}
@@ -325,7 +325,7 @@ export default function Product() {
                   </Link>
                 </div>
               </div>
-            )}
+            )}*/}
             {/* 在产品图片和表单之前添加导航卡片 */}
             {navigationCards.length > 0 && (
               <NavigationCardGrid cards={navigationCards} />
