@@ -8,6 +8,7 @@ interface SplitSectionProps {
   block?: {
     _type?: string;
     imageOnRight?: boolean;
+    fullWidthImage?: boolean;
     cta?: string;
     buttonLink?: string;
     heading?: string;
@@ -26,15 +27,43 @@ interface SplitSectionProps {
 }
 
 const SplitSection: React.FC<SplitSectionProps> = ({ block }) => {
+  // 判断是否为全宽模式
+  const isFullWidth = block?.fullWidthImage;
+
+  // 动态决定最外层容器的类名
+  const containerClasses = isFullWidth 
+    ? "w-full" 
+    : "mx-auto container";
+  // 动态决定网格的间距
+  const gridGapClasses = isFullWidth 
+    ? "lg:gap-x-0" 
+    : "lg:gap-x-16";
+  // 动态决定外层的左右内边距
+  const outerPaddingClasses = isFullWidth 
+    ? "" 
+    : "lg:px-4";
+  // 动态决定文字区域的内边距
+  const contentPaddingClasses = isFullWidth
+    ? "px-8 lg:px-16 xl:px-24"
+    : "px-6 lg:px-0";
+  // 动态决定图片容器的类名
+  const imageContainerClasses = isFullWidth
+    ? "lg:col-span-1 h-full"
+    : "relative lg:col-span-1 mt-8 lg:mt-0";
+  // 动态决定图片的类名
+  const imageClasses = isFullWidth
+    ? "w-full h-full object-cover"
+    : "w-full h-auto object-cover rounded-lg";
+
   return (
     <div className="relative bg-white">
-      <div className="mx-auto container py-8 lg:grid lg:grid-cols-2 lg:gap-x-16 lg:px-4">
+      <div className={`${containerClasses} lg:grid lg:grid-cols-2 ${gridGapClasses} ${outerPaddingClasses}`}>
         {/* 动态决定图片和内容的位置 */}
         {block?.imageOnRight ? (
           // 内容在左，图片在右
           <>
-            <div className="px-6 lg:col-span-1 lg:px-0 flex items-center">
-              <div className="mx-auto max-w-2xl lg:mx-0">
+            <div className={`${contentPaddingClasses} lg:col-span-1 flex items-center`}>
+              <div className={`${isFullWidth ? 'max-w-2xl' : 'mx-auto max-w-2xl lg:mx-0'}`}>
                 {block.cta && (
                   <div className="flex">
                     <div className="relative flex items-center gap-x-4 rounded-full bg-white px-4 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
@@ -84,12 +113,12 @@ const SplitSection: React.FC<SplitSectionProps> = ({ block }) => {
               </div>
             </div>
             
-            <div className="relative lg:col-span-1 mt-8 lg:mt-0">
+            <div className={imageContainerClasses}>
               {block.image?.url && (
                 <Image
                   src={block.image.url}
                   alt={block.image.altText || ""}
-                  className="w-full h-auto object-cover rounded-lg"
+                  className={imageClasses}
                   width={block.image.width || 600}
                   height={block.image.height || 400}
                   loading="lazy"
@@ -100,12 +129,12 @@ const SplitSection: React.FC<SplitSectionProps> = ({ block }) => {
         ) : (
           // 图片在左，内容在右
           <>
-            <div className="relative lg:col-span-1">
+            <div className={imageContainerClasses}>
               {block?.image?.url && (
                 <Image
                   src={block.image.url}
                   alt={block.image.altText || ""}
-                  className="w-full h-auto object-cover rounded-lg"
+                  className={imageClasses}
                   width={block.image.width || 600}
                   height={block.image.height || 400}
                   loading="lazy"
@@ -113,8 +142,8 @@ const SplitSection: React.FC<SplitSectionProps> = ({ block }) => {
               )}
             </div>
             
-            <div className="px-6 lg:col-span-1 lg:px-0 flex items-center mt-8 lg:mt-0">
-              <div className="mx-auto max-w-2xl lg:mx-0">
+            <div className={`${contentPaddingClasses} lg:col-span-1 flex items-center mt-8 lg:mt-0`}>
+              <div className={`${isFullWidth ? 'max-w-2xl' : 'mx-auto max-w-2xl lg:mx-0'}`}>
                 {block?.cta && (
                   <div className="flex">
                     <div className="relative flex items-center gap-x-4 rounded-full bg-white px-4 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
