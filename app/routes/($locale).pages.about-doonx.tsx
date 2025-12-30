@@ -20,7 +20,7 @@ const heroBlock = {
   taglineLink: "/capabilities",
   taglineLinkText: "Explore Our Capabilities",
   heading: "Custom Plastic Film & Parts: Quality & Efficiency Guaranteed",
-  description: "We specialize in creating custom plastic films and parts, combining superior materials with precise manufacturing for optimal performance and cost savings.",
+  description: "From custom cast film to the final printed part—we are your single source for high-quality plastic components.",
 };
 
 // 转换为CardGridSection格式的capabilities数据，确保使用正确的字面量类型
@@ -35,21 +35,31 @@ const capabilitiesCardGrid = {
       title: "Custom Plastic Film",
       description: "Specialized film manufacturing with customized thickness, transparency and surface treatments.",
       image: {
-        url: "https://cdn.shopify.com/s/files/1/0736/0459/6001/files/DoonX-Grey-Ethylene-Vinyl-Acetate-EVA-Film-Sheet-1.webp",
+        url: "https://cdn.shopify.com/s/files/1/0736/0459/6001/files/DoonX-Custom-Cast-Film-Extrusion.webp",
         alt: "Custom Plastic Film",
       },
-      readMore: "Explore Films",
+      readMore: "See our Custom Films services",
       href: "/capabilities/custom-films",
     },
     {
       title: "CNC Machining",
       description: "Precision plastic parts manufacturing through milling, turning and professional post-processing.",
       image: {
-        url: "https://cdn.shopify.com/s/files/1/0736/0459/6001/files/DoonX-Banner.jpg",
+        url: "https://cdn.shopify.com/s/files/1/0736/0459/6001/files/DoonX-5-Axis-CNC-Milling-1.webp",
         alt: "CNC Machining",
       },
       readMore: "View CNC Services",
       href: "/capabilities/cnc-machining",
+    },
+    {
+      title: "Screen/UV Printing",
+      description: "Bring your designs to life with vibrant colors and crisp details",
+      image: {
+        url: "https://cdn.shopify.com/s/files/1/0736/0459/6001/files/DoonX-Plastic-Printing.webp",
+        alt: "Screen/UV Printing",
+      },
+      readMore: "Explore Finishes",
+      href: "/capabilities/printing",
     },
   ]
 };
