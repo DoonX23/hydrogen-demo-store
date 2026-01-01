@@ -120,7 +120,7 @@ export default function Material() {
   const {title, body, image, relativeCollections, breadcrumb, childArticles, pagebuilder} = material; // 解构出 pagebuilder
   return (
     <>
-    <div className='container'>
+   <div className='w-full md:container overflow-hidden'>
       {/* 面包屑导航 */}
       {breadcrumb && breadcrumb.length > 0 && (
         <ArticleBreadcrumb breadcrumb={breadcrumb} />
