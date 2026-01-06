@@ -5,10 +5,11 @@ import {calculatePriceAndWeight, type CalculationProps} from '~/utils/calculatio
 import {createAdminApiClient} from '@shopify/admin-api-client';
 
 // 提取变体创建逻辑为纯函数
-async function createVariant(adminClient: any, {productId, price, weight}: {
+async function createVariant(adminClient: any, {productId, price, weight, calculationProps}: {
   productId: string;
   price: string;
   weight: number;
+  calculationProps: CalculationProps;
 }) {
   // 生成唯一变体名
   const variantName = `${Date.now().toString(36)}${Math.random().toString(36).slice(-2)}`;
@@ -29,7 +30,15 @@ async function createVariant(adminClient: any, {productId, price, weight}: {
             unit: "KILOGRAMS"
           }
         }
-      }
+      },
+      // 新增：metafields 字段
+      metafields: [
+        {
+          namespace: "custom", // 命名空间，用于分组管理 metafields
+          key: "product_parameters", // metafield 的唯一键名
+          value: JSON.stringify(calculationProps) // 将 calculationProps 对象转换为 JSON 字符串
+        }
+      ]
     }]
   };
 
@@ -74,7 +83,8 @@ export const action: ActionFunction = async ({request, context}) => {
     const newVariantId = await createVariant(adminClient, {
       productId: formData.get('productId') as string,
       price,
-      weight
+      weight,
+      calculationProps
     });
 
 
