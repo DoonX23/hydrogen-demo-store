@@ -35,6 +35,7 @@ import {CustomMenuMobileNav} from './Header/CustomMenuMobileNav';
 import { CustomMobileHeader,CustomDesktopHeader} from './Header/CustomHeader';
 import { Banner } from './Header/Banner';
 import {SiteFeatures} from './SiteFeatures'
+import { Outlet } from 'react-router';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -46,6 +47,14 @@ type LayoutProps = {
 
 export function PageLayout({children, layout}: LayoutProps) {
   const {headerMenu, footerMenu} = layout || {};
+
+  // 将 useDrawer 提升到这里
+  const {
+    isOpen: isCartOpen,
+    openDrawer: openCart,
+    closeDrawer: closeCart,
+  } = useDrawer();
+  
   return (
     <>
     <Banner/>
@@ -56,11 +65,18 @@ export function PageLayout({children, layout}: LayoutProps) {
           </a>
         </div>
         {headerMenu && layout?.shop.name && (
-          <Header title={layout.shop.name} menu={headerMenu} />
+          <Header 
+          title={layout.shop.name} 
+          menu={headerMenu}
+          isCartOpen={isCartOpen}
+          openCart={openCart}
+          closeCart={closeCart}
+        />
         )}
               <SiteFeatures/>
         <main role="main" id="mainContent" className="flex-grow">
-          {children}
+          {/* 通过 Outlet context 传递 openCart */}
+          <Outlet context={{ openCart }} />
         </main>
       </div>
       {footerMenu && <CustomFooter menu={footerMenu} />}
@@ -68,14 +84,21 @@ export function PageLayout({children, layout}: LayoutProps) {
   );
 }
 
-function Header({title, menu}: {title: string; menu?: EnhancedMenu}) {
+function Header({
+  title, 
+  menu,
+  isCartOpen,
+  openCart,
+  closeCart,
+}: {
+  title: string;
+  menu?: EnhancedMenu;
+  isCartOpen: boolean;
+  openCart: () => void;
+  closeCart: () => void;
+}) {
   const isHome = useIsHomePath();
 
-  const {
-    isOpen: isCartOpen,
-    openDrawer: openCart,
-    closeDrawer: closeCart,
-  } = useDrawer();
 
   const {
     isOpen: isMenuOpen,

@@ -10,6 +10,7 @@ import {GasketForm} from './GasketForm';  // 导入新组件
 import {DiscForm} from './DiscForm';  // 新增导入
 import {Button} from '~/components/Button';
 import type {MetafieldNavigatorProps} from './ProductMetafieldNavigator';
+import { useAutoOpenCartOnAdd } from '~/hooks/useAutoOpenCartOnAdd';
 
 interface ApiResponse {
   status: 'success' | 'error';
@@ -30,7 +31,7 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
     throw new Response('product', {status: 404});
   }
   
-  const fetcher = useFetcher<ApiResponse>();
+  const fetcher = useAutoOpenCartOnAdd();
   const formType = product.form_type?.value || '';
   
   // 只提升hasError状态到父组件
