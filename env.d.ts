@@ -20,6 +20,7 @@ declare global {
    * Declare expected Env parameter in fetch handler.
    */
   interface Env {
+    TURNSTILE_SECRET_KEY: string;
     //OKENDO
     PUBLIC_OKENDO_SUBSCRIBER_ID: string;
     // ...other environment variables

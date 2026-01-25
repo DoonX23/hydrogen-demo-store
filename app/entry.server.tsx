@@ -66,6 +66,7 @@ export default async function handleRequest(
       'https://cdn-static.okendo.io',         // Okendo
       'https://surveys.okendo.io',             // Okendo
       'https://api.okendo.io',                 // Okendo
+      "https://challenges.cloudflare.com",
       ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:*'] : []),
     ],
     connectSrc: [
@@ -100,7 +101,8 @@ export default async function handleRequest(
       'https://*.hubspot.com',     // 添加
       'https://www.youtube.com',
       'https://www.google.com',
-      'https://www.gstatic.com'
+      'https://www.gstatic.com',
+      "https://challenges.cloudflare.com",
     ],
     imgSrc: [                        // 添加 imgSrc 配置
       "'self'",

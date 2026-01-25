@@ -4,8 +4,43 @@ import type {ActionFunction} from '@shopify/remix-oxygen';
 import {calculatePriceAndWeight, type CalculationProps} from '~/utils/calculations';
 import {createAdminApiClient} from '@shopify/admin-api-client';
 
-// 提取变体创建逻辑为纯函数
-async function createVariant(adminClient: any, {productId, price, weight, calculationProps}: {
+// --- 在文件最上方或 verifyTurnstile 函数上方定义接口 ---
+interface TurnstileResponse {
+  success: boolean;
+  'error-codes'?: string[];
+  challenge_ts?: string;
+  hostname?: string;
+}
+
+// --- 修改后的 verifyTurnstile 函数 ---
+async function verifyTurnstile(token: string | null, secretKey: string, ip: string | null) {
+  if (!token) return false;
+
+  try {
+    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        secret: secretKey,
+        response: token,
+        remoteip: ip
+      }),
+    });
+
+    // 【关键修改】在这里加 "as TurnstileResponse"
+    const outcome = await response.json() as TurnstileResponse;
+    
+    // 现在 TypeScript 知道 outcome 里一定有 success 字段了
+    console.log("Turnstile verify result:", outcome); 
+    
+    return outcome.success;
+  } catch (e) {
+    console.error('Turnstile verification error:', e);
+    return false;
+  }
+}
+// 提取变体创建逻辑为纯函数 (保持原样无修改)
+async function createVariant(adminClient: any, { productId, price, weight, calculationProps }: {
   productId: string;
   price: string;
   weight: number;
@@ -54,9 +89,40 @@ async function createVariant(adminClient: any, {productId, price, weight, calcul
 }
 
 
-export const action: ActionFunction = async ({request, context}) => {
+export const action: ActionFunction = async ({ request, context }) => {
   try {
     const formData = await request.formData();
+
+    // 1. 获取前端传来的 Token
+    const token = formData.get('cf-turnstile-response') as string;
+    
+    // 2. 获取 Secret Key (使用了新名称)
+    // 记得去 Oxygen 后台把环境变量名也改成 TURNSTILE_SECRET_KEY
+    const secretKey = context.env.TURNSTILE_SECRET_KEY; 
+
+    if (!secretKey) {
+      console.error("缺少环境变量 TURNSTILE_SECRET_KEY");
+      throw new Error("Server configuration error");
+    }
+
+    // 3. 执行验证
+    const clientIp = request.headers.get('CF-Connecting-IP');
+    const isHuman = await verifyTurnstile(token, secretKey, clientIp);
+
+    if (!isHuman) {
+      console.warn(`[Security] 拦截了这一条机器请求，IP: ${clientIp}`);
+      return data(
+        { 
+          status: 'error', 
+          error: '验证失败，请刷新页面重试 (Turnstile Verification Failed)' 
+        }, 
+        { status: 403 } // 403 Forbidden: 拒绝访问
+      );
+    }
+    
+    // ==========================================
+    // 🛡️ 拦截结束，下面是你原有的业务代码
+    // ==========================================
 
     const calculationProps: CalculationProps = {
       formType: formData.get('formType') as string,

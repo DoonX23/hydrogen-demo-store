@@ -23,6 +23,7 @@
     "@fontsource/poppins": "^5.1.1",
     "@headlessui/react": "^1.7.19",
     "@heroicons/react": "^2.2.0",
+    "@marsidev/react-turnstile": "^1.4.1",
     "@okendo/shopify-hydrogen": "^2.5.0",
     "@portabletext/to-html": "^2.0.13",
     "@react-router/fs-routes": "7.6.0",
