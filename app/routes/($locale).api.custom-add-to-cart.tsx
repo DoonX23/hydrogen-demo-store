@@ -88,6 +88,77 @@ async function createVariant(adminClient: any, { productId, price, weight, calcu
   return data.productVariantsBulkCreate.productVariants[0].id;
 }
 
+// --- 修复后的校验函数 ---
+function validateData(props: CalculationProps) {
+  const errors: string[] = [];
+  
+  // 1. 全局基础校验
+  if (isNaN(props.quantity) || props.quantity < 1) {
+    errors.push("Quantity must be at least 1");
+  }
+  if (props.quantity > 10000) { 
+    errors.push("Quantity cannot exceed 10000"); 
+  }
+  if (props.unitPrice < 0) {
+     errors.push("Invalid price");
+  }
+
+  const MAX_DIMENSION_MM = 3000; 
+  const MIN_DIMENSION_MM = 1;
+
+  // 2. 根据 formType 进行针对性校验
+  switch (props.formType) {
+    case 'Sheet':
+      // 修复核心：使用 (props.lengthMm ?? 0)
+      if ((props.lengthMm ?? 0) < MIN_DIMENSION_MM || (props.lengthMm ?? 0) > MAX_DIMENSION_MM) {
+        errors.push(`Length must be between ${MIN_DIMENSION_MM} and ${MAX_DIMENSION_MM}mm`);
+      }
+      if ((props.widthMm ?? 0) < MIN_DIMENSION_MM || (props.widthMm ?? 0) > MAX_DIMENSION_MM) {
+        errors.push(`Width must be between ${MIN_DIMENSION_MM} and ${MAX_DIMENSION_MM}mm`);
+      }
+      if (!props.thickness) errors.push("Thickness is required");
+      break;
+
+    case 'Rod':
+      if ((props.lengthMm ?? 0) < MIN_DIMENSION_MM || (props.lengthMm ?? 0) > MAX_DIMENSION_MM) {
+        errors.push(`Length must be between ${MIN_DIMENSION_MM} and ${MAX_DIMENSION_MM}mm`);
+      }
+      if (!props.diameter) errors.push("Diameter is required");
+      break;
+      
+    case 'Film':
+    case 'Flexible Rod':
+       // 处理 lengthM 可能为 undefined 的情况
+       if ((props.lengthM ?? 0) <= 0 || (props.lengthM ?? 0) > 1000) { 
+         errors.push("Invalid length (Meters)");
+       }
+       break;
+
+    case 'Gasket':
+       // 处理内径外径
+       const inner = props.innerDiameterMm ?? 0;
+       const outer = props.outerDiameterMm ?? 0;
+       
+       if (inner <= 0 || outer <= 0) {
+           errors.push("Invalid diameter dimensions");
+       }
+       if (inner >= outer) {
+           errors.push("Inner diameter must be smaller than outer diameter");
+       }
+       break;
+    
+    case 'Disc':
+       if ((props.diameterMm ?? 0) <= 0) {
+           errors.push("Invalid diameter");
+       }
+       break;
+
+    default:
+      errors.push("Invalid product form type");
+  }
+
+  return errors;
+}
 
 export const action: ActionFunction = async ({ request, context }) => {
   try {
@@ -139,6 +210,23 @@ export const action: ActionFunction = async ({ request, context }) => {
       quantity: parseInt(formData.get('quantity') as string),
       unitPrice: parseFloat(formData.get('unitPrice') as string)
     };
+
+    // ==========================================
+    // 🛡️ 新增：后端数据逻辑校验 (Input Validation)
+    // ==========================================
+    const dataErrors = validateData(calculationProps);
+    
+    if (dataErrors.length > 0) {
+      // 如果有错误，直接返回 400 Bad Request
+      return data(
+        { 
+          status: 'error', 
+          error: dataErrors.join(', ') // "Quantity too big, Invalid length"
+        },
+        { status: 400 }
+      );
+    }
+
     const {price, weight} = calculatePriceAndWeight(calculationProps);
 
     const adminClient = createAdminApiClient({
