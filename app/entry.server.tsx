@@ -71,6 +71,7 @@ export default async function handleRequest(
     ],
     connectSrc: [
       "'self'",
+      "https://challenges.cloudflare.com",
       'https://*.clarity.ms',
       'https://*.crisp.chat',
       'wss://*.crisp.chat',
