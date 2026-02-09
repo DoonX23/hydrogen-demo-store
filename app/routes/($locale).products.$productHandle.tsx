@@ -332,6 +332,11 @@ export default function Product() {
                 </div>
               </div>
             )}*/}
+            <div className="flex">
+              <div className="relative rounded-xl px-3 py-1 text-sm/6 text-gray-600 dark:text-gray-300 ring-1 ring-brand dark:ring-white hover:ring-highlight hover:text-highlight">
+                Feb 10-24 Holiday: Save 15% with code <span className="font-bold text-brand dark:text-highlight">DOONX15</span> while shipping is on hold (orders resume Feb 25)
+              </div>
+            </div>
             {/* 在产品图片和表单之前添加导航卡片 */}
             {productCards.length > 0 && (
               <NavigationCardGrid cards={productCards} />
