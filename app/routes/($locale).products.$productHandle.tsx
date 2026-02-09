@@ -333,8 +333,13 @@ export default function Product() {
               </div>
             )}*/}
             <div className="flex">
-              <div className="relative rounded-xl px-3 py-1 text-sm/6 text-gray-600 dark:text-gray-300 ring-1 ring-brand dark:ring-white hover:ring-highlight hover:text-highlight">
-                Feb 10-24 Holiday: Save 15% with code <span className="font-bold text-brand dark:text-highlight">DOONX15</span> while shipping is on hold (orders resume Feb 25)
+              <div className="relative rounded-xl px-4 py-2 text-sm/6 text-gray-600 dark:text-gray-300 ring-1 ring-brand dark:ring-white hover:ring-highlight">
+                <div className="text-red-600 dark:text-red-400 font-medium">
+                  Shipping paused Feb 10–24; resumes Feb 25.
+                </div>
+                <div>
+                  Holiday Sale: <span className="font-bold italic text-brand dark:text-highlight text-base">15% OFF</span> with code <span className="font-bold text-brand dark:text-highlight text-base">DOONX15</span>
+                </div>
               </div>
             </div>
             {/* 在产品图片和表单之前添加导航卡片 */}
