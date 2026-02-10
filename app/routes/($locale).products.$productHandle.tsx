@@ -338,7 +338,7 @@ export default function Product() {
                   Shipping paused Feb 10–24; resumes Feb 25.
                 </div>
                 <div>
-                  Holiday Sale: <span className="font-bold italic text-brand dark:text-highlight text-base">15% OFF</span> with code <span className="font-bold text-brand dark:text-highlight text-base">DOONX15</span>
+                  Holiday Sale: <span className="font-bold italic text-brand dark:text-highlight text-base">10% OFF</span> with code <span className="font-bold text-brand dark:text-highlight text-base">DOONX10</span>
                 </div>
               </div>
             </div>
