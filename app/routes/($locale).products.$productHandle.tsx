@@ -334,11 +334,8 @@ export default function Product() {
             )}*/}
             <div className="flex">
               <div className="relative rounded-xl px-4 py-2 text-sm/6 text-gray-600 dark:text-gray-300 ring-1 ring-brand dark:ring-white hover:ring-highlight">
-                <div className="text-red-600 dark:text-red-400 font-medium">
-                  Shipping paused Feb 10–24; resumes Feb 25.
-                </div>
                 <div>
-                  Holiday Sale: <span className="font-bold italic text-brand dark:text-highlight text-base">10% OFF</span> with code <span className="font-bold text-brand dark:text-highlight text-base">DOONX10</span>
+                  Spring Sale: <span className="font-bold italic text-brand dark:text-highlight text-base">5% OFF</span> with code <span className="font-bold text-brand dark:text-highlight text-base">DOONX5</span>
                 </div>
               </div>
             </div>
