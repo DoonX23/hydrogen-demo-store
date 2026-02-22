@@ -9,7 +9,7 @@ interface Feature {
 
 const features: Feature[] = [
   { name: 'INSTANT', description: "cut to size prices", icon: CurrencyDollarIcon },
-  { name: 'FREE DELIVERY', description: 'ships to 200+ countries', icon: TruckIcon },
+  { name: 'WORLDWIDE DELIVERY', description: 'Flat rate economy shipping available', icon: TruckIcon },
   { name: 'OUTSTANDING', description: 'customer service', icon: ChatBubbleBottomCenterTextIcon },
   { name: 'SECURE CHECKOUT', description: 'PayPal / MasterCard / Visa', icon: ShieldCheckIcon },
 ];
