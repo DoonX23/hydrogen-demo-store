@@ -49,7 +49,7 @@ import {
       }
     }`;
   
-    const article = await (context.sanity as any).loadQuery(query, {
+    const article = await (context.sanity as any).query(query, {
       fullPath
     });
     
@@ -61,19 +61,20 @@ import {
     }
   
     const articleData = {
-      title: article.data.title,
-      contentHtml: convertToHtml(article.data.body),
+      title: article.title,
+    // 增加一个防御，万一 body 是 null，不传给报错的函数
+    contentHtml: article.body ? convertToHtml(article.body) : "",
       seo: {
-        title: article.data.seo?.title || article.data.title,
-        description: article.data.seo?.description || article.data.excerpt,
+        title: article.seo?.title || article.title,
+        description: article.seo?.description || article.excerpt,
       },
-      publishedAt: article.data.updatedAt,
-      excerpt: article.data.excerpt,
-      image: article.data.image ? {
-        url: article.data.image.url,
-        height: article.data.image.height,
-        width: article.data.image.width,
-        altText: article.data.image.altText
+      publishedAt: article.updatedAt,
+      excerpt: article.excerpt,
+      image: article.image ? {
+        url: article.image.url,
+        height: article.image.height,
+        width: article.image.width,
+        altText: article.image.altText
       } : null
     };
     
@@ -85,12 +86,12 @@ import {
     // 使用 Response.json() 代替弃用的 json 函数
     return {
       material: {
-        title: article.data.title,
-        body: convertToHtml(article.data.body),
-        image: article.data.image || null,
-        relativeCollections: article.data.relativeCollections || [],
-        breadcrumb: article.data.breadcrumb || [], 
-        childArticles: article.data.childArticles || []
+        title: article.title,
+        body: article.body ? convertToHtml(article.body) : "",
+        image: article.image || null,
+        relativeCollections: article.relativeCollections || [],
+        breadcrumb: article.breadcrumb || [], 
+        childArticles: article.childArticles || []
       },
       seo
     };

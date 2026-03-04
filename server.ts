@@ -16,8 +16,13 @@ import {
 
 import {AppSession} from '~/lib/session.server';
 import {getLocaleFromRequest} from '~/lib/utils';
-// 添加 Sanity 相关导入
-import {createSanityContext} from 'hydrogen-sanity';
+// 添加 Sanity 相关导入，升级sanity再度修改了；
+import { createSanityContext, type SanityContext } from 'hydrogen-sanity';
+declare module '@shopify/remix-oxygen' {
+  export interface AppLoadContext {
+    sanity: SanityContext;
+  }
+}
 /**
  * Export a fetch handler in module format.
  */
@@ -41,9 +46,9 @@ export default {
         AppSession.init(request, [env.SESSION_SECRET]),
       ]);
 
-      // 添加 Sanity 配置
+      // 添加 Sanity 配置 旧版的 createSanityContext 是同步的，而新版必须使用 await 进行异步初始化。
       
-      const sanity = createSanityContext({
+      const sanity = await createSanityContext({
         request,
         cache,
         waitUntil,

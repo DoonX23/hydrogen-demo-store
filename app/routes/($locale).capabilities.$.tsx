@@ -64,7 +64,7 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
     }
   }`;
 
-  const article = await (context.sanity as any).loadQuery(query, {
+  const article = await (context.sanity as any).query(query, {
     fullPath
   });
   
@@ -76,20 +76,20 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
   }
 
   const articleData = {
-    title: article.data.title,
-    contentHtml: convertToHtml(article.data.body),
+    title: article.title,
+    contentHtml: convertToHtml(article.body),
     seo: {
-      title: article.data.seo.title,
-      description: article.data.seo.description,
+      title: article.seo.title,
+      description: article.seo.description,
     },
-    publishedAt: article.data.updatedAt,
-    excerpt: article.data.excerpt,
+    publishedAt: article.updatedAt,
+    excerpt: article.excerpt,
     // 增加 image 字段
-    image: article.data.image ? {
-      url: article.data.image.url,
-      height: article.data.image.height,
-      width: article.data.image.width,
-      altText: article.data.image.altText
+    image: article.image ? {
+      url: article.image.url,
+      height: article.image.height,
+      width: article.image.width,
+      altText: article.image.altText
     } : null
   };
   
@@ -102,13 +102,13 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
   // 2. 使用data()会导致类型被多层包装：先被DataWithResponseInit<T>包装，再被useLoaderData的JsonifyObject<>包装，最终类型为JsonifyObject<DataWithResponseInit<T>>，造成严重类型丢失
   return {
     capability: {
-      title: article.data.title,
-      body: convertToHtml(article.data.body),
-      image: article.data.image || null,
-      pagebuilder: article.data.pagebuilder || [], // 添加pagebuilder数据
-      relativeCollections: article.data.relativeCollections || [],
-      breadcrumb: article.data.breadcrumb || [], 
-      childArticles: article.data.childArticles || []
+      title: article.title,
+      body: convertToHtml(article.body),
+      image: article.image || null,
+      pagebuilder: article.pagebuilder || [], // 添加pagebuilder数据
+      relativeCollections: article.relativeCollections || [],
+      breadcrumb: article.breadcrumb || [], 
+      childArticles: article.childArticles || []
     },
     seo
   };

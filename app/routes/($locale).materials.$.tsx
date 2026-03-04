@@ -66,7 +66,7 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
   }`;
 
 
-  const article = await (context.sanity as any).loadQuery(query, {
+  const article = await (context.sanity as any).query(query, {
     fullPath
   });
 
@@ -76,20 +76,20 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
   }
 
   const articleData = {
-      title: article.data.title,
-      contentHtml: convertToHtml(article.data.body),
+      title: article.title,
+      contentHtml: convertToHtml(article.body),
       seo: {
-      title: article.data.seo.title,
-      description: article.data.seo.description,
+      title: article.seo.title,
+      description: article.seo.description,
       },
-      publishedAt: article.data.updatedAt,
-      excerpt: article.data.excerpt,
+      publishedAt: article.updatedAt,
+      excerpt: article.excerpt,
       // 增加 image 字段
-      image: article.data.image ? {
-          url: article.data.image.url,
-          height: article.data.image.height,
-          width: article.data.image.width,
-          altText: article.data.image.altText
+      image: article.image ? {
+          url: article.image.url,
+          height: article.image.height,
+          width: article.image.width,
+          altText: article.image.altText
       } : null
   };
   const seo = seoPayload.article({
@@ -99,13 +99,13 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
   // 使用 Response.json() 代替弃用的 json 函数
   return {
     material: {
-      title: article.data.title,
-      body: convertToHtml(article.data.body),
-      image: article.data.image || null, // 添加 image 数据
-      pagebuilder: article.data.pagebuilder || [], // 添加 pagebuilder 数据
-      relativeCollections: article.data.relativeCollections || [], // 添加这行
-      breadcrumb: article.data.breadcrumb || [], 
-      childArticles: article.data.childArticles || []
+      title: article.title,
+      body: convertToHtml(article.body),
+      image: article.image || null, // 添加 image 数据
+      pagebuilder: article.pagebuilder || [], // 添加 pagebuilder 数据
+      relativeCollections: article.relativeCollections || [], // 添加这行
+      breadcrumb: article.breadcrumb || [], 
+      childArticles: article.childArticles || []
     },
     seo
   };

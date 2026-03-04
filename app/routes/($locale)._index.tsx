@@ -61,7 +61,7 @@ async function loadCriticalData({context, request}: LoaderFunctionArgs) {
       variables: {handle: 'plastic-film'},
     }),
     // 【新增】查询Sanity首页数据
-    (context.sanity as any).loadQuery(sanityQuery),
+    (context.sanity as any).query(sanityQuery),
     // Add other queries here, so that they are loaded in parallel
   ]);
 
@@ -69,7 +69,7 @@ async function loadCriticalData({context, request}: LoaderFunctionArgs) {
     shop,
     primaryHero: hero,
     // 【新增】添加pagebuilder数据
-    pagebuilder: sanityData?.data?.pagebuilder || [],
+    pagebuilder: sanityData?.pagebuilder || [],
     seo: seoPayload.home({url: request.url}),
   };
 }
