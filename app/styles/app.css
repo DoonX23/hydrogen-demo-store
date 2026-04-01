@@ -23,7 +23,7 @@
   --screen-height: 100vh;
   --screen-height-dynamic: 100vh;
   --color-brand: 10 49 97;
-  --color-highlight: 251 119 1;
+  --color-highlight: 255 95 0;
 
   @media (min-width: 32em) {
     --height-nav: 4rem;
