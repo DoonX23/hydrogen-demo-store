@@ -151,7 +151,7 @@ const CardGridSection: React.FC<CardGridSectionProps> = ({ block }) => {
 
   // 默认区块样式
   const defaultSectionStyles = {
-    section: 'bg-white py-12 md:py-16',
+    section: 'bg-grey-90 py-12 md:py-16',
     container: 'container mx-auto px-4',
     headerWrapper: 'mb-8 md:mb-12 text-center',
     heading: 'text-3xl md:text-4xl font-bold mb-4 tracking-tight text-gray-900 text-balance',

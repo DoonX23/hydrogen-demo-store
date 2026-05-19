@@ -14,3 +14,4 @@ node_modules
 customer-accountapi.generated.d.ts
 storefrontapi.generated.d.ts
 .react-router
+.clinerules

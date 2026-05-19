@@ -60,6 +60,7 @@ import NcInputNumber from '~/components/NcInputNumber';
 import Prices from '~/components/Prices';
 import { OkendoReviews, OkendoStarRating } from '@okendo/shopify-hydrogen';
 import NavigationCardGrid, { type NavigationCardsData } from '~/components/CustomProduct/NavigationCardGrid';
+import CardGridSection from '~/components/PageBuilder/CardGridSection';
 
 export const headers = routeHeaders;
 
@@ -190,7 +191,11 @@ export default function Product() {
   const collection = product.collections.nodes[0];
   const specifications = product.specifications?.value
     ? JSON.parse(product.specifications.value) as Record<string, any[]>
-    : {};
+    : null;
+
+  const processingOptions = product.processing_options?.value
+    ? JSON.parse(product.processing_options.value) as { heading?: string; subheading?: string; cards?: any[]; cardStyles?: any }
+    : null;
 
   // 2. 修改解析逻辑
   const navigationCardsData: NavigationCardsData = (() => {
@@ -217,7 +222,8 @@ export default function Product() {
 
   const productSections = [
     { id: 'description', title: 'Description' },
-    { id: 'specifications', title: 'Specifications' },
+    ...(processingOptions ? [{ id: 'processing', title: 'Processing Options' }] : []),
+    ...(specifications ? [{ id: 'specifications', title: 'Specifications' }] : []),
     { id: 'reviews', title: 'Reviews' },
     //{ id: 'shipping', title: 'Shipping' },
     //{ id: 'return', title: 'Return' }
@@ -403,8 +409,31 @@ export default function Product() {
         {/* 原有代码替换为 */}
         <ProductDescriptionSection product={product} />
 
-        {/* 规格参数部分 - 只有当product.specifications?.value存在时才显示 - 这是第2个锚点 */}
-        {product.specifications?.value && (<ProductSpecifications specifications={specifications} />)}
+        {/* Processing Options Section - 在Description和Specifications之间 */}
+        {processingOptions && (
+          <div id="processing" className="pb-8 md:pb-12">
+            <h2 className="text-2xl font-semibold mb-4">{processingOptions.heading || 'Processing Options'}</h2>
+            {processingOptions.subheading && (
+              <p className="text-base text-gray-600 mb-6">{processingOptions.subheading}</p>
+            )}
+            <CardGridSection 
+              block={{
+                ...processingOptions,
+                heading: undefined,
+                subheading: undefined,
+                sectionStyles: {
+                  section: 'bg-grey-90',
+                  headerWrapper: 'hidden',
+                  heading: 'hidden',
+                  subheading: 'hidden',
+                },
+              }} 
+            />
+          </div>
+        )}
+
+        {/* 规格参数部分 - 只有当specifications存在时才显示 - 这是第2个锚点 */}
+        {specifications && (<ProductSpecifications specifications={specifications} />)}
         
         <div id="reviews">
         <h2 className="text-2xl font-bold mb-4">Reviews</h2>
@@ -804,6 +833,12 @@ const PRODUCT_FRAGMENT = `#graphql
       }
     }
     navigation_cards: metafield(namespace: "custom", key:"navigation_cards") {
+      id
+      value
+      namespace
+      key
+    }
+    processing_options: metafield(namespace: "custom", key:"processing_options") {
       id
       value
       namespace
