@@ -14,99 +14,115 @@ import {
 
   import ArticleBreadcrumb from '~/components/ArticleBreadcrumb';
 
-  export const headers = routeHeaders;
+export const headers = routeHeaders;
+
+// ==========================================
+// 💡 核心配置区：根节点别名
+// ==========================================
+// 在 materials._index.tsx 中，它是 'materials'。
+// 当你新建 shape._index.tsx 时，只需把这里改成 'shape' 即可！
+const ROOT_SLUG = 'materials';
+
+export async function loader({ request, context }: LoaderFunctionArgs) {
   
-  export async function loader({request, context}: LoaderFunctionArgs) {
-    // 这里不需要从params获取路径，因为我们直接查询materials根页面
-    const fullPath = 'materials'; // 根路径
-  
-    // 使用GROQ查询语句查询根materials页面
-    const query = `*[_type == "article" && fullPath == $fullPath][0]{
-      title,
-      slug,
-      fullPath,
-      excerpt,
-      image,
-      breadcrumb,
-      "relativeCollections": relativeCollections[]->{ 
-        "id": store.gid,
-        "title": store.title,
-        "handle": store.slug.current,
-        "image": {
-          "url": store.imageUrl,
-          "altText": store.title
-        }
-      },
-      body,
-      seo,
-      publishedAt,
-      "childArticles": *[_type == "article" && parentArticle._ref == ^._id]{
-        title,
-        slug,  
-        fullPath,
-        excerpt,
-        image
+  // 使用纯净的 GROQ 查询根页面，不再依赖数据库里的 fullPath
+  // 直接查找 slug 为 ROOT_SLUG，且没有父级的文章（作为频道的总入口）
+  const query = `*[_type == "article" && slug.current == $rootSlug && !defined(parentArticle)][0]{
+    _id,
+    title,
+    "slug": slug.current,
+    excerpt,
+    image,
+    "relativeCollections": relativeCollections[]->{ 
+      "id": store.gid,
+      "title": store.title,
+      "handle": store.slug.current,
+      "image": {
+        "url": store.imageUrl,
+        "altText": store.title
       }
-    }`;
-  
-    const article = await (context.sanity as any).query(query, {
-      fullPath
-    });
-    
-    console.log(JSON.stringify(article.data));
-    
-    if (!article) {
-      console.log('404');
-      throw new Response(null, {status: 404});
+    },
+    body,
+    seo,
+    "_updatedAt": _updatedAt,
+    "childArticles": *[_type == "article" && parentArticle._ref == ^._id]{
+      title,
+      "slug": slug.current,  
+      excerpt,
+      image
     }
-  
-    const articleData = {
+  }`;
+
+  const article = await (context.sanity as any).query(query, {
+    rootSlug: ROOT_SLUG
+  });
+
+  if (!article) {
+    console.log(`404 - ${ROOT_SLUG} root page not found`);
+    throw new Response(null, { status: 404 });
+  }
+
+  // 1. 动态生成首页自己的面包屑 (只有它自己一级)
+  const rootBreadcrumb = [
+    {
+      _key: ROOT_SLUG,
       title: article.title,
+      path: ROOT_SLUG
+    }
+  ];
+
+  // 2. 动态生成子文章的 fullPath (给 RelatedArticles 组件用的跳转链接)
+  const childArticlesWithFullPath = (article.childArticles || []).map((child: any) => ({
+    ...child,
+    fullPath: `${ROOT_SLUG}/${child.slug}`
+  }));
+
+  const articleData = {
+    title: article.title,
     // 增加一个防御，万一 body 是 null，不传给报错的函数
     contentHtml: article.body ? convertToHtml(article.body) : "",
-      seo: {
-        title: article.seo?.title || article.title,
-        description: article.seo?.description || article.excerpt,
-      },
-      publishedAt: article.updatedAt,
-      excerpt: article.excerpt,
-      image: article.image ? {
-        url: article.image.url,
-        height: article.image.height,
-        width: article.image.width,
-        altText: article.image.altText
-      } : null
-    };
-    
-    const seo = seoPayload.article({
-      article: articleData,
-      url: request.url,
-    });
-    
-    // 使用 Response.json() 代替弃用的 json 函数
-    return {
-      material: {
-        title: article.title,
-        body: article.body ? convertToHtml(article.body) : "",
-        image: article.image || null,
-        relativeCollections: article.relativeCollections || [],
-        breadcrumb: article.breadcrumb || [], 
-        childArticles: article.childArticles || []
-      },
-      seo
-    };
-  }
-  
-  export const meta = ({matches}: MetaArgs<typeof loader>) => {
-    return getSeoMeta(...matches.map((match) => (match.data as any).seo));
+    seo: {
+      title: article.seo?.title || article.title,
+      description: article.seo?.description || article.excerpt,
+    },
+    publishedAt: article._updatedAt,
+    excerpt: article.excerpt,
+    image: article.image ? {
+      url: article.image.url,
+      height: article.image.height,
+      width: article.image.width,
+      altText: article.image.altText
+    } : null
   };
-  
-  export default function MaterialsIndex() {
-    const {material} = useLoaderData<typeof loader>();
-    const {title, body, image, relativeCollections, breadcrumb, childArticles} = material;
-    
-    return (
-      <div className='container'>
+
+  const seo = seoPayload.article({
+    article: articleData,
+    url: request.url,
+  });
+
+  return {
+    material: {
+      title: article.title,
+      body: article.body ? convertToHtml(article.body) : "",
+      image: article.image || null,
+      relativeCollections: article.relativeCollections || [],
+      breadcrumb: rootBreadcrumb, // 使用动态生成的面包屑
+      childArticles: childArticlesWithFullPath // 使用拼接了前缀的子文章
+    },
+    seo
+  };
+}
+
+export const meta = ({ matches }: MetaArgs<typeof loader>) => {
+  return getSeoMeta(...matches.map((match) => (match.data as any).seo));
+};
+
+export default function MaterialsIndex() {
+  const { material } = useLoaderData<typeof loader>();
+  const { title, body, image, relativeCollections, breadcrumb, childArticles } = material;
+
+  return (
+    <div className='container'>
       {/* 面包屑导航 */}
       {breadcrumb && breadcrumb.length > 0 && (
         <ArticleBreadcrumb breadcrumb={breadcrumb} />

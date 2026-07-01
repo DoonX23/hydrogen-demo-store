@@ -10,8 +10,9 @@ import {routeHeaders} from '~/data/cache';
 import {seoPayload} from '~/lib/seo.server';
 import {FeaturedCollections} from '~/components/FeaturedCollections';
 import {convertToHtml} from '~/utils/portableText';
-import {RelatedArticles} from '~/components/RelatedArticles'; // 导入新组件
+import {RelatedArticles} from '~/components/RelatedArticles'; 
 import ArticleBreadcrumb from '~/components/ArticleBreadcrumb';
+
 // 导入新组件
 import ListItems from '~/components/PageBuilder/ListItems';
 import SplitSection from '~/components/PageBuilder/SplitSection';
@@ -22,22 +23,28 @@ import CardGridSection from '~/components/PageBuilder/CardGridSection';
 
 export const headers = routeHeaders;
 
+// ==========================================
+// 💡 核心配置区：设置当前模块的根节点为 capabilities
+// ==========================================
+const ROOT_SLUG = 'capabilities';
+
 export async function loader({request, params, context}: LoaderFunctionArgs) {
-  invariant(params['*'], 'Missing capabilities handle');
-  const path = params['*']; // 获取url中的路径参数
+  invariant(params['*'], `Missing ${ROOT_SLUG} handle`);
+  const rawPath = params['*']; // 获取url中的路径参数
 
-  // 构建完整路径
-  const fullPath = `capabilities/${path}`;
+  // 1. 拆分路径并塞入根节点
+  const segments = [ROOT_SLUG, ...rawPath.split('/').filter(Boolean)];
+  const targetSlug = segments[segments.length - 1];
 
-  // 使用GROQ查询语句
-  const query = `*[_type == "article" && fullPath == $fullPath][0]{
-    title,
-    slug,
-    fullPath,
+  // 2. 数据库查询：把相关层级的文章一网打尽，彻底抛弃 fullPath 的强依赖
+  const query = `*[_type == "article" && slug.current in $segments]{
+    _id, 
+    title, 
+    "slug": slug.current, 
+    "parentId": parentArticle->_id,
     excerpt,
     image,
-    breadcrumb, // 添加获取面包屑数据
-    pagebuilder[], // 确保包含pagebuilder并指定它是一个数组
+    pagebuilder[],
     "relativeCollections": relativeCollections[]->{ 
       "id": store.gid,
       "title": store.title,
@@ -49,47 +56,101 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
     },
     body,
     seo,
-    publishedAt,
-    "parentArticle": parentArticle->{
-      title,
-      slug,
-      fullPath
-    },
+    "_updatedAt": _updatedAt,
     "childArticles": *[_type == "article" && parentArticle._ref == ^._id]{
       title,
-      slug,  
-      fullPath,
+      "slug": slug.current,  
       excerpt,
       image
     }
   }`;
 
-  const article = await (context.sanity as any).query(query, {
-    fullPath
-  });
-  
+  const allFetchedArticles = await (context.sanity as any).query(query, { segments });
 
-  
-  if (!article) {
-    console.log('404');
+  // 3. 找到所有匹配目标名字的候选文章
+  const candidateArticles = allFetchedArticles.filter((article: any) => article.slug === targetSlug);
+
+  // 4. 层级验证函数
+  function verifyHierarchy(candidate: any, allArticles: any[], expectedPath: string[]) {
+    let currentDoc = candidate;
+    let validatedChain = [];
+
+    for (let i = expectedPath.length - 1; i >= 0; i--) {
+      const expectedSlug = expectedPath[i];
+
+      if (currentDoc.slug !== expectedSlug) {
+        return { isValid: false, chain: [] };
+      }
+
+      validatedChain.unshift(currentDoc);
+
+      if (i > 0) {
+        const parentDoc = allArticles.find((a: any) => a._id === currentDoc.parentId);
+        if (!parentDoc) {
+          return { isValid: false, chain: [] };
+        }
+        currentDoc = parentDoc;
+      }
+    }
+
+    if (currentDoc.parentId) {
+      return { isValid: false, chain: [] };
+    }
+
+    return { isValid: true, chain: validatedChain };
+  }
+
+  // 5. 执行校验并获取最终文章
+  let finalArticle = null;
+  let breadcrumbData: any[] = [];
+
+  for (const candidate of candidateArticles) {
+    const result = verifyHierarchy(candidate, allFetchedArticles, segments);
+    if (result.isValid) {
+      finalArticle = candidate;
+      breadcrumbData = result.chain;
+      break;
+    }
+  }
+
+  if (!finalArticle) {
+    console.log('404 - Article not found or hierarchy mismatch');
     throw new Response(null, {status: 404});
   }
 
+  // 6. 动态生成面包屑数据
+  let accumulatedPath = '';
+  const finalBreadcrumb = breadcrumbData.map((node) => {
+    accumulatedPath += accumulatedPath ? `/${node.slug}` : node.slug;
+    return {
+      _key: accumulatedPath,
+      title: node.title,
+      path: accumulatedPath
+    };
+  });
+
+  // 7. 动态生成子文章的 fullPath
+  const basePath = `${ROOT_SLUG}/${rawPath}`;
+  const childArticlesWithFullPath = (finalArticle.childArticles || []).map((child: any) => ({
+    ...child,
+    fullPath: `${basePath}/${child.slug}`
+  }));
+
+  // 8. 组装 SEO 数据
   const articleData = {
-    title: article.title,
-    contentHtml: convertToHtml(article.body),
+    title: finalArticle.title,
+    contentHtml: convertToHtml(finalArticle.body),
     seo: {
-      title: article.seo.title,
-      description: article.seo.description,
+      title: finalArticle.seo?.title || finalArticle.title,
+      description: finalArticle.seo?.description || finalArticle.excerpt,
     },
-    publishedAt: article.updatedAt,
-    excerpt: article.excerpt,
-    // 增加 image 字段
-    image: article.image ? {
-      url: article.image.url,
-      height: article.image.height,
-      width: article.image.width,
-      altText: article.image.altText
+    publishedAt: finalArticle._updatedAt,
+    excerpt: finalArticle.excerpt,
+    image: finalArticle.image ? {
+      url: finalArticle.image.url,
+      height: finalArticle.image.height,
+      width: finalArticle.image.width,
+      altText: finalArticle.image.altText
     } : null
   };
   
@@ -98,17 +159,16 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
     url: request.url,
   });
   
-  // 1. json()和defer()方法在新版本中已废弃，需升级为data()
-  // 2. 使用data()会导致类型被多层包装：先被DataWithResponseInit<T>包装，再被useLoaderData的JsonifyObject<>包装，最终类型为JsonifyObject<DataWithResponseInit<T>>，造成严重类型丢失
   return {
+    // 💡 保持原有的对象名称 'capability'
     capability: {
-      title: article.title,
-      body: convertToHtml(article.body),
-      image: article.image || null,
-      pagebuilder: article.pagebuilder || [], // 添加pagebuilder数据
-      relativeCollections: article.relativeCollections || [],
-      breadcrumb: article.breadcrumb || [], 
-      childArticles: article.childArticles || []
+      title: finalArticle.title,
+      body: convertToHtml(finalArticle.body),
+      image: finalArticle.image || null,
+      pagebuilder: finalArticle.pagebuilder || [], 
+      relativeCollections: finalArticle.relativeCollections || [],
+      breadcrumb: finalBreadcrumb, 
+      childArticles: childArticlesWithFullPath
     },
     seo
   };

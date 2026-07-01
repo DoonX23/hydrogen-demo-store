@@ -4,13 +4,13 @@ import {
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
 import { useLoaderData } from 'react-router';
-import {getSeoMeta, Image} from '@shopify/hydrogen'; 
-import {PageHeader, Section} from '~/components/Text';
-import {routeHeaders} from '~/data/cache';
-import {seoPayload} from '~/lib/seo.server';
-import {FeaturedCollections} from '~/components/FeaturedCollections';
-import {convertToHtml} from '~/utils/portableText';
-import {RelatedArticles} from '~/components/RelatedArticles'; // 导入新组件
+import { getSeoMeta, Image } from '@shopify/hydrogen'; 
+import { PageHeader, Section } from '~/components/Text';
+import { routeHeaders } from '~/data/cache';
+import { seoPayload } from '~/lib/seo.server';
+import { FeaturedCollections } from '~/components/FeaturedCollections';
+import { convertToHtml } from '~/utils/portableText';
+import { RelatedArticles } from '~/components/RelatedArticles';
 import ArticleBreadcrumb from '~/components/ArticleBreadcrumb';
 import ListItems from '~/components/PageBuilder/ListItems';
 import SplitSection from '~/components/PageBuilder/SplitSection';
@@ -21,19 +21,22 @@ import CardGridSection from '~/components/PageBuilder/CardGridSection';
 
 export const headers = routeHeaders;
 
-export async function loader({request, context}: LoaderFunctionArgs) {
-  // 这里不需要从params获取路径，因为我们直接查询capabilities根页面
-  const fullPath = 'capabilities'; // 根路径
+// ==========================================
+// 💡 核心配置区：根节点别名
+// ==========================================
+const ROOT_SLUG = 'capabilities';
 
-  // 使用GROQ查询语句查询根capabilities页面
-  const query = `*[_type == "article" && fullPath == $fullPath][0]{
+export async function loader({ request, context }: LoaderFunctionArgs) {
+  // 使用新的 GROQ 查询语句：
+  // 1. 不再使用 fullPath 查，而是直接查 slug.current
+  // 2. !defined(parentArticle) 确保它是一个最顶级的根页面
+  const query = `*[_type == "article" && slug.current == $rootSlug && !defined(parentArticle)][0]{
+    _id,
     title,
-    slug,
-    fullPath,
+    "slug": slug.current,
     excerpt,
     image,
-    breadcrumb,
-    pagebuilder[], // 确保包含pagebuilder并指定它是一个数组
+    pagebuilder[],
     "relativeCollections": relativeCollections[]->{ 
       "id": store.gid,
       "title": store.title,
@@ -45,26 +48,38 @@ export async function loader({request, context}: LoaderFunctionArgs) {
     },
     body,
     seo,
-    publishedAt,
+    "_updatedAt": _updatedAt,
     "childArticles": *[_type == "article" && parentArticle._ref == ^._id]{
       title,
-      slug,  
-      fullPath,
+      "slug": slug.current,  
       excerpt,
       image
     }
   }`;
 
   const article = await (context.sanity as any).query(query, {
-    fullPath
+    rootSlug: ROOT_SLUG
   });
-  
 
-  
   if (!article) {
-    console.log('404');
-    throw new Response(null, {status: 404});
+    console.log('404 - Root page not found');
+    throw new Response(null, { status: 404 });
   }
+
+  // 1. 动态生成首页自己的面包屑 (只有它自己一级)
+  const rootBreadcrumb = [
+    {
+      _key: ROOT_SLUG,
+      title: article.title,
+      path: ROOT_SLUG
+    }
+  ];
+
+  // 2. 动态生成子文章的 fullPath
+  const childArticlesWithFullPath = (article.childArticles || []).map((child: any) => ({
+    ...child,
+    fullPath: `${ROOT_SLUG}/${child.slug}`
+  }));
 
   const articleData = {
     title: article.title,
@@ -73,7 +88,7 @@ export async function loader({request, context}: LoaderFunctionArgs) {
       title: article.seo?.title || article.title,
       description: article.seo?.description || article.excerpt,
     },
-    publishedAt: article.updatedAt,
+    publishedAt: article._updatedAt,
     excerpt: article.excerpt,
     image: article.image ? {
       url: article.image.url,
@@ -88,33 +103,30 @@ export async function loader({request, context}: LoaderFunctionArgs) {
     url: request.url,
   });
   
-  /*1. json()和defer()方法在新版本中已废弃，需升级为data()
-    2. 使用data()会导致类型被多层包装：先被DataWithResponseInit<T>包装，再被useLoaderData的JsonifyObject<>包装，最终类型为JsonifyObject<DataWithResponseInit<T>>，造成严重类型丢失
-  */
   return {
     capabilities: {
       title: article.title,
       body: convertToHtml(article.body),
       image: article.image || null,
-      pagebuilder: article.pagebuilder || [], // 添加pagebuilder数据
+      pagebuilder: article.pagebuilder || [],
       relativeCollections: article.relativeCollections || [],
-      breadcrumb: article.breadcrumb || [], 
-      childArticles: article.childArticles || []
+      breadcrumb: rootBreadcrumb, 
+      childArticles: childArticlesWithFullPath
     },
     seo
   };
 }
 
-export const meta = ({matches}: MetaArgs<typeof loader>) => {
+export const meta = ({ matches }: MetaArgs<typeof loader>) => {
   return getSeoMeta(...matches.map((match) => (match.data as any).seo));
 };
 
 export default function CapabilitiesIndex() {
-  const {capabilities} = useLoaderData<typeof loader>();
-  const {title, body, image, relativeCollections, breadcrumb, childArticles, pagebuilder} = capabilities;
+  const { capabilities } = useLoaderData<typeof loader>();
+  const { title, body, image, relativeCollections, breadcrumb, childArticles, pagebuilder } = capabilities;
 
   return (
-<>
+    <>
       {/* Page Builder 内容 */}
       {pagebuilder && pagebuilder.length > 0 && (
         <main className="isolate">
