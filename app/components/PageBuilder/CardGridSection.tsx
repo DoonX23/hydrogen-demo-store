@@ -4,7 +4,59 @@ import { Link } from 'react-router';
 import { Image } from '@shopify/hydrogen';
 import ListItems, { ListItem } from './ListItems';
 
+// ==========================================
+// 原生原生映射字典 (替代 CVA)
+// ==========================================
+
+const getSectionClasses = (theme: string = 'gray') => {
+  const themes: Record<string, string> = {
+    light: 'bg-white text-gray-900',
+    gray: 'bg-gray-50 text-gray-900',
+    dark: 'bg-gray-900 text-white',
+  };
+  return `py-12 md:py-16 transition-colors duration-300 ${themes[theme] || themes.gray}`;
+};
+
+const getTextClasses = (theme: string = 'gray', isHeading: boolean = false) => {
+  const themes: Record<string, string> = {
+    light: 'text-gray-600',
+    gray: 'text-gray-600',
+    dark: 'text-gray-300',
+  };
+  const base = isHeading ? '!text-inherit text-balance font-bold tracking-tight' : themes[theme] || themes.gray;
+  return base;
+};
+
+const getCardClasses = (layout: string = 'imageLeft', style: string = 'flat') => {
+  const layouts: Record<string, string> = {
+    imageLeft: 'flex-col md:flex-row',
+    imageTop: 'flex-col',
+  };
+  const styles: Record<string, string> = {
+    flat: 'bg-gray-100 hover:brightness-95 rounded-lg',
+    shadow: 'bg-white shadow-md hover:shadow-xl rounded-xl',
+    bordered: 'bg-transparent border border-gray-200 hover:border-primary-500 rounded-lg',
+  };
+  return `group h-full flex overflow-hidden transition-all duration-300 ease-out ${layouts[layout] || layouts.imageLeft} ${styles[style] || styles.flat}`;
+};
+
+const getImageWrapperClasses = (layout: string = 'imageLeft', aspect: string = '4/3') => {
+  const layouts: Record<string, string> = {
+    imageLeft: 'md:w-2/5',
+    imageTop: 'w-full',
+  };
+  const aspects: Record<string, string> = {
+    '4/3': 'aspect-[4/3]',
+    '16/9': 'aspect-video',
+    '1/1': 'aspect-square',
+  };
+  return `shrink-0 relative overflow-hidden w-full ${layouts[layout] || layouts.imageLeft} ${aspects[aspect] || aspects['4/3']}`;
+};
+
+// ==========================================
 // 类型定义
+// ==========================================
+
 type ImageType = {
   url: string;
   alt?: string;
@@ -26,62 +78,28 @@ type CardGridSectionProps = {
     cards?: Card[];
     cardLayout?: 'imageLeft' | 'imageTop';
     columns?: number;
-    sectionStyles?: {
-      section?: string;
-      container?: string;
-      headerWrapper?: string;
-      heading?: string;
-      subheading?: string;
-    };
-    cardStyles?: {
-      title?: string;
-      description?: string;
-      readMore?: string;
-      card?: string;
-      cardContent?: string;
-      image?: string;
-      imageAspect?: string;
-    };
+    theme?: 'light' | 'gray' | 'dark';
+    cardStyle?: 'flat' | 'shadow' | 'bordered';
+    imageAspect?: '4/3' | '16/9' | '1/1';
   };
 };
 
-// 卡片组件
+// ==========================================
+// 单个卡片组件
+// ==========================================
+
 const CardItem: React.FC<{ 
   card: Card; 
   layout: 'imageLeft' | 'imageTop';
-  styles: {
-    title: string;
-    description: string;
-    readMore: string;
-    card: string;
-    cardContent: string;
-    image: string;
-    imageAspect: string;
-  };
-}> = ({ card, layout, styles }) => {
-  const { 
-    title, 
-    description, 
-    list, 
-    image, 
-    href, 
-    readMore
-  } = card;
+  cardStyle: 'flat' | 'shadow' | 'bordered';
+  imageAspect: '4/3' | '16/9' | '1/1';
+  theme: 'light' | 'gray' | 'dark';
+}> = ({ card, layout, cardStyle, imageAspect, theme }) => {
+  const { title, description, list, image, href, readMore } = card;
 
-  // 根据区块级布局确定卡片布局样式
-  const cardLayoutClass = layout === 'imageLeft'
-    ? 'flex flex-col md:flex-row' // 移动端垂直排列，桌面端水平排列
-    : 'flex flex-col'; // 始终垂直排列
-
-  // 图片容器样式，包含自定义的宽高比
-  const imageWrapperClass = layout === 'imageLeft'
-    ? `shrink-0 relative overflow-hidden w-full md:w-2/5 ${styles.imageAspect}` // 桌面端占2/5宽度
-    : `shrink-0 relative overflow-hidden w-full ${styles.imageAspect}`; // 全宽度
-
-  // 内容包装器组件，根据是否有链接决定渲染Link还是div
   const ContentWrapper = href 
     ? ({ children }: { children: React.ReactNode }) => (
-        <Link to={href} className="group h-full block focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg">
+        <Link to={href} className="block h-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg">
           {children}
         </Link>
       )
@@ -89,55 +107,71 @@ const CardItem: React.FC<{
 
   return (
     <ContentWrapper>
-      <div className={styles.card}>
-        <div className={cardLayoutClass}>
-          {/* 图片部分 */}
-          {image?.url && (
-            <div className={imageWrapperClass}>
-              <Image
-                src={image.url}
-                alt={image.alt || title || ''}
-                className={styles.image}
-              />
+      <div className={getCardClasses(layout, cardStyle)}>
+        
+        {/* 图片部分 */}
+        {image?.url && (
+          <div className={getImageWrapperClasses(layout, imageAspect)}>
+            <Image
+              src={image.url}
+              alt={image.alt || title || ''}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+        )}
+        
+        {/* 内容部分 */}
+        <div className="flex flex-1 flex-col p-5 sm:p-6">
+          {title && (
+            <h3 className={`text-xl font-semibold mb-2 transition-colors ${theme === 'dark' && cardStyle === 'flat' ? 'text-gray-900' : 'text-inherit'} group-hover:text-primary-600`}>
+              {title}
+            </h3>
+          )}
+          
+          {description && (
+            <p className={`mt-2 ${theme === 'dark' && cardStyle === 'flat' ? 'text-gray-600' : getTextClasses(theme, false)}`}>
+              {description}
+            </p>
+          )}
+          
+          {list && (
+            <div className="mt-4">
+              <ListItems list={list} />
             </div>
           )}
           
-          {/* 内容部分 */}
-          <div className={styles.cardContent}>
-            {title && <h3 className={styles.title}>{title}</h3>}
-            {description && <p className={styles.description}>{description}</p>}
-            {list && <ListItems list={list} />}
-            
-            {/* 阅读更多链接 */}
-            {href && readMore && (
-              <div className="mt-auto pt-4">
-                <span className={styles.readMore}>
-                  {readMore}
-                  <svg 
-                    className="shrink-0 size-4" 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    width="24" 
-                    height="24" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  >
-                    <path d="m9 18 6-6-6-6" />
-                  </svg>
-                </span>
-              </div>
-            )}
-          </div>
+          {/* 阅读更多链接 */}
+          {href && readMore && (
+            <div className="mt-auto pt-5">
+              <span className="text-highlight font-bold group-hover:text-brand transition-colors inline-flex items-center gap-x-1">
+                {readMore}
+                <svg 
+                  className="shrink-0 size-4 transition-transform group-hover:translate-x-1" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </ContentWrapper>
   );
 };
 
-// 主组件
+// ==========================================
+// 主区块组件
+// ==========================================
+
 const CardGridSection: React.FC<CardGridSectionProps> = ({ block }) => {
   const { 
     heading, 
@@ -145,99 +179,51 @@ const CardGridSection: React.FC<CardGridSectionProps> = ({ block }) => {
     cards = [], 
     cardLayout = 'imageLeft', 
     columns = cardLayout === 'imageLeft' ? 2 : 3,
-    sectionStyles,
-    cardStyles,
+    theme = 'gray',
+    cardStyle = 'flat',
+    imageAspect = '4/3',
   } = block;
 
-  // 默认区块样式
-  const defaultSectionStyles = {
-    section: 'bg-grey-90 py-12 md:py-16',
-    container: 'container mx-auto px-4',
-    headerWrapper: 'mb-8 md:mb-12 text-center',
-    heading: 'text-3xl md:text-4xl font-bold mb-4 tracking-tight text-gray-900 text-balance',
-    subheading: 'text-lg/8 text-gray-600 max-w-3xl mx-auto',
-  };
-
-  // 默认卡片样式
-  const defaultCardStyles = {
-    title: 'text-xl font-semibold group-hover:text-primary-600 group-focus:text-primary-600 transition-colors text-balance',
-    description: 'mt-2 text-gray-600',
-    readMore: 'text-highlight font-bold group-hover:text-brand group-focus:text-brand transition-colors inline-flex items-center gap-x-1',
-    card: 'h-full bg-gray-100 transition-all duration-300 ease-out hover:brightness-95 overflow-hidden rounded-lg',
-    cardContent: 'flex flex-1 flex-col p-3 sm:p-4',
-    image: 'w-full h-full object-cover',
-    imageAspect: 'aspect-[4/3]',
-  };
-
-  // 合并样式
-  const mergedSectionStyles = {
-    section: sectionStyles?.section || defaultSectionStyles.section,
-    container: sectionStyles?.container || defaultSectionStyles.container,
-    headerWrapper: sectionStyles?.headerWrapper || defaultSectionStyles.headerWrapper,
-    heading: sectionStyles?.heading || defaultSectionStyles.heading,
-    subheading: sectionStyles?.subheading || defaultSectionStyles.subheading,
-  };
-
-  const mergedCardStyles = {
-    title: cardStyles?.title || defaultCardStyles.title,
-    description: cardStyles?.description || defaultCardStyles.description,
-    readMore: cardStyles?.readMore || defaultCardStyles.readMore,
-    card: cardStyles?.card || defaultCardStyles.card,
-    cardContent: cardStyles?.cardContent || defaultCardStyles.cardContent,
-    image: cardStyles?.image || defaultCardStyles.image,
-    imageAspect: cardStyles?.imageAspect || defaultCardStyles.imageAspect,
-  };
-
-  // 根据布局和列数确定 CSS 类名
   const getGridClass = () => {
     if (cardLayout === 'imageLeft') {
-      // 左图右内容支持 1-4 列
       const validColumns = Math.min(Math.max(1, columns), 4);
       switch (validColumns) {
-        case 1:
-          return 'grid grid-cols-1 gap-8 max-w-2xl mx-auto';
-        case 2:
-          return 'grid grid-cols-1 lg:grid-cols-2 gap-8';
-        case 3:
-          return 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6';
-        case 4:
-          return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6';
-        default:
-          return 'grid grid-cols-1 lg:grid-cols-2 gap-8';
+        case 1: return 'grid grid-cols-1 gap-8 max-w-3xl mx-auto';
+        case 2: return 'grid grid-cols-1 lg:grid-cols-2 gap-8';
+        case 3: return 'grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6';
+        case 4: return 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6';
+        default: return 'grid grid-cols-1 lg:grid-cols-2 gap-8';
       }
     } else {
-      // 上图下内容支持 1-6 列
       const validColumns = Math.min(Math.max(1, columns), 6);
       switch (validColumns) {
-        case 1:
-          return 'grid grid-cols-1 gap-8 max-w-md mx-auto';
-        case 2:
-          return 'grid grid-cols-1 sm:grid-cols-2 gap-6';
-        case 3:
-          return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6';
-        case 4:
-          return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6';
-        case 5:
-          return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6';
-        case 6:
-          return 'grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-6';
-        default:
-          return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6';
+        case 1: return 'grid grid-cols-1 gap-8 max-w-md mx-auto';
+        case 2: return 'grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8';
+        case 3: return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8';
+        case 4: return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6';
+        case 5: return 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6';
+        case 6: return 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6';
+        default: return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8';
       }
     }
   };
 
   return (
-    <section className={mergedSectionStyles.section}>
-      <div className={mergedSectionStyles.container}>
+    <section className={getSectionClasses(theme)}>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        
         {/* 标题部分 */}
         {(heading || subheading) && (
-          <div className={mergedSectionStyles.headerWrapper}>
+          <div className="mb-10 md:mb-16 text-center max-w-3xl mx-auto">
             {heading && (
-              <h2 className={mergedSectionStyles.heading}>{heading}</h2>
+              <h2 className={`text-3xl md:text-4xl mb-4 ${getTextClasses(theme, true)}`}>
+                {heading}
+              </h2>
             )}
             {subheading && (
-              <p className={mergedSectionStyles.subheading}>{subheading}</p>
+              <p className={`text-lg md:text-xl leading-relaxed ${getTextClasses(theme, false)}`}>
+                {subheading}
+              </p>
             )}
           </div>
         )}
@@ -249,7 +235,9 @@ const CardGridSection: React.FC<CardGridSectionProps> = ({ block }) => {
               key={index} 
               card={card} 
               layout={cardLayout}
-              styles={mergedCardStyles}
+              cardStyle={cardStyle}
+              imageAspect={imageAspect}
+              theme={theme}
             />
           ))}
         </div>
