@@ -64,9 +64,9 @@ function root({
 
 function home({url}: {url: Request['url']}): SeoConfig {
   return {
-    title: 'DoonX: Custom Plastic Film & CNC Machining Solutions',
-    titleTemplate: '%s | DoonX',
-    description: 'DoonX specializes in custom plastic film manufacturing and precision CNC plastic parts production. ISO 9001:2015 certified, 20+ years expertise, Competitive pricing, Worldwide delivery.',
+    title: 'DoonX: Plastic Sheets, Rods, Tubes & Film | Cut to Size & Fabrication',
+    titleTemplate: '%s',
+    description: 'DoonX is your trusted supplier for premium plastic sheets, rods, tubing, and film. We offer custom cut-to-size and full fabrication services including CNC machining, die-cutting, and printing.',
     url,
     robots: {
       noIndex: false,
