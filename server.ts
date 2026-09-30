@@ -4,7 +4,7 @@ import * as remixBuild from 'virtual:react-router/server-build';
 import {
   createRequestHandler,
   getStorefrontHeaders,
-} from '@shopify/remix-oxygen';
+} from '@shopify/hydrogen/oxygen';
 import {
   cartGetIdDefault,
   cartSetIdDefault,
@@ -117,6 +117,36 @@ export default {
           sanity,
         }),
       });
+
+      /**
+       * 修复：经 ngrok 等隧道/代理访问本地 dev 服务器时，中间层会改写 Host 头，
+       * 导致 Origin ≠ Host，React Router 的 CSRF 防护会在进入 action 之前
+       * 直接中止请求（"host header does not match origin header"）。
+       * 仅开发模式下生效：以 Origin 为准重建请求恢复两者一致；
+       * 生产直连时 Origin 与 Host 本来就一致，此分支不会触发，线上防护不受影响。
+       */
+      if (process.env.NODE_ENV !== 'production' && request.method !== 'GET') {
+        const originHeader = request.headers.get('origin');
+        const originHost = originHeader ? new URL(originHeader).host : null;
+        const requestHost = request.headers.get('host');
+        if (originHost && requestHost && originHost !== requestHost) {
+          const url = new URL(request.url);
+          url.host = originHost;
+          const headers = new Headers(request.headers);
+          // 注意：workerd 的 Request 构造器不会自动重建 Host 头，删掉它会导致
+          // "host headers are not provided"；但允许显式携带 x-forwarded-host。
+          // React Router 的 CSRF 检查优先读取 x-forwarded-host（xfh ?? host），
+          // 把它设成与 origin 一致的域名即可通过比对。
+          headers.set('x-forwarded-host', originHost);
+          request = new Request(url.toString(), {
+            method: request.method,
+            headers,
+            body: request.body,
+            // @ts-expect-error Worker/Node 流式请求体要求显式 duplex
+            duplex: 'half',
+          });
+        }
+      }
 
       const response = await handleRequest(request);
 
