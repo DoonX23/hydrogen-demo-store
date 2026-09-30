@@ -1,55 +1,45 @@
 // ~/components/CustomProduct/GasketForm.tsx
 import {useState, useEffect} from 'react';
-import type {CustomFormProps, DimensionLimitation} from '~/lib/type';
-import {UnitConverter} from './UnitConverter';
+import type {CustomFormProps} from '~/lib/type';
+import {UniversalInput} from './UniversalInput';
+import {UnitSystemSwitch} from './UnitSystemSwitch';
 import {PriceDisplay} from './PriceDisplay';
 import CustomInputNumber from './CustomInputNumber';
 import {ProductMetafieldNavigator} from './ProductMetafieldNavigator';
 
-export function GasketForm({product, facets, productMetafields, onError}: CustomFormProps) {
-  // 解析产品元数据
-  const dimensionLimitation = product.dimension_limitation?.value
-    ? JSON.parse(product.dimension_limitation.value) as DimensionLimitation
-    : {};
-  
+export function GasketForm({product, config, facets, productMetafields, onError, unitSystem, onUnitSystemChange}: CustomFormProps) {
+  // 产品配置已由解析层（resolveProductConfig）拆好验好：表单零解析、零兜底
+  const {limits, initial} = config;
+
   // Gasket表单专属状态
   // 内径 (Inner Diameter)
-  const [innerDiameterMm, setInnerDiameterMm] = useState(
-    dimensionLimitation.minInnerDiameter || 10
-  );
-  
+  const [innerDiameterMm, setInnerDiameterMm] = useState(initial.innerDiameter);
+
   // 外径 (Outer Diameter)
-  const [outerDiameterMm, setOuterDiameterMm] = useState(
-    dimensionLimitation.minOuterDiameter || 20
-  );
-  
+  const [outerDiameterMm, setOuterDiameterMm] = useState(initial.outerDiameter);
+
   const [quantity, setQuantity] = useState(10);
-  
-  // 统一的错误状态
-  const [hasError, setHasError] = useState(false);
+
+  // 错误为派生值：由当前值现算（不存 state，多字段互不覆盖）
+  // 含交叉校验：外径必须大于内径
+  const innerError = innerDiameterMm < limits.minInnerDiameter || innerDiameterMm > limits.maxInnerDiameter;
+  const outerError = outerDiameterMm < limits.minOuterDiameter || outerDiameterMm > limits.maxOuterDiameter;
+  const crossError = outerDiameterMm <= innerDiameterMm;
+  const hasError = innerError || outerError || crossError;
 
   // 通知父组件错误状态
   useEffect(() => {
     onError(hasError);
   }, [hasError, onError]);
 
-  // 验证外径必须大于内径
-  useEffect(() => {
-    if (outerDiameterMm <= innerDiameterMm) {
-      setHasError(true);
-    } else {
-      setHasError(false);
-    }
-  }, [innerDiameterMm, outerDiameterMm]);
-
   return (
     <>
       {/* 价格显示 */}
-      <PriceDisplay 
+      <PriceDisplay
         formType="Gasket"
-        thickness={product.thickness?.value || ''}
+        thickness={config.thickness}
         diameter=""
-        density={Number(product.density?.value) || 0}
+        density={config.density}
         lengthMm={0}
         lengthM={0}
         widthMm={0}
@@ -57,7 +47,7 @@ export function GasketForm({product, facets, productMetafields, onError}: Custom
         outerDiameterMm={outerDiameterMm}  // 新增参数
         precision=""
         quantity={quantity}
-        unitPrice={Number(product.unit_price?.value) || 0}
+        unitPrice={config.unitPrice}
       />
 
       {/* 产品元数据导航 */}
@@ -67,45 +57,46 @@ export function GasketForm({product, facets, productMetafields, onError}: Custom
         variants={productMetafields}
       />
 
-      {/* 隐藏字段 */}
-      <input type="hidden" name="thickness" value={product.thickness?.value || ''} />
-      <input type="hidden" name="density" value={product.density?.value || ''} />
-      <input type="hidden" name="unitPrice" value={product.unit_price?.value || ''} />
+      {/* 隐藏字段（配置统一来自解析层） */}
+      <input type="hidden" name="thickness" value={config.thickness} />
+      <input type="hidden" name="density" value={config.density} />
+      <input type="hidden" name="unitPrice" value={config.unitPrice} />
       
       <div className="mt-6 mb-6">
         <div className="space-y-6 max-w-xl">
+          {/* 单位制切换（紧贴尺寸输入区顶部，切档只改显示不碰基准值） */}
+          <UnitSystemSwitch baseUnit="mm" unitSystem={unitSystem} onChange={onUnitSystemChange} />
+
           {/* 内径输入 */}
           <div className="space-y-2">
             <label className="block text-sm font-medium">Inner Diameter</label>
-            <UnitConverter 
-              unitOne="mm"
-              unitTwo="inch"
-              maxValue={dimensionLimitation.maxInnerDiameter || 500}
-              minValue={dimensionLimitation.minInnerDiameter || 1}
-              nameOne="innerDiameterMm"
-              nameTwo="innerDiameterInch"
+            <UniversalInput
+              name="innerDiameterMm"
+              baseUnit="mm"
+              maxValue={limits.maxInnerDiameter}
+              minValue={limits.minInnerDiameter}
               value={innerDiameterMm}
+              unitSystem={unitSystem}
+              error={innerError}
               onChange={setInnerDiameterMm}
-              onError={setHasError}
             />
           </div>
 
           {/* 外径输入 */}
           <div className="space-y-2">
             <label className="block text-sm font-medium">Outer Diameter</label>
-            <UnitConverter 
-              unitOne="mm"
-              unitTwo="inch"
-              maxValue={dimensionLimitation.maxOuterDiameter || 1000}
-              minValue={dimensionLimitation.minOuterDiameter || 5}
-              nameOne="outerDiameterMm"
-              nameTwo="outerDiameterInch"
+            <UniversalInput
+              name="outerDiameterMm"
+              baseUnit="mm"
+              maxValue={limits.maxOuterDiameter}
+              minValue={limits.minOuterDiameter}
               value={outerDiameterMm}
+              unitSystem={unitSystem}
+              error={outerError}
               onChange={setOuterDiameterMm}
-              onError={setHasError}
             />
             {/* 验证提示 */}
-            {outerDiameterMm <= innerDiameterMm && (
+            {crossError && (
               <p className="text-sm text-red-600">
                 Outer diameter must be greater than inner diameter
               </p>

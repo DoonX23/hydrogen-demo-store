@@ -6,6 +6,8 @@ import type {
 } from '@shopify/hydrogen/storefront-api-types';
 import type {ProductQuery} from 'storefrontapi.generated';
 import type {MetafieldNavigatorProps} from '~/components/CustomProduct/ProductMetafieldNavigator';
+import type {UnitSystem} from '~/utils/units';
+import type {CustomProductConfig} from '~/lib/customProductConfig';
 
 export type NonNullableFields<T> = {
   [P in keyof T]: NonNullable<T[P]>;
@@ -27,6 +29,7 @@ export type I18nLocale = Locale & {
 export type Storefront = HydrogenStorefront<I18nLocale>;
 
 //为了避免DimensionLimitation 的type重复，所以封装提取到这个地方；
+// 注意：刻意不带索引签名——后台字段名写错时编译期即报错，不再静默走兜底
 export type DimensionLimitation = {
   maxLength?: number;
   minLength?: number;
@@ -44,13 +47,15 @@ export type DimensionLimitation = {
     value: string;
     label: string;
   }>;
-  [key: string]: number | string | any[] | undefined;
 }
 
 // 自定义表单组件通用Props
 export interface CustomFormProps {
   product: NonNullable<ProductQuery['product']>;  // 关键修改
+  config: CustomProductConfig;  // 解析层产出的类型化配置（表单零解析零兜底）
   facets: MetafieldNavigatorProps['options'];
   productMetafields: MetafieldNavigatorProps['variants'];
   onError: (hasError: boolean) => void;
+  unitSystem: UnitSystem;  // 全局单位制（state 留在 CustomProductForm，六个表单共享）
+  onUnitSystemChange: (unitSystem: UnitSystem) => void;  // 切换控件在各表单尺寸输入区顶部
 }

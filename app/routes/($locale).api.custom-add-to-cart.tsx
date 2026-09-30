@@ -2,6 +2,7 @@
 import {data} from '@shopify/remix-oxygen';
 import type {ActionFunction} from '@shopify/remix-oxygen';
 import {calculatePriceAndWeight, type CalculationProps} from '~/utils/calculations';
+import {formatDimension, type UnitSystem} from '~/utils/units';
 import {createAdminApiClient} from '@shopify/admin-api-client';
 
 // --- 在文件最上方或 verifyTurnstile 函数上方定义接口 ---
@@ -169,7 +170,11 @@ export const action: ActionFunction = async ({ request, context }) => {
     
     // 2. 获取 Secret Key (使用了新名称)
     // 记得去 Oxygen 后台把环境变量名也改成 TURNSTILE_SECRET_KEY
-    const secretKey = context.env.TURNSTILE_SECRET_KEY; 
+    // 本地开发用 Cloudflare 官方测试密钥（始终通过，与前端测试 sitekey 配套）；
+    // 生产构建时 import.meta.env.DEV 被 Vite 静态替换为 false，走正式密钥并强制要求环境变量存在
+    const secretKey = import.meta.env.DEV
+      ? '1x0000000000000000000000000000000AA' // Cloudflare 官方测试 secretkey：Always passes
+      : context.env.TURNSTILE_SECRET_KEY;
 
     if (!secretKey) {
       console.error("缺少环境变量 TURNSTILE_SECRET_KEY");
@@ -194,6 +199,10 @@ export const action: ActionFunction = async ({ request, context }) => {
     // ==========================================
     // 🛡️ 拦截结束，下面是你原有的业务代码
     // ==========================================
+
+    // 客户当前单位制（前端隐藏字段提交，供行属性格式化；缺失/非法一律按默认英制处理）
+    const unitSystem: UnitSystem =
+      formData.get('unitSystem') === 'metric' ? 'metric' : 'imperial';
 
     const calculationProps: CalculationProps = {
       formType: formData.get('formType') as string,
@@ -246,53 +255,54 @@ export const action: ActionFunction = async ({ request, context }) => {
       const lineAttributes = [];
       
       // 修改：按产品特征分类处理属性
+      // 尺寸行属性由服务端 formatDimension 生成（公制只显示基准；英制基准在前括注换算值）
       // 1. 厚度类产品 (Thickness-based)
       switch (calculationProps.formType) {
         case 'Sheet':
           lineAttributes.push(
             {key: 'Thickness', value: `${calculationProps.thickness}`},
-            {key: 'Length', value: `${formData.get('lengthMm')}mm (${formData.get('lengthInch')}")`},
-            {key: 'Width', value: `${calculationProps.widthMm}mm (${formData.get('widthInch')}")`},
+            {key: 'Length', value: formatDimension(calculationProps.lengthMm ?? 0, 'mm', unitSystem)},
+            {key: 'Width', value: formatDimension(calculationProps.widthMm, 'mm', unitSystem)},
             {key: 'Precision', value: calculationProps.precision}
           );
           break;
-          
+
         case 'Film':
           lineAttributes.push(
             {key: 'Thickness', value: `${calculationProps.thickness}`},
-            {key: 'Length', value: `${formData.get('lengthM')}m (${formData.get('lengthFt')}ft)`},
-            {key: 'Width', value: `${calculationProps.widthMm}mm (${formData.get('widthInch')}")`}
+            {key: 'Length', value: formatDimension(calculationProps.lengthM ?? 0, 'm', unitSystem)},
+            {key: 'Width', value: formatDimension(calculationProps.widthMm, 'mm', unitSystem)}
           );
           break;
-          
+
         // 2. 直径类产品 (Diameter-based)
         case 'Rod':
           lineAttributes.push(
             {key: 'Diameter', value: `${calculationProps.diameter}`},
-            {key: 'Length', value: `${formData.get('lengthMm')}mm (${formData.get('lengthInch')}")`}
+            {key: 'Length', value: formatDimension(calculationProps.lengthMm ?? 0, 'mm', unitSystem)}
           );
           break;
-          
+
         case 'Flexible Rod':
           lineAttributes.push(
             {key: 'Diameter', value: `${calculationProps.diameter}`},
-            {key: 'Length', value: `${formData.get('lengthM')}m (${formData.get('lengthFt')}ft)`}
+            {key: 'Length', value: formatDimension(calculationProps.lengthM ?? 0, 'm', unitSystem)}
           );
           break;
-          
+
         // 3. 圆形类产品 (Circular-based)
         case 'Gasket':
           lineAttributes.push(
             {key: 'Thickness', value: `${calculationProps.thickness}`},
-            {key: 'Inner Diameter', value: `${calculationProps.innerDiameterMm}mm (${formData.get('innerDiameterInch')}")`},
-            {key: 'Outer Diameter', value: `${calculationProps.outerDiameterMm}mm (${formData.get('outerDiameterInch')}")`}
+            {key: 'Inner Diameter', value: formatDimension(calculationProps.innerDiameterMm ?? 0, 'mm', unitSystem)},
+            {key: 'Outer Diameter', value: formatDimension(calculationProps.outerDiameterMm ?? 0, 'mm', unitSystem)}
           );
           break;
-          
+
         case 'Disc':
           lineAttributes.push(
             {key: 'Thickness', value: `${calculationProps.thickness}`},
-            {key: 'Diameter', value: `${calculationProps.diameterMm}mm (${formData.get('diameterInch')}")`}
+            {key: 'Diameter', value: formatDimension(calculationProps.diameterMm ?? 0, 'mm', unitSystem)}
           );
           break;
       }
