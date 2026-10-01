@@ -1,4 +1,4 @@
-// ~/lib/customProductConfig.ts
+// ~/lib/customProduct/config.ts
 // 定制产品配置解析层 —— 全站唯一的 metafield 解析点（边界解析 / 收货员模式）
 // 职责：取货 → 拆包装（try/catch，后台写坏 JSON 不崩页，打日志）→ 验货（范围校验）
 //   → 发放类型化配置。六个表单与 ProductDescriptionSection 只消费 config，零解析零兜底。

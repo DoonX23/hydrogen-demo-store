@@ -1,7 +1,7 @@
 import { RichText } from '@shopify/hydrogen';
 import type { ProductQuery } from 'storefrontapi.generated';
 import {ExternalVideo} from '@shopify/hydrogen';
-import {resolveProductConfig} from '~/lib/customProductConfig';
+import {resolveProductConfig} from '~/lib/customProduct';
 // ProductDescriptionSection组件定义
 export function ProductDescriptionSection({ product }: { product: ProductQuery['product']; }) {
     if (!product) return null;

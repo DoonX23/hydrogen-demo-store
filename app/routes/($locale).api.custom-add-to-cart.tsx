@@ -12,10 +12,11 @@ import {
   buildLineAttributes,
   getSpec,
   assembleCalculationInput,
+  resolveProductConfig,
+  type ProductMetafieldSource,
   type CalculationInput,
   type FormInputField,
-} from '~/utils/calculations';
-import {resolveProductConfig, type ProductMetafieldSource} from '~/lib/customProductConfig';
+} from '~/lib/customProduct';
 import type {UnitSystem} from '~/utils/units';
 import {createAdminApiClient} from '@shopify/admin-api-client';
 
@@ -103,7 +104,7 @@ async function createVariant(adminClient: any, { productId, price, weight, calcu
   return data.productVariantsBulkCreate.productVariants[0].id;
 }
 
-// 校验与行属性组装已 spec 化，收进共享模块 ~/utils/calculations/formSpecs.ts：
+// 校验与行属性组装已 spec 化，收进共享模块 ~/lib/customProduct/specs.ts：
 // validateCustomInput（粗校验：全局基础项 + spec 驱动的逐字段范围/档位/precision/跨字段规则）
 // buildLineAttributes（行属性：固定参数 → 逐字段尺寸 → Precision，由 spec 表驱动）
 // 六种形态的差异全部收敛在 FORM_SPECS 一张表里，本路由零形态分支。

@@ -5,16 +5,16 @@
 // 表单红框判什么，服务端就拒什么；表单申报什么尺寸，前后端就按同一份入参算价。
 import {useState, useEffect} from 'react';
 import type {CustomFormProps} from '~/lib/type';
-import type {FormType} from '~/lib/customProductConfig';
 import {
   getSpec,
   isFieldValid,
   fieldBounds,
   getInitialFieldValues,
   assembleCalculationInput,
+  type FormType,
   type CalculationInput,
   type FormInputField,
-} from '~/utils/calculations';
+} from '~/lib/customProduct';
 import {formatDimension} from '~/utils/units';
 import {UniversalInput} from './UniversalInput';
 import {PriceDisplay} from './PriceDisplay';

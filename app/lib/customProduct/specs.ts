@@ -1,4 +1,4 @@
-// ~/utils/calculations/formSpecs.ts
+// ~/lib/customProduct/specs.ts
 // 形态差异唯一的描述点（spec 表）：六种 formType 的几何体积、计费基准、费用开关、
 // 表单字段 / 行属性 / 范围校验全部收敛为一条记录；算价管道、校验、行属性组装三段
 // 流程代码只写一遍、由数据驱动。加第 7 种形态 = 只加一条 spec + 一个联合分支。
@@ -6,7 +6,7 @@
 // 类型约定：表定义处每个形态的回调拿到精确的 CalcInput<F>（编译期对齐，传错字段
 // 直接报错）；统一消费（管道 / 循环）经 getSpec 擦除为联合视图——安全性由 spec 表
 // 与 CalculationInput 联合同构保证（字段互斥，运行时分支已窄化）。
-import type {CustomProductConfig, FormType} from '~/lib/customProductConfig';
+import type {CustomProductConfig, FormType} from './config';
 import {formatDimension, type BaseUnit, type UnitSystem} from '~/utils/units';
 import {
   calculateMachiningBaseFee,
@@ -14,7 +14,7 @@ import {
   calculatePrecisionFee,
   calculateShipping,
   type CalculationResult,
-} from './common';
+} from './fees';
 
 // --- 入参类型（判别联合，每个分支只收该表单真实需要的字段） ---
 // TS 按分支自动收窄，缺字段在编译期报错，彻底消除 || 0 静默兜底。

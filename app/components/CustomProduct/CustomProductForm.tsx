@@ -2,7 +2,7 @@
 import type {ProductQuery} from 'storefrontapi.generated';
 import {useState, useMemo} from 'react';
 // import {useFetcher} from 'react-router'; // 这一行被你下面的 hooks 替代了，可以保持原样
-import {resolveProductConfig} from '~/lib/customProductConfig';
+import {resolveProductConfig} from '~/lib/customProduct';
 import {SpecForm} from './SpecForm';  // 六形态唯一的 spec 驱动表单（原 6 个表单已合并删除）
 import {Button} from '~/components/Button';
 import type {MetafieldNavigatorProps} from './ProductMetafieldNavigator';

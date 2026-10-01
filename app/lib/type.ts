@@ -7,7 +7,7 @@ import type {
 import type {ProductQuery} from 'storefrontapi.generated';
 import type {MetafieldNavigatorProps} from '~/components/CustomProduct/ProductMetafieldNavigator';
 import type {UnitSystem} from '~/utils/units';
-import type {CustomProductConfig} from '~/lib/customProductConfig';
+import type {CustomProductConfig} from '~/lib/customProduct';
 
 export type NonNullableFields<T> = {
   [P in keyof T]: NonNullable<T[P]>;

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   calculatePriceAndWeight,
   type CalculationInput,
-} from '~/utils/calculations';
+} from '~/lib/customProduct';
 
 /**
  * 折扣标签图标
