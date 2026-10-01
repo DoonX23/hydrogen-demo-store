@@ -3,12 +3,7 @@ import type {ProductQuery} from 'storefrontapi.generated';
 import {useState, useMemo} from 'react';
 // import {useFetcher} from 'react-router'; // 这一行被你下面的 hooks 替代了，可以保持原样
 import {resolveProductConfig} from '~/lib/customProductConfig';
-import {SheetForm} from './SheetForm';
-import {FilmForm} from './FilmForm';
-import {RodForm} from './RodForm';
-import {FlexibleRodForm} from './FlexibleRodForm';
-import {GasketForm} from './GasketForm';  // 导入新组件
-import {DiscForm} from './DiscForm';  // 新增导入
+import {SpecForm} from './SpecForm';  // 六形态唯一的 spec 驱动表单（原 6 个表单已合并删除）
 import {Button} from '~/components/Button';
 import type {MetafieldNavigatorProps} from './ProductMetafieldNavigator';
 import { useAutoOpenCartOnAdd } from '~/hooks/useAutoOpenCartOnAdd';
@@ -71,22 +66,19 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
       onUnitSystemChange: setUnitSystem,
     };
 
-    switch(formType) {
-      case 'Sheet':
-        return <SheetForm {...commonProps} />;
-      case 'Film':
-        return <FilmForm {...commonProps} />;
-      case 'Rod':
-        return <RodForm {...commonProps} />;
-      case 'Flexible Rod':
-        return <FlexibleRodForm {...commonProps} />;
-      case 'Gasket':  // 新增case
-      return <GasketForm {...commonProps} />;
-      case 'Disc':  // 新增case
-      return <DiscForm {...commonProps} />;
-      default:
-        return null;
-    }
+    // spec 驱动的唯一表单：formType 非空才渲染（非定制商品不进表单）
+    if (!formType) return null;
+    return (
+      <SpecForm
+        product={product}
+        config={config}
+        facets={facets}
+        productMetafields={productMetafields}
+        onError={setHasError}
+        unitSystem={unitSystem}
+        onUnitSystemChange={setUnitSystem}
+      />
+    );
   };
 
   return (
