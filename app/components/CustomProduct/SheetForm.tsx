@@ -60,10 +60,8 @@ export function SheetForm({product, config, facets, productMetafields, onError, 
       <PriceDisplay
         formType="Sheet"
         thickness={config.thickness}
-        diameter=""
         density={config.density}
         lengthMm={lengthMm}
-        lengthM={0}
         widthMm={widthMm}
         precision={precision}
         quantity={quantity}
@@ -77,10 +75,7 @@ export function SheetForm({product, config, facets, productMetafields, onError, 
         variants={productMetafields}
       />
 
-      {/* 隐藏字段 - 通过FormData提交（配置统一来自解析层） */}
-      <input type="hidden" name="thickness" value={config.thickness} />
-      <input type="hidden" name="density" value={config.density} />
-      <input type="hidden" name="unitPrice" value={config.unitPrice} />
+      {/* 固定参数（thickness/density/unitPrice）不再提交：服务端直接读产品 metafield */}
       
       <div className="mt-6 mb-6">
         <div className="space-y-6 max-w-xl">

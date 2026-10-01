@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
-  calculatePriceAndWeight, 
-  type CalculationProps, 
+  calculatePriceAndWeight,
+  type CalculationInput,
 } from '~/utils/calculations';
 
 /**
@@ -27,12 +27,15 @@ function DiscountIcon() {
 /**
  * PriceDisplay组件 - 用于显示产品的价格和优惠码
  */
-export function PriceDisplay(props: CalculationProps) {
+export function PriceDisplay(props: CalculationInput) {
   const { quantity } = props;
   const [isCopied, setIsCopied] = useState(false);
-  
-  // 计算当前价格和重量
+
+  // 计算当前价格和重量；未知 formType 算不出价 → 不渲染，而不是显示错误价
   const result = calculatePriceAndWeight(props);
+  if (!result) {
+    return null;
+  }
   const unitPrice = Number(result.price);
   const formattedPrice = unitPrice.toFixed(2);
   

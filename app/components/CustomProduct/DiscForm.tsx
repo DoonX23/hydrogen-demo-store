@@ -26,19 +26,12 @@ export function DiscForm({product, config, facets, productMetafields, onError, u
 
   return (
     <>
-      {/* 价格显示 - precision传空字符串 */}
+      {/* 价格显示 */}
       <PriceDisplay
         formType="Disc"
         thickness={config.thickness}
-        diameter=""
         density={config.density}
-        lengthMm={0}
-        lengthM={0}
-        widthMm={0}
         diameterMm={diameterMm}
-        innerDiameterMm={0}
-        outerDiameterMm={0}
-        precision=""
         quantity={quantity}
         unitPrice={config.unitPrice}
       />
@@ -50,10 +43,7 @@ export function DiscForm({product, config, facets, productMetafields, onError, u
         variants={productMetafields}
       />
 
-      {/* 隐藏字段（配置统一来自解析层） */}
-      <input type="hidden" name="thickness" value={config.thickness} />
-      <input type="hidden" name="density" value={config.density} />
-      <input type="hidden" name="unitPrice" value={config.unitPrice} />
+      {/* 固定参数（thickness/density/unitPrice）不再提交：服务端直接读产品 metafield */}
       
       <div className="mt-6 mb-6">
         <div className="space-y-6 max-w-xl">

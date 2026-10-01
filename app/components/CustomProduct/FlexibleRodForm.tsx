@@ -29,13 +29,9 @@ export function FlexibleRodForm({product, config, facets, productMetafields, onE
       {/* 价格显示 */}
       <PriceDisplay
         formType="Flexible Rod"
-        thickness=""
         diameter={config.diameter}
         density={config.density}
-        lengthMm={0}
         lengthM={lengthM}
-        widthMm={0}
-        precision=""
         quantity={quantity}
         unitPrice={config.unitPrice}
       />
@@ -47,10 +43,7 @@ export function FlexibleRodForm({product, config, facets, productMetafields, onE
         variants={productMetafields}
       />
 
-      {/* 隐藏字段（配置统一来自解析层） */}
-      <input type="hidden" name="diameter" value={config.diameter} />
-      <input type="hidden" name="density" value={config.density} />
-      <input type="hidden" name="unitPrice" value={config.unitPrice} />
+      {/* 固定参数（diameter/density/unitPrice）不再提交：服务端直接读产品 metafield */}
       
       <div className="mt-6 mb-6">
         <div className="space-y-6 max-w-xl">

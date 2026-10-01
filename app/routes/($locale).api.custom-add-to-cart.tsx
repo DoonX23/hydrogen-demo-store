@@ -1,7 +1,12 @@
-// routes/api.create-variant.ts
+// routes/api.custom-add-to-cart.ts
+// 定制商品加购：动态建变体流程（Cart Transform Function 上线前的过渡态）。
+// 信任模型：固定参数（thickness/density/unitPrice/diameter/formType）一律从产品 metafield
+// 读取（服务端用与前端同一份 resolveProductConfig 重建配置），表单只提交客户的真实选择
+// （尺寸/precision/quantity/instructions）——申报什么尺寸为什么尺寸付钱，参数无物可伪造。
 import {data} from '@shopify/remix-oxygen';
 import type {ActionFunction} from '@shopify/remix-oxygen';
-import {calculatePriceAndWeight, type CalculationProps} from '~/utils/calculations';
+import {calculatePriceAndWeight, type CalculationInput} from '~/utils/calculations';
+import {resolveProductConfig, type CustomProductConfig, type ProductMetafieldSource} from '~/lib/customProductConfig';
 import {formatDimension, type UnitSystem} from '~/utils/units';
 import {createAdminApiClient} from '@shopify/admin-api-client';
 
@@ -45,7 +50,7 @@ async function createVariant(adminClient: any, { productId, price, weight, calcu
   productId: string;
   price: string;
   weight: number;
-  calculationProps: CalculationProps;
+  calculationProps: CalculationInput;
 }) {
   // 生成唯一变体名
   const variantName = `${Date.now().toString(36)}${Math.random().toString(36).slice(-2)}`;
@@ -90,75 +95,103 @@ async function createVariant(adminClient: any, { productId, price, weight, calcu
 }
 
 // --- 修复后的校验函数 ---
-function validateData(props: CalculationProps) {
+// 粗校验（UX 反馈，非安全权威）。尺寸范围用产品自己的 metafield 配置（config.limits，
+// 与表单同一份范围），不再是全局硬编码；固定参数已经来自 metafield，这里只拦配置缺失。
+function validateData(props: CalculationInput, config: CustomProductConfig) {
   const errors: string[] = [];
-  
+
   // 1. 全局基础校验
   if (isNaN(props.quantity) || props.quantity < 1) {
     errors.push("Quantity must be at least 1");
   }
-  if (props.quantity > 10000) { 
-    errors.push("Quantity cannot exceed 10000"); 
+  if (props.quantity > 10000) {
+    errors.push("Quantity cannot exceed 10000");
   }
-  if (props.unitPrice < 0) {
-     errors.push("Invalid price");
+  if (!Number.isFinite(props.density) || props.density <= 0) {
+    errors.push("Product density is not configured");
+  }
+  if (!Number.isFinite(props.unitPrice) || props.unitPrice <= 0) {
+    errors.push("Product unit price is not configured");
   }
 
-  const MAX_DIMENSION_MM = 3000; 
-  const MIN_DIMENSION_MM = 1;
+  const {limits} = config;
 
-  // 2. 根据 formType 进行针对性校验
+  // 2. 按 formType 精校验（范围即产品 metafield 配置的 dimension_limitation，与表单一致）
   switch (props.formType) {
     case 'Sheet':
-      // 修复核心：使用 (props.lengthMm ?? 0)
-      if ((props.lengthMm ?? 0) < MIN_DIMENSION_MM || (props.lengthMm ?? 0) > MAX_DIMENSION_MM) {
-        errors.push(`Length must be between ${MIN_DIMENSION_MM} and ${MAX_DIMENSION_MM}mm`);
+      if (props.lengthMm < limits.minLength || props.lengthMm > limits.maxLength) {
+        errors.push(`Length must be between ${limits.minLength} and ${limits.maxLength}mm`);
       }
-      if ((props.widthMm ?? 0) < MIN_DIMENSION_MM || (props.widthMm ?? 0) > MAX_DIMENSION_MM) {
-        errors.push(`Width must be between ${MIN_DIMENSION_MM} and ${MAX_DIMENSION_MM}mm`);
+      if (props.widthMm < limits.minWidth || props.widthMm > limits.maxWidth) {
+        errors.push(`Width must be between ${limits.minWidth} and ${limits.maxWidth}mm`);
       }
       if (!props.thickness) errors.push("Thickness is required");
+      if (!isValidPrecision(props.precision, config, props.lengthMm < 50 || props.widthMm < 50)) {
+        errors.push("Invalid precision");
+      }
       break;
 
     case 'Rod':
-      if ((props.lengthMm ?? 0) < MIN_DIMENSION_MM || (props.lengthMm ?? 0) > MAX_DIMENSION_MM) {
-        errors.push(`Length must be between ${MIN_DIMENSION_MM} and ${MAX_DIMENSION_MM}mm`);
+      if (props.lengthMm < limits.minLength || props.lengthMm > limits.maxLength) {
+        errors.push(`Length must be between ${limits.minLength} and ${limits.maxLength}mm`);
       }
       if (!props.diameter) errors.push("Diameter is required");
+      if (!isValidPrecision(props.precision, config, false)) {
+        errors.push("Invalid precision");
+      }
       break;
-      
+
     case 'Film':
     case 'Flexible Rod':
-       // 处理 lengthM 可能为 undefined 的情况
-       if ((props.lengthM ?? 0) <= 0 || (props.lengthM ?? 0) > 1000) { 
-         errors.push("Invalid length (Meters)");
+       if (props.lengthM < limits.minLength || props.lengthM > limits.maxLength) {
+         errors.push(`Length must be between ${limits.minLength} and ${limits.maxLength}m`);
+       }
+       if (props.formType === 'Film' && !config.widthOptions.some((option) => Number(option.value) === props.widthMm)) {
+         errors.push("Invalid width");
        }
        break;
 
-    case 'Gasket':
-       // 处理内径外径
-       const inner = props.innerDiameterMm ?? 0;
-       const outer = props.outerDiameterMm ?? 0;
-       
-       if (inner <= 0 || outer <= 0) {
-           errors.push("Invalid diameter dimensions");
+    case 'Gasket': {
+       const inner = props.innerDiameterMm;
+       const outer = props.outerDiameterMm;
+
+       if (inner < limits.minInnerDiameter || inner > limits.maxInnerDiameter) {
+         errors.push(`Inner diameter must be between ${limits.minInnerDiameter} and ${limits.maxInnerDiameter}mm`);
+       }
+       if (outer < limits.minOuterDiameter || outer > limits.maxOuterDiameter) {
+         errors.push(`Outer diameter must be between ${limits.minOuterDiameter} and ${limits.maxOuterDiameter}mm`);
        }
        if (inner >= outer) {
            errors.push("Inner diameter must be smaller than outer diameter");
        }
+       if (!props.thickness) errors.push("Thickness is required");
        break;
-    
-    case 'Disc':
-       if ((props.diameterMm ?? 0) <= 0) {
-           errors.push("Invalid diameter");
-       }
-       break;
+    }
 
-    default:
-      errors.push("Invalid product form type");
+    case 'Disc':
+       if (props.diameterMm < limits.minDiameter || props.diameterMm > limits.maxDiameter) {
+         errors.push(`Diameter must be between ${limits.minDiameter} and ${limits.maxDiameter}mm`);
+       }
+       if (!props.thickness) errors.push("Thickness is required");
+       break;
   }
 
   return errors;
+}
+
+// precision 规则（与表单联动一致，将来 function 的 parseLineAttributes 复用同一套规则）：
+// 枚举精确匹配；产品只配了 Normal 时禁止 High；Sheet 尺寸 < 50mm 时强制 High
+function isValidPrecision(precision: string, config: CustomProductConfig, forceHigh: boolean) {
+  if (precision !== 'High (±0.2mm)' && precision !== 'Normal (±2mm)') {
+    return false;
+  }
+  if (config.machiningPrecision === 'Normal (±2mm)' && precision === 'High (±0.2mm)') {
+    return false;
+  }
+  if (forceHigh && precision !== 'High (±0.2mm)') {
+    return false;
+  }
+  return true;
 }
 
 export const action: ActionFunction = async ({ request, context }) => {
@@ -204,26 +237,99 @@ export const action: ActionFunction = async ({ request, context }) => {
     const unitSystem: UnitSystem =
       formData.get('unitSystem') === 'metric' ? 'metric' : 'imperial';
 
-    const calculationProps: CalculationProps = {
-      formType: formData.get('formType') as string,
-      thickness: formData.get('thickness') as string,
-      diameter: formData.get('diameter') as string,
-      density: parseFloat(formData.get('density') as string),
-      lengthM: parseFloat(formData.get('lengthM') as string) || 0,
-      lengthMm: parseFloat(formData.get('lengthMm') as string) || 0,
-      widthMm: parseFloat(formData.get('widthMm') as string) || 0,
-      diameterMm: parseFloat(formData.get('diameterMm') as string) || 0,
-      innerDiameterMm: parseFloat(formData.get('innerDiameterMm') as string) || 0,
-      outerDiameterMm: parseFloat(formData.get('outerDiameterMm') as string) || 0,
-      precision: formData.get('precision') as string || '',
-      quantity: parseInt(formData.get('quantity') as string),
-      unitPrice: parseFloat(formData.get('unitPrice') as string)
-    };
+    // ==========================================
+    // 固定参数一律从产品 metafield 读取（与前端同一份 resolveProductConfig）：
+    // 表单不再提交 thickness/density/unitPrice/diameter/formType，客户端声明通道消失
+    // ==========================================
+    const productId = formData.get('productId') as string;
+    if (!productId?.startsWith('gid://shopify/Product/')) {
+      return data(
+        { status: 'error', error: 'Missing or invalid productId' },
+        { status: 400 }
+      );
+    }
+
+    const {product} = await context.storefront.query<{product: ProductMetafieldSource | null}>(
+      PRODUCT_CONFIG_QUERY,
+      {variables: {id: productId}},
+    );
+    if (!product) {
+      return data(
+        { status: 'error', error: 'Product not found' },
+        { status: 400 }
+      );
+    }
+    const config = resolveProductConfig(product);
+    if (!config.formType) {
+      // 无 form_type 的产品不允许走定制加购通道
+      return data(
+        { status: 'error', error: 'Product is not customizable' },
+        { status: 400 }
+      );
+    }
+
+    // 客户的真实选择仍来自表单（申报什么尺寸为什么尺寸付钱）；formType 与固定参数来自 metafield
+    const num = (key: string) => parseFloat(formData.get(key) as string) || 0;
+    const quantity = parseInt(formData.get('quantity') as string);
+
+    let calculationProps: CalculationInput;
+    switch (config.formType) {
+      case 'Sheet':
+        calculationProps = {
+          formType: 'Sheet',
+          thickness: config.thickness, density: config.density,
+          lengthMm: num('lengthMm'), widthMm: num('widthMm'),
+          precision: (formData.get('precision') as string) || '',
+          quantity, unitPrice: config.unitPrice,
+        };
+        break;
+      case 'Rod':
+        calculationProps = {
+          formType: 'Rod',
+          diameter: config.diameter, density: config.density,
+          lengthMm: num('lengthMm'),
+          precision: (formData.get('precision') as string) || '',
+          quantity, unitPrice: config.unitPrice,
+        };
+        break;
+      case 'Film':
+        calculationProps = {
+          formType: 'Film',
+          thickness: config.thickness, density: config.density,
+          lengthM: num('lengthM'), widthMm: num('widthMm'),
+          quantity, unitPrice: config.unitPrice,
+        };
+        break;
+      case 'Flexible Rod':
+        calculationProps = {
+          formType: 'Flexible Rod',
+          diameter: config.diameter, density: config.density,
+          lengthM: num('lengthM'),
+          quantity, unitPrice: config.unitPrice,
+        };
+        break;
+      case 'Gasket':
+        calculationProps = {
+          formType: 'Gasket',
+          thickness: config.thickness, density: config.density,
+          innerDiameterMm: num('innerDiameterMm'), outerDiameterMm: num('outerDiameterMm'),
+          quantity, unitPrice: config.unitPrice,
+        };
+        break;
+      case 'Disc':
+        calculationProps = {
+          formType: 'Disc',
+          thickness: config.thickness, density: config.density,
+          diameterMm: num('diameterMm'),
+          quantity, unitPrice: config.unitPrice,
+        };
+        break;
+    }
 
     // ==========================================
     // 🛡️ 新增：后端数据逻辑校验 (Input Validation)
     // ==========================================
-    const dataErrors = validateData(calculationProps);
+    const dataErrors = validateData(calculationProps, config);
     
     if (dataErrors.length > 0) {
       // 如果有错误，直接返回 400 Bad Request
@@ -236,7 +342,15 @@ export const action: ActionFunction = async ({ request, context }) => {
       );
     }
 
-    const {price, weight} = calculatePriceAndWeight(calculationProps);
+    // 未知 formType → null（fail-closed），直接 400，不再有 price '0.00' 白送
+    const result = calculatePriceAndWeight(calculationProps);
+    if (!result) {
+      return data(
+        { status: 'error', error: 'Invalid product form type' },
+        { status: 400 }
+      );
+    }
+    const {price, weight} = result;
 
     const adminClient = createAdminApiClient({
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
@@ -261,7 +375,7 @@ export const action: ActionFunction = async ({ request, context }) => {
         case 'Sheet':
           lineAttributes.push(
             {key: 'Thickness', value: `${calculationProps.thickness}`},
-            {key: 'Length', value: formatDimension(calculationProps.lengthMm ?? 0, 'mm', unitSystem)},
+            {key: 'Length', value: formatDimension(calculationProps.lengthMm, 'mm', unitSystem)},
             {key: 'Width', value: formatDimension(calculationProps.widthMm, 'mm', unitSystem)},
             {key: 'Precision', value: calculationProps.precision}
           );
@@ -270,7 +384,7 @@ export const action: ActionFunction = async ({ request, context }) => {
         case 'Film':
           lineAttributes.push(
             {key: 'Thickness', value: `${calculationProps.thickness}`},
-            {key: 'Length', value: formatDimension(calculationProps.lengthM ?? 0, 'm', unitSystem)},
+            {key: 'Length', value: formatDimension(calculationProps.lengthM, 'm', unitSystem)},
             {key: 'Width', value: formatDimension(calculationProps.widthMm, 'mm', unitSystem)}
           );
           break;
@@ -279,14 +393,14 @@ export const action: ActionFunction = async ({ request, context }) => {
         case 'Rod':
           lineAttributes.push(
             {key: 'Diameter', value: `${calculationProps.diameter}`},
-            {key: 'Length', value: formatDimension(calculationProps.lengthMm ?? 0, 'mm', unitSystem)}
+            {key: 'Length', value: formatDimension(calculationProps.lengthMm, 'mm', unitSystem)}
           );
           break;
 
         case 'Flexible Rod':
           lineAttributes.push(
             {key: 'Diameter', value: `${calculationProps.diameter}`},
-            {key: 'Length', value: formatDimension(calculationProps.lengthM ?? 0, 'm', unitSystem)}
+            {key: 'Length', value: formatDimension(calculationProps.lengthM, 'm', unitSystem)}
           );
           break;
 
@@ -294,15 +408,15 @@ export const action: ActionFunction = async ({ request, context }) => {
         case 'Gasket':
           lineAttributes.push(
             {key: 'Thickness', value: `${calculationProps.thickness}`},
-            {key: 'Inner Diameter', value: formatDimension(calculationProps.innerDiameterMm ?? 0, 'mm', unitSystem)},
-            {key: 'Outer Diameter', value: formatDimension(calculationProps.outerDiameterMm ?? 0, 'mm', unitSystem)}
+            {key: 'Inner Diameter', value: formatDimension(calculationProps.innerDiameterMm, 'mm', unitSystem)},
+            {key: 'Outer Diameter', value: formatDimension(calculationProps.outerDiameterMm, 'mm', unitSystem)}
           );
           break;
 
         case 'Disc':
           lineAttributes.push(
             {key: 'Thickness', value: `${calculationProps.thickness}`},
-            {key: 'Diameter', value: formatDimension(calculationProps.diameterMm ?? 0, 'mm', unitSystem)}
+            {key: 'Diameter', value: formatDimension(calculationProps.diameterMm, 'mm', unitSystem)}
           );
           break;
       }
@@ -360,6 +474,36 @@ export const action: ActionFunction = async ({ request, context }) => {
     );
   }
 };
+
+// 加购时按 productId 重读 7 个 custom metafield（与产品页 PRODUCT_QUERY 同源）：
+// 服务端用与前端相同的解析层重建配置，固定参数不信任任何客户端提交值
+const PRODUCT_CONFIG_QUERY = `
+  query ProductConfig($id: ID!) {
+    product(id: $id) {
+      form_type: metafield(namespace: "custom", key: "form_type") {
+        value
+      }
+      dimension_limitation: metafield(namespace: "custom", key: "dimension_limitation") {
+        value
+      }
+      density: metafield(namespace: "custom", key: "density") {
+        value
+      }
+      unit_price: metafield(namespace: "custom", key: "unit_price") {
+        value
+      }
+      thickness: metafield(namespace: "custom", key: "thickness") {
+        value
+      }
+      diameter: metafield(namespace: "custom", key: "diameter") {
+        value
+      }
+      machining_precision: metafield(namespace: "custom", key: "machining_precision") {
+        value
+      }
+    }
+  }
+`;
 
 const CREATE_VARIANT_MUTATION = `
   mutation productVariantsBulkCreate($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {

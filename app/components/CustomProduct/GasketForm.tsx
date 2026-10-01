@@ -38,14 +38,9 @@ export function GasketForm({product, config, facets, productMetafields, onError,
       <PriceDisplay
         formType="Gasket"
         thickness={config.thickness}
-        diameter=""
         density={config.density}
-        lengthMm={0}
-        lengthM={0}
-        widthMm={0}
-        innerDiameterMm={innerDiameterMm}  // 新增参数
-        outerDiameterMm={outerDiameterMm}  // 新增参数
-        precision=""
+        innerDiameterMm={innerDiameterMm}
+        outerDiameterMm={outerDiameterMm}
         quantity={quantity}
         unitPrice={config.unitPrice}
       />
@@ -57,10 +52,7 @@ export function GasketForm({product, config, facets, productMetafields, onError,
         variants={productMetafields}
       />
 
-      {/* 隐藏字段（配置统一来自解析层） */}
-      <input type="hidden" name="thickness" value={config.thickness} />
-      <input type="hidden" name="density" value={config.density} />
-      <input type="hidden" name="unitPrice" value={config.unitPrice} />
+      {/* 固定参数（thickness/density/unitPrice）不再提交：服务端直接读产品 metafield */}
       
       <div className="mt-6 mb-6">
         <div className="space-y-6 max-w-xl">

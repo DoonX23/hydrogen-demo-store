@@ -3,100 +3,49 @@ export { calculateSheetPriceAndWeight, type SheetCalculationProps } from './shee
 export { calculateRodPriceAndWeight, type RodCalculationProps } from './rodCalculations';
 export { calculateFilmPriceAndWeight, type FilmCalculationProps } from './filmCalculations';
 export { calculateFlexibleRodPriceAndWeight, type FlexibleRodCalculationProps } from './flexibleRodCalculations';
-export { calculateGasketPriceAndWeight, type GasketCalculationProps } from './gasketCalculations'; // 新增
-export { calculateDiscPriceAndWeight, type DiscCalculationProps } from './discCalculations'; // 新增
+export { calculateGasketPriceAndWeight, type GasketCalculationProps } from './gasketCalculations';
+export { calculateDiscPriceAndWeight, type DiscCalculationProps } from './discCalculations';
 export { type CalculationResult } from './common';
 
-// 为了保持向后兼容，导出原来的函数
-import { calculateSheetPriceAndWeight } from './sheetCalculations';
-import { calculateRodPriceAndWeight } from './rodCalculations';
-import { calculateFilmPriceAndWeight } from './filmCalculations';
-import { calculateFlexibleRodPriceAndWeight } from './flexibleRodCalculations';
-import { calculateGasketPriceAndWeight } from './gasketCalculations'; // 新增
-import { calculateDiscPriceAndWeight } from './discCalculations'; // 新增
+import { calculateSheetPriceAndWeight, type SheetCalculationProps } from './sheetCalculations';
+import { calculateRodPriceAndWeight, type RodCalculationProps } from './rodCalculations';
+import { calculateFilmPriceAndWeight, type FilmCalculationProps } from './filmCalculations';
+import { calculateFlexibleRodPriceAndWeight, type FlexibleRodCalculationProps } from './flexibleRodCalculations';
+import { calculateGasketPriceAndWeight, type GasketCalculationProps } from './gasketCalculations';
+import { calculateDiscPriceAndWeight, type DiscCalculationProps } from './discCalculations';
+import { type CalculationResult } from './common';
 
-// 原来的计算参数接口
-export interface CalculationProps {
-  formType: string;
-  thickness: string;
-  diameter: string;
-  density: number;
-  lengthMm?: number;
-  lengthM?: number;
-  widthMm: number;
-  innerDiameterMm?: number;    // 新增（可选）
-  outerDiameterMm?: number;    // 新增（可选）
-  diameterMm?: number;         // 新增：Disc使用
-  precision: string;
-  quantity: number;
-  unitPrice: number;
-}
+// 统一入口入参：按 formType 判别的联合类型。
+// 每个分支只收该表单真实需要的字段——调用方不再传 diameter=""/lengthMm={0} 之类的假值；
+// TS 按分支自动收窄，缺字段在编译期报错，彻底消除 || 0 静默兜底。
+export type CalculationInput =
+  | ({ formType: 'Sheet' } & SheetCalculationProps)
+  | ({ formType: 'Rod' } & RodCalculationProps)
+  | ({ formType: 'Film' } & FilmCalculationProps)
+  | ({ formType: 'Flexible Rod' } & FlexibleRodCalculationProps)
+  | ({ formType: 'Gasket' } & GasketCalculationProps)
+  | ({ formType: 'Disc' } & DiscCalculationProps);
 
-// 原来的函数，现在重构为调用新的分离函数
-export function calculatePriceAndWeight(props: CalculationProps) {
-  const { formType } = props;
-  
-  switch(formType) {
+// 统一算价入口：按 formType 分发到六个具名计算函数。
+// 未知 formType → null（fail-closed）：调用方必须显式处理，
+// 不再兜底 price '0.00' 白送（旧 default 分支的失败方向是错的）。
+export function calculatePriceAndWeight(
+  input: CalculationInput,
+): CalculationResult | null {
+  switch (input.formType) {
     case 'Sheet':
-      return calculateSheetPriceAndWeight({
-        thickness: props.thickness,
-        density: props.density,
-        lengthMm: props.lengthMm || 0,
-        widthMm: props.widthMm,
-        precision: props.precision,
-        quantity: props.quantity,
-        unitPrice: props.unitPrice
-      });
-      
+      return calculateSheetPriceAndWeight(input);
     case 'Rod':
-      return calculateRodPriceAndWeight({
-        diameter: props.diameter,
-        density: props.density,
-        lengthMm: props.lengthMm || 0,
-        precision: props.precision,
-        quantity: props.quantity,
-        unitPrice: props.unitPrice
-      });
-      
+      return calculateRodPriceAndWeight(input);
     case 'Film':
-      return calculateFilmPriceAndWeight({
-        thickness: props.thickness,
-        density: props.density,
-        lengthM: props.lengthM || 0,
-        widthMm: props.widthMm,
-        quantity: props.quantity,
-        unitPrice: props.unitPrice
-      });
-      
+      return calculateFilmPriceAndWeight(input);
     case 'Flexible Rod':
-      return calculateFlexibleRodPriceAndWeight({
-        diameter: props.diameter,
-        density: props.density,
-        lengthM: props.lengthM || 0,
-        quantity: props.quantity,
-        unitPrice: props.unitPrice
-      });
-      
-    case 'Gasket':  // 新增case
-    return calculateGasketPriceAndWeight({
-      thickness: props.thickness,
-      density: props.density,
-      innerDiameterMm: props.innerDiameterMm || 0,
-      outerDiameterMm: props.outerDiameterMm || 0,
-      quantity: props.quantity,
-      unitPrice: props.unitPrice
-    });
-
-    case 'Disc':  // 新增case
-    return calculateDiscPriceAndWeight({
-      thickness: props.thickness,
-      density: props.density,
-      diameterMm: props.diameterMm || 0,
-      quantity: props.quantity,
-      unitPrice: props.unitPrice
-    });
-
+      return calculateFlexibleRodPriceAndWeight(input);
+    case 'Gasket':
+      return calculateGasketPriceAndWeight(input);
+    case 'Disc':
+      return calculateDiscPriceAndWeight(input);
     default:
-      return { price: '0.00', weight: 0.001 };
+      return null;
   }
 }

@@ -3,7 +3,6 @@
 // 职责：取货 → 拆包装（try/catch，后台写坏 JSON 不崩页，打日志）→ 验货（范围校验）
 //   → 发放类型化配置。六个表单与 ProductDescriptionSection 只消费 config，零解析零兜底。
 // 所有兜底默认值集中在下方 DEFAULTS 表：调整默认值、新增产品类型只改这一个文件。
-import type {ProductQuery} from 'storefrontapi.generated';
 import type {DimensionLimitation} from '~/lib/type';
 
 export type FormType = 'Sheet' | 'Film' | 'Rod' | 'Flexible Rod' | 'Gasket' | 'Disc';
@@ -89,7 +88,7 @@ export interface NormalizedLimits {
 export interface CustomProductConfig {
   formType: FormType | '';        // '' = 非定制商品（容器据此不渲染表单）
   limits: NormalizedLimits;       // 合法范围（min < max 已校验）
-  initial: {                      // 进站初始值（零空白态；优先取 metafield 的 min，其次默认表）
+  initial: {                      // 进站初始值（零空白态；DEFAULTS 表即标准，未配字段以 0 填充、无消费方）
     length: number;
     width: number;
     innerDiameter: number;
@@ -105,8 +104,22 @@ export interface CustomProductConfig {
   machiningPrecision: string;    // 可选精度档位（Rod / Sheet）
 }
 
+// resolveProductConfig 只读这七个 metafield 字段——最小结构接口，不再依赖生成类型：
+// 产品页传 ProductQuery['product']（结构超集，天然兼容），Oxygen 加购路由与将来的
+// Cart Transform Function 传自己的 metafield 视图。同一份解析层三处复用，
+// 同一份范围与兜底：前端展示多少就允许多少。
+export interface ProductMetafieldSource {
+  form_type?: {value: string} | null;
+  dimension_limitation?: {value: string} | null;
+  density?: {value: string} | null;
+  unit_price?: {value: string} | null;
+  thickness?: {value: string} | null;
+  diameter?: {value: string} | null;
+  machining_precision?: {value: string} | null;
+}
+
 export function resolveProductConfig(
-  product: NonNullable<ProductQuery['product']>,
+  product: ProductMetafieldSource,
 ): CustomProductConfig {
   const formTypeRaw = product.form_type?.value || '';
   const formType = (
@@ -140,11 +153,11 @@ export function resolveProductConfig(
     formType,
     limits,
     initial: {
-      length: raw.minLength || defaults.initLength || 0,
-      width: raw.minWidth || defaults.initWidth || 0,
-      innerDiameter: raw.minInnerDiameter || defaults.initInnerDiameter || 0,
-      outerDiameter: raw.minOuterDiameter || defaults.initOuterDiameter || 0,
-      diameter: raw.minDiameter || defaults.initDiameter || 0,
+      length: defaults.initLength || 0,
+      width: defaults.initWidth || 0,
+      innerDiameter: defaults.initInnerDiameter || 0,
+      outerDiameter: defaults.initOuterDiameter || 0,
+      diameter: defaults.initDiameter || 0,
     },
     stockSizes: raw.stockSizes || '',
     widthOptions:
@@ -160,7 +173,7 @@ export function resolveProductConfig(
 }
 
 // 拆包装：dimension_limitation 唯一解析出口
-function parseLimits(product: NonNullable<ProductQuery['product']>): DimensionLimitation {
+function parseLimits(product: ProductMetafieldSource): DimensionLimitation {
   const value = product.dimension_limitation?.value;
   if (!value) return {};
   try {

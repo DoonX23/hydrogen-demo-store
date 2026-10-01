@@ -92,12 +92,9 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
   return (
     <div className="w-full mx-auto">
       <fetcher.Form action="/api/custom-add-to-cart" method="post">
-        {/* 公共隐藏字段 */}
+        {/* 公共隐藏字段（formType 不提交：服务端从 metafield 推导，不信任客户端；
+            material/opacity/color 同理——服务端需要时自己读 metafield，已删） */}
         <input type="hidden" name="productId" value={product.id || ''} />
-        <input type="hidden" name="formType" value={formType} />
-        <input type="hidden" name="material" value={product.material?.value || ''} />
-        <input type="hidden" name="opacity" value={product.opacity?.value || ''} />
-        <input type="hidden" name="color" value={product.color?.value || ''} />
         
         {/* 3. 核心关键：必须把 Token 放入隐藏的 input 发送给后端 */}
         <input type="hidden" name="cf-turnstile-response" value={turnstileToken} />
