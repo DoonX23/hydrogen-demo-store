@@ -6,7 +6,7 @@
 // 类型约定：表定义处每个形态的回调拿到精确的 CalcInput<F>（编译期对齐，传错字段
 // 直接报错）；统一消费（管道 / 循环）经 getSpec 擦除为联合视图——安全性由 spec 表
 // 与 CalculationInput 联合同构保证（字段互斥，运行时分支已窄化）。
-import type {CustomProductConfig, FormType} from './config';
+import {PRECISION_NORMAL, PRECISION_HIGH, type CustomProductConfig, type FormType} from './config';
 import {formatDimension, type BaseUnit} from '~/utils/units';
 import {
   calculateMachiningBaseFee,
@@ -289,12 +289,12 @@ export function isValidPrecision(
   precision: string,
   config: CustomProductConfig,
 ): boolean {
-  if (precision !== 'High (±0.2mm)' && precision !== 'Normal (±2mm)') {
+  if (precision !== PRECISION_HIGH && precision !== PRECISION_NORMAL) {
     return false;
   }
   if (
-    config.machiningPrecision === 'Normal (±2mm)' &&
-    precision === 'High (±0.2mm)'
+    config.machiningPrecision === PRECISION_NORMAL &&
+    precision === PRECISION_HIGH
   ) {
     return false;
   }

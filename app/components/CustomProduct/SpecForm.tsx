@@ -7,6 +7,8 @@ import {useState, useEffect} from 'react';
 
 import type {CustomFormProps} from '~/lib/type';
 import {
+  PRECISION_NORMAL,
+  PRECISION_HIGH,
   getSpec,
   isFieldValid,
   fieldBounds,
@@ -45,7 +47,7 @@ export function SpecForm({
   const [precision, setPrecision] = useState(
     spec.precisionInitial === 'config'
       ? config.machiningPrecision
-      : 'Normal (±2mm)',
+      : PRECISION_NORMAL,
   );
   // 初始数量：Gasket=10 为历史行为原样保留，缺省 1
   const [quantity, setQuantity] = useState(spec.defaultQuantity ?? 1);
@@ -82,12 +84,12 @@ export function SpecForm({
 
   // 加工精度选项（仅收精度费的形态渲染；产品只配 Normal 时禁 High）
   const precisionOptions = [
-    {id: 'Normal', value: 'Normal (±2mm)', label: 'Normal (±2mm)'},
+    {id: 'Normal', value: PRECISION_NORMAL, label: PRECISION_NORMAL},
     {
       id: 'High',
-      value: 'High (±0.2mm)',
-      label: 'High (±0.2mm)',
-      disabled: config.machiningPrecision === 'Normal (±2mm)',
+      value: PRECISION_HIGH,
+      label: PRECISION_HIGH,
+      disabled: config.machiningPrecision === PRECISION_NORMAL,
     },
   ];
 

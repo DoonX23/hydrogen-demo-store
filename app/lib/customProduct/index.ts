@@ -9,6 +9,8 @@
 
 export {
   resolveProductConfig,
+  PRECISION_NORMAL,
+  PRECISION_HIGH,
   type FormType,
   type NormalizedLimits,
   type CustomProductConfig,

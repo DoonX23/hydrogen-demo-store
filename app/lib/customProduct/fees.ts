@@ -1,3 +1,5 @@
+import {PRECISION_NORMAL, PRECISION_HIGH} from './config';
+
 // 运费阶梯接口 (已注释)
 // interface ShippingTier {
 //   minWeight: number;
@@ -84,9 +86,9 @@ export function calculateShipping(weight: number, quantity: number): number {
   // 计算精度费用
   export function calculatePrecisionFee(precision: string, quantity: number): number {
     switch(precision) {
-      case 'High (±0.2mm)':
+      case PRECISION_HIGH:
         return 0.5 + MACHINING_BASE_FEE / quantity;
-      case 'Normal (±2mm)':
+      case PRECISION_NORMAL:
         return 0.5;
       default:
         return 0;

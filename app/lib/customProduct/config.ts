@@ -7,14 +7,10 @@ import type {DimensionLimitation} from '~/lib/type';
 
 export type FormType = 'Sheet' | 'Film' | 'Rod' | 'Flexible Rod' | 'Gasket' | 'Disc';
 
-const KNOWN_FORM_TYPES: FormType[] = [
-  'Sheet',
-  'Film',
-  'Rod',
-  'Flexible Rod',
-  'Gasket',
-  'Disc',
-];
+// 加工精度档位（machiningPrecision 取值）——全站唯一的档位名字面量出处：
+// config 默认值 / specs 校验 / fees 计价 / SpecForm 选项四处共用，改名只改这一处
+export const PRECISION_NORMAL = 'Normal (±2mm)';
+export const PRECISION_HIGH = 'High (±0.2mm)';
 
 // Film 宽度默认档位（metafield 未配置 widthOptions 时兜底；value 为模具物理真值 mm）
 const DEFAULT_WIDTH_OPTIONS: NonNullable<DimensionLimitation['widthOptions']> = [
@@ -70,6 +66,12 @@ const DEFAULTS: Record<FormType, FormDefaults> = {
   },
 };
 
+// 形态合法性判断：从 DEFAULTS 表（穷举锚点）派生，不再手写第二份枚举。
+// 用 hasOwnProperty 而非 in：避免 'toString' 等原型链属性被误判成合法形态。
+function isFormType(value: string): value is FormType {
+  return Object.prototype.hasOwnProperty.call(DEFAULTS, value);
+}
+
 // 归一化后的合法范围：全部为数字（该表单未用到的字段以 0 填充，无消费方）
 export interface NormalizedLimits {
   minLength: number;
@@ -122,11 +124,7 @@ export function resolveProductConfig(
   product: ProductMetafieldSource,
 ): CustomProductConfig {
   const formTypeRaw = product.form_type?.value || '';
-  const formType = (
-    KNOWN_FORM_TYPES as string[]
-  ).includes(formTypeRaw)
-    ? (formTypeRaw as FormType)
-    : '';
+  const formType: FormType | '' = isFormType(formTypeRaw) ? formTypeRaw : '';
   const defaults: FormDefaults = formType ? DEFAULTS[formType] : {};
 
   // 唯一 JSON 解析点：写坏不崩页，打日志 + 空配置兜底
@@ -168,7 +166,7 @@ export function resolveProductConfig(
     unitPrice: Number(product.unit_price?.value) || 0,
     thickness: product.thickness?.value || '',
     diameter: product.diameter?.value || '',
-    machiningPrecision: product.machining_precision?.value || 'Normal (±2mm)',
+    machiningPrecision: product.machining_precision?.value || PRECISION_NORMAL,
   };
 }
 
