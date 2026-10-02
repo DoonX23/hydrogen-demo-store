@@ -7,7 +7,6 @@ import {SpecForm} from './SpecForm';  // 六形态唯一的 spec 驱动表单（
 import {Button} from '~/components/Button';
 import type {MetafieldNavigatorProps} from './ProductMetafieldNavigator';
 import { useAutoOpenCartOnAdd } from '~/hooks/useAutoOpenCartOnAdd';
-import type {UnitSystem} from '~/utils/units';
 
 // 1. 引入 Turnstile 组件
 import { Turnstile } from '@marsidev/react-turnstile';
@@ -43,9 +42,6 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
   // 2. 新增状态：存储验证码的 Token
   const [turnstileToken, setTurnstileToken] = useState('');
 
-  // 全局单位制：提升到容器层，六个表单共享；默认英制（业务决策）
-  const [unitSystem, setUnitSystem] = useState<UnitSystem>('imperial');
-
   // 你的 Site Key (建议如果不方便配环境变量，可以直接先填字符串应急)
   // 长期建议写在 .env 只有以 PUBLIC_ 开头的变量才能在前端访问
   // 本地开发用 Cloudflare 官方测试密钥（始终通过，渲染后立即签发 Token，按钮秒解锁）；
@@ -56,16 +52,6 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
 
   // 根据formType渲染对应的表单组件
   const renderForm = () => {
-    const commonProps = {
-      product,
-      config,
-      facets,
-      productMetafields,
-      onError: setHasError,
-      unitSystem,
-      onUnitSystemChange: setUnitSystem,
-    };
-
     // spec 驱动的唯一表单：formType 非空才渲染（非定制商品不进表单）
     if (!formType) return null;
     return (
@@ -75,8 +61,6 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
         facets={facets}
         productMetafields={productMetafields}
         onError={setHasError}
-        unitSystem={unitSystem}
-        onUnitSystemChange={setUnitSystem}
       />
     );
   };
@@ -91,7 +75,7 @@ export function CustomProductForm({product, facets, productMetafields}: CustomPr
         {/* 3. 核心关键：必须把 Token 放入隐藏的 input 发送给后端 */}
         <input type="hidden" name="cf-turnstile-response" value={turnstileToken} />
 
-        {/* 渲染对应的表单组件（单位制切换在各表单尺寸输入区顶部，radio 直接提交 unitSystem） */}
+        {/* 渲染对应的表单组件（尺寸输入为双单位并排，无单位制切换） */}
         {renderForm()}
         
         {/* 公共提交按钮 */}

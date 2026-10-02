@@ -6,7 +6,6 @@ import type {
 } from '@shopify/hydrogen/storefront-api-types';
 import type {ProductQuery} from 'storefrontapi.generated';
 import type {MetafieldNavigatorProps} from '~/components/CustomProduct/ProductMetafieldNavigator';
-import type {UnitSystem} from '~/utils/units';
 import type {CustomProductConfig} from '~/lib/customProduct';
 
 export type NonNullableFields<T> = {
@@ -56,6 +55,4 @@ export interface CustomFormProps {
   facets: MetafieldNavigatorProps['options'];
   productMetafields: MetafieldNavigatorProps['variants'];
   onError: (hasError: boolean) => void;
-  unitSystem: UnitSystem;  // 全局单位制（state 留在 CustomProductForm，六个表单共享）
-  onUnitSystemChange: (unitSystem: UnitSystem) => void;  // 切换控件在各表单尺寸输入区顶部
 }

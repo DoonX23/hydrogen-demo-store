@@ -7,7 +7,7 @@
 // 直接报错）；统一消费（管道 / 循环）经 getSpec 擦除为联合视图——安全性由 spec 表
 // 与 CalculationInput 联合同构保证（字段互斥，运行时分支已窄化）。
 import type {CustomProductConfig, FormType} from './config';
-import {formatDimension, type BaseUnit, type UnitSystem} from '~/utils/units';
+import {formatDimension, type BaseUnit} from '~/utils/units';
 import {
   calculateMachiningBaseFee,
   calculateOversizeFee,
@@ -461,11 +461,10 @@ export function assembleCalculationInput(
   }
 }
 
-// 购物车行属性组装（服务端生成，客户端不可伪造；单位制只影响显示）：
-// 固定参数 → 逐字段尺寸（公制只显示基准；英制基准在前括注换算值）→ Precision
+// 购物车行属性组装（服务端生成，客户端不可伪造）：
+// 固定参数 → 逐字段尺寸（基准在前 + 英制括注，永远双单位并注）→ Precision
 export function buildLineAttributes(
   props: CalculationInput,
-  unitSystem: UnitSystem,
 ): Array<{key: string; value: string}> {
   const spec = getSpec(props.formType);
   const attributes: Array<{key: string; value: string}> = [];
@@ -479,11 +478,7 @@ export function buildLineAttributes(
   for (const field of spec.inputs) {
     attributes.push({
       key: field.label,
-      value: formatDimension(
-        fieldValue(props, field.field),
-        field.unit,
-        unitSystem,
-      ),
+      value: formatDimension(fieldValue(props, field.field), field.unit),
     });
   }
   if (spec.precision) {

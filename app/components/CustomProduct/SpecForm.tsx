@@ -1,9 +1,10 @@
 // ~/components/CustomProduct/SpecForm.tsx
-// 六形态唯一的定制表单：外壳（价格 / 导航 / 单位制 / 说明 / 数量）写一遍，
+// 六形态唯一的定制表单：外壳（价格 / 导航 / 说明 / 数量）写一遍，
 // 字段区 / 精度区 / 初始值 / 联动规则全部由 FORM_SPECS 查卡驱动。
 // 前后端同一张 spec 表、同一份 isFieldValid / crossValidate / assembleCalculationInput：
 // 表单红框判什么，服务端就拒什么；表单申报什么尺寸，前后端就按同一份入参算价。
 import {useState, useEffect} from 'react';
+
 import type {CustomFormProps} from '~/lib/type';
 import {
   getSpec,
@@ -16,10 +17,11 @@ import {
   type FormInputField,
 } from '~/lib/customProduct';
 import {formatDimension} from '~/utils/units';
-import {UniversalInput} from './UniversalInput';
-import {PriceDisplay} from './PriceDisplay';
+
 import {CustomRadioGroup} from '../CustomRadioGroup';
-import {UnitSystemSwitch} from './UnitSystemSwitch';
+
+import {UnitConverter} from './UnitConverter';
+import {PriceDisplay} from './PriceDisplay';
 import CustomInputNumber from './CustomInputNumber';
 import {ProductMetafieldNavigator} from './ProductMetafieldNavigator';
 
@@ -29,8 +31,6 @@ export function SpecForm({
   facets,
   productMetafields,
   onError,
-  unitSystem,
-  onUnitSystemChange,
 }: CustomFormProps) {
   // 容器只在 formType 非空时渲染本表单，此处断言非空（不用提前 return，守 hooks 规则）
   const formType = config.formType as FormType;
@@ -62,10 +62,13 @@ export function SpecForm({
   // 错误为派生值：由当前值与合法范围现算（不存 state，多字段互不覆盖）
   const fieldErrors = new Map(
     spec.inputs
-      .map((field) => [
-        field.field,
-        !isFieldValid(field, values[field.field], config),
-      ] as const)
+      .map(
+        (field) =>
+          [
+            field.field,
+            !isFieldValid(field, values[field.field], config),
+          ] as const,
+      )
       .filter(([, invalid]) => invalid),
   );
   // 跨字段规则（Gasket 内径 < 外径）：服务端校验同一份文案
@@ -77,16 +80,9 @@ export function SpecForm({
     onError(hasError);
   }, [hasError, onError]);
 
-  // 字段单位的最小基准：任一字段以 m 计（Film / Flexible Rod 长度），单位制切换按 m 档
-  const baseUnit = spec.inputs.some((field) => field.unit === 'm') ? 'm' : 'mm';
-
-  // 加工精度选项（仅收精度费的形态渲染）
+  // 加工精度选项（仅收精度费的形态渲染；产品只配 Normal 时禁 High）
   const precisionOptions = [
-    {
-      id: 'Normal',
-      value: 'Normal (±2mm)',
-      label: 'Normal (±2mm)',
-    },
+    {id: 'Normal', value: 'Normal (±2mm)', label: 'Normal (±2mm)'},
     {
       id: 'High',
       value: 'High (±0.2mm)',
@@ -111,21 +107,15 @@ export function SpecForm({
 
       <div className="mt-6 mb-6">
         <div className="space-y-6 max-w-xl">
-          {/* 单位制切换（紧贴尺寸输入区顶部，切档只改显示不碰基准值） */}
-          <UnitSystemSwitch
-            baseUnit={baseUnit}
-            unitSystem={unitSystem}
-            onChange={onUnitSystemChange}
-          />
-
-          {/* 字段区：spec.inputs 顺序即渲染顺序（Film 宽度在前） */}
+          {/* 字段区：spec.inputs 顺序即渲染顺序（Film 宽度在前）；
+              尺寸输入为双单位并排（基准框 + 英制换算框），无需单位制切换 */}
           {spec.inputs.map((field) => {
             const {min, max} = fieldBounds(field, config);
             if (field.widget === 'radio') {
-              // 档位字段（Film 宽度）：radio label 随单位制动态生成（模具物理真值 mm，绝不圆整）
+              // 档位字段（Film 宽度）：radio label 双单位并注（模具物理真值 mm 原样保留）
               const options = config.widthOptions.map((option) => ({
                 ...option,
-                label: formatDimension(Number(option.value), 'mm', unitSystem),
+                label: formatDimension(Number(option.value), 'mm'),
               }));
               return (
                 <CustomRadioGroup
@@ -145,14 +135,15 @@ export function SpecForm({
             }
             return (
               <div key={field.field} className="space-y-2">
-                <label className="block text-sm font-medium">{field.label}</label>
-                <UniversalInput
+                <label className="block text-sm font-medium">
+                  {field.label}
+                </label>
+                <UnitConverter
                   name={field.field}
                   baseUnit={field.unit}
                   maxValue={max}
                   minValue={min}
                   value={values[field.field]}
-                  unitSystem={unitSystem}
                   error={fieldErrors.has(field.field)}
                   onChange={(baseValue) =>
                     setValues((prev) => ({...prev, [field.field]: baseValue}))
@@ -183,11 +174,12 @@ export function SpecForm({
 
           {/* 附加说明 */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium">
+            <label htmlFor="instructions" className="block text-sm font-medium">
               Additional Instructions
             </label>
             <textarea
               name="instructions"
+              id="instructions"
               rows={2}
               className="w-full max-w-xl text-sm rounded-md border-blue-100 shadow-sm bg-blue-100 focus:border-brand"
               placeholder="Please enter any additional instructions here..."

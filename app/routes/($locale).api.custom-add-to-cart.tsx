@@ -17,7 +17,6 @@ import {
   type CalculationInput,
   type FormInputField,
 } from '~/lib/customProduct';
-import type {UnitSystem} from '~/utils/units';
 import {createAdminApiClient} from '@shopify/admin-api-client';
 
 // --- 在文件最上方或 verifyTurnstile 函数上方定义接口 ---
@@ -148,10 +147,6 @@ export const action: ActionFunction = async ({ request, context }) => {
     // 🛡️ 拦截结束，下面是你原有的业务代码
     // ==========================================
 
-    // 客户当前单位制（前端隐藏字段提交，供行属性格式化；缺失/非法一律按默认英制处理）
-    const unitSystem: UnitSystem =
-      formData.get('unitSystem') === 'metric' ? 'metric' : 'imperial';
-
     // ==========================================
     // 固定参数一律从产品 metafield 读取（与前端同一份 resolveProductConfig）：
     // 表单不再提交 thickness/density/unitPrice/diameter/formType，客户端声明通道消失
@@ -245,8 +240,8 @@ export const action: ActionFunction = async ({ request, context }) => {
 
     try {
       // 行属性由 spec 表驱动、服务端生成（客户端不可伪造）：
-      // 固定参数 → 逐字段尺寸（公制只显示基准；英制基准在前括注换算值）→ Precision
-      const lineAttributes = buildLineAttributes(calculationProps, unitSystem);
+      // 固定参数 → 逐字段尺寸（基准在前 + 英制括注，永远双单位并注）→ Precision
+      const lineAttributes = buildLineAttributes(calculationProps);
 
       // 添加说明信息（所有表单类型通用）
       const instructions = formData.get('instructions');
