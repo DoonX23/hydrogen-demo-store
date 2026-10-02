@@ -134,8 +134,6 @@ export interface FormSpec<F extends FormType> {
   inputs: InputSpec[];
   // 是否收精度费（同时输出 Precision 行属性；仅 Sheet / Rod）
   precision?: boolean;
-  // 尺寸 < 50mm 时强制 High（Sheet 联动规则）
-  forceHighPrecision?: (p: CalcInput<F>) => boolean;
   // 几何体积（mm³）：六形态唯一的几何差异点
   volume: (p: CalcInput<F>) => number;
   // 计费重量（kg）：Disc / Gasket 按外切方板计费，缺省 = 实际重量
@@ -166,7 +164,6 @@ export const FORM_SPECS: {[F in FormType]: FormSpec<F>} = {
       {field: 'widthMm', label: 'Width', unit: 'mm', limit: 'width', initKey: 'width'},
     ],
     precision: true,
-    forceHighPrecision: (p) => p.lengthMm < 50 || p.widthMm < 50,
     volume: (p) => p.lengthMm * p.widthMm * parseFloat(p.thickness),
     oversizeDim: (p) => Math.max(p.lengthMm, p.widthMm),
   },
@@ -257,7 +254,6 @@ interface ErasedFormSpec {
   fixedAttribute?: FixedAttributeSpec;
   inputs: InputSpec[];
   precision?: boolean;
-  forceHighPrecision?: (p: CalculationInput) => boolean;
   volume: (p: CalculationInput) => number;
   billWeight?: (p: CalculationInput) => number;
   oversizeDim?: (p: CalculationInput) => number;
@@ -288,11 +284,10 @@ const precisionOf = (props: CalculationInput): string =>
   (props as unknown as {precision?: string}).precision ?? '';
 
 // precision 规则（与表单联动一致，将来 function 的 parseLineAttributes 复用同一套规则）：
-// 枚举精确匹配；产品只配了 Normal 时禁止 High；尺寸 < 50mm 时强制 High
+// 枚举精确匹配；产品只配了 Normal 时禁止 High
 export function isValidPrecision(
   precision: string,
   config: CustomProductConfig,
-  forceHigh: boolean,
 ): boolean {
   if (precision !== 'High (±0.2mm)' && precision !== 'Normal (±2mm)') {
     return false;
@@ -301,9 +296,6 @@ export function isValidPrecision(
     config.machiningPrecision === 'Normal (±2mm)' &&
     precision === 'High (±0.2mm)'
   ) {
-    return false;
-  }
-  if (forceHigh && precision !== 'High (±0.2mm)') {
     return false;
   }
   return true;
@@ -347,8 +339,7 @@ export function validateCustomInput(
 
   // 4. precision 联动规则
   if (spec.precision) {
-    const forceHigh = spec.forceHighPrecision?.(props) ?? false;
-    if (!isValidPrecision(precisionOf(props), config, forceHigh)) {
+    if (!isValidPrecision(precisionOf(props), config)) {
       errors.push('Invalid precision');
     }
   }

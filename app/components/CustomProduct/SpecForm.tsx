@@ -77,14 +77,6 @@ export function SpecForm({
     onError(hasError);
   }, [hasError, onError]);
 
-  // 尺寸 < 50mm 时强制高精度（Sheet 联动规则，查卡取规则）
-  const requiresHighPrecision = spec.forceHighPrecision?.(calculationInput) ?? false;
-  useEffect(() => {
-    if (requiresHighPrecision && config.machiningPrecision !== 'Normal (±2mm)') {
-      setPrecision('High (±0.2mm)');
-    }
-  }, [requiresHighPrecision, config.machiningPrecision]);
-
   // 字段单位的最小基准：任一字段以 m 计（Film / Flexible Rod 长度），单位制切换按 m 档
   const baseUnit = spec.inputs.some((field) => field.unit === 'm') ? 'm' : 'mm';
 
@@ -94,7 +86,6 @@ export function SpecForm({
       id: 'Normal',
       value: 'Normal (±2mm)',
       label: 'Normal (±2mm)',
-      disabled: requiresHighPrecision,
     },
     {
       id: 'High',
