@@ -126,48 +126,48 @@ export function UnitConverter({
       <input type="hidden" name={name} value={value} />
 
       <div className="flex items-center gap-2">
-        {/* 第一个单位输入框（基准单位，真值本体） */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              inputMode="decimal"
-              value={drafts.base}
-              onChange={(e) =>
-                setDrafts((prev) => ({
-                  ...prev,
-                  base: sanitizeDecimal(e.target.value),
-                }))
-              }
-              onBlur={handleValueOneBlur}
-              onKeyDown={handleKeyDown}
-              className="w-full min-w-0 px-2 py-2 text-sm text-black bg-blue-100 border border-blue-100 rounded dark:text-black focus:border-brand"
-              placeholder={unitOne}
-            />
-            <span className="text-sm text-black shrink-0">{unitOne}</span>
-          </div>
+        {/* 第一个单位输入框（基准单位，真值本体）。
+            单位用 absolute 悬浮在框内右侧（主流"后缀内嵌"样式）：
+            input 加 pr-8 给单位腾位，span 加 pointer-events-none 防挡聚焦 */}
+        <div className="relative flex-1 min-w-0">
+          <input
+            type="text"
+            inputMode="decimal"
+            value={drafts.base}
+            onChange={(e) =>
+              setDrafts((prev) => ({
+                ...prev,
+                base: sanitizeDecimal(e.target.value),
+              }))
+            }
+            onBlur={handleValueOneBlur}
+            onKeyDown={handleKeyDown}
+            className="w-full min-w-0 px-2 pr-8 py-2 text-sm text-black bg-blue-100 border border-blue-100 rounded dark:text-black focus:border-brand"
+          />
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-brand pointer-events-none">
+            {unitOne}
+          </span>
         </div>
 
-        {/* 第二个单位输入框（英制，派生计算器） */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              inputMode="decimal"
-              value={drafts.imperial}
-              onChange={(e) =>
-                setDrafts((prev) => ({
-                  ...prev,
-                  imperial: sanitizeDecimal(e.target.value),
-                }))
-              }
-              onBlur={handleValueTwoBlur}
-              onKeyDown={handleKeyDown}
-              className="w-full min-w-0 px-2 py-2 text-sm text-black bg-blue-100 border border-blue-100 rounded dark:text-black focus:border-brand"
-              placeholder={unitTwo}
-            />
-            <span className="text-sm text-black shrink-0">{unitTwo}</span>
-          </div>
+        {/* 第二个单位输入框（英制，派生计算器），后缀内嵌同框一 */}
+        <div className="relative flex-1 min-w-0">
+          <input
+            type="text"
+            inputMode="decimal"
+            value={drafts.imperial}
+            onChange={(e) =>
+              setDrafts((prev) => ({
+                ...prev,
+                imperial: sanitizeDecimal(e.target.value),
+              }))
+            }
+            onBlur={handleValueTwoBlur}
+            onKeyDown={handleKeyDown}
+            className="w-full min-w-0 px-2 pr-8 py-2 text-sm text-black bg-blue-100 border border-blue-100 rounded dark:text-black focus:border-brand"
+          />
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-brand pointer-events-none">
+            {unitTwo}
+          </span>
         </div>
       </div>
 
