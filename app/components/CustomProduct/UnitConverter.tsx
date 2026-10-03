@@ -17,6 +17,11 @@ import {
   type BaseUnit,
 } from '~/utils/units';
 
+// 输入即时清洗：只放行数字、负号与小数点，字母/其他符号在敲键瞬间被剔除——
+// 这是 type="text" + inputMode="decimal" 的主流配套（number input 会吞掉 "555." 中间态，
+// 故弃用；而 text 需自己兜住垃圾字符）。失焦时 parseFloat 再对多小数点等残余兜底。
+const sanitizeDecimal = (raw: string): string => raw.replace(/[^0-9.\-]/g, '');
+
 interface UnitConverterProps {
   name: string; // 基准字段名（FormData 提交名，如 lengthMm）
   baseUnit: BaseUnit; // 基准单位：'mm' | 'm'（英制换算单位由此派生 in / ft）
@@ -68,8 +73,9 @@ export function UnitConverter({
   const handleValueOneBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const raw = e.target.value;
 
-    // 空值回退到下限（旧版行为原样保留）
-    if (raw === '' || raw === '-') {
+    // 不含任何数字（空串 / '-' / '.' / '-.' 等纯符号）一律回退到下限，
+    // 避免 "." 被补零成 0 绕过空值分支（text 输入框的中间态比 number 多）
+    if (!/\d/.test(raw)) {
       commit(minValue);
       return;
     }
@@ -93,7 +99,8 @@ export function UnitConverter({
   const handleValueTwoBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const raw = e.target.value;
 
-    if (raw === '' || raw === '-') {
+    // 同框一：无数字即回退下限
+    if (!/\d/.test(raw)) {
       commit(minValue);
       return;
     }
@@ -123,17 +130,19 @@ export function UnitConverter({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <input
-              type="number"
+              type="text"
+              inputMode="decimal"
               value={drafts.base}
               onChange={(e) =>
-                setDrafts((prev) => ({...prev, base: e.target.value}))
+                setDrafts((prev) => ({
+                  ...prev,
+                  base: sanitizeDecimal(e.target.value),
+                }))
               }
               onBlur={handleValueOneBlur}
               onKeyDown={handleKeyDown}
-              className="w-full min-w-0 px-2 py-2 text-sm text-black bg-blue-100 border border-blue-100 rounded dark:text-black focus:border-brand [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0"
+              className="w-full min-w-0 px-2 py-2 text-sm text-black bg-blue-100 border border-blue-100 rounded dark:text-black focus:border-brand"
               placeholder={unitOne}
-              min={0}
-              step="any"
             />
             <span className="text-sm text-black shrink-0">{unitOne}</span>
           </div>
@@ -143,17 +152,19 @@ export function UnitConverter({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <input
-              type="number"
+              type="text"
+              inputMode="decimal"
               value={drafts.imperial}
               onChange={(e) =>
-                setDrafts((prev) => ({...prev, imperial: e.target.value}))
+                setDrafts((prev) => ({
+                  ...prev,
+                  imperial: sanitizeDecimal(e.target.value),
+                }))
               }
               onBlur={handleValueTwoBlur}
               onKeyDown={handleKeyDown}
-              className="w-full min-w-0 px-2 py-2 text-sm text-black bg-blue-100 border border-blue-100 rounded dark:text-black focus:border-brand [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0"
+              className="w-full min-w-0 px-2 py-2 text-sm text-black bg-blue-100 border border-blue-100 rounded dark:text-black focus:border-brand"
               placeholder={unitTwo}
-              min={0}
-              step="any"
             />
             <span className="text-sm text-black shrink-0">{unitTwo}</span>
           </div>
