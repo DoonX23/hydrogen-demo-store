@@ -126,7 +126,7 @@ export function CustomFooter({menu}: {menu?: EnhancedMenu}) {
             <div
               className={`self-end pt-8 opacity-50 col-span-1 lg:col-span-${itemsCount}`}
             >
-              &copy; {new Date().getFullYear()} / DoonX, Inc. development by DoonX.
+              &copy; {new Date().getFullYear()} / DoonX, LLC. development by DoonX.
             </div>
           </div>
         </footer>
