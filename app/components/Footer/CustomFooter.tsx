@@ -106,9 +106,8 @@ export function CustomFooter({menu}: {menu?: EnhancedMenu}) {
               <div>
                 <div className="font-semibold">Address:</div>
                 <p className="text-balance">
-                  Longsheng Road, Longhua District,<br/>
-                  Shenzhen City, Guangdong Province,<br/>
-                  China
+                  30 N Gould St Ste 100,<br/>
+                  Sheridan, WY 82801, United States<br/>
                 </p>
               </div>
             </div>
