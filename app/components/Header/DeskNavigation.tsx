@@ -45,9 +45,9 @@ function TemplatesDropdown({
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 }) {
-  // 判断是否是 "By Shape" 菜单
-  const isByShapeMenu = menuData.title.toLowerCase() === 'by shape';
-  // 只有 By Shape 菜单才使用左右分栏状态
+  // 判断是否是 "Products" 菜单
+  const isByShapeMenu = menuData.title.toLowerCase() === 'products';
+  // 只有 "Products" 菜单才使用左右分栏状态
   const [activeSecondLevel, setActiveSecondLevel] = useState<string | null>(
     isByShapeMenu && menuData.items?.[0]?.id ? menuData.items[0].id : null
   );
