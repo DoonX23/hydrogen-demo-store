@@ -10,8 +10,28 @@ import {CartForm, type CartQueryDataReturn, Analytics} from '@shopify/hydrogen';
 import {isLocalPath} from '~/lib/utils';
 import {Cart} from '~/components/Cart';
 
+function isSameOriginRequest(request: Request) {
+  const requestHost = new URL(request.url).host;
+  const isSameOrigin = (value: string | null) => {
+    if (!value) return false;
+    try {
+      return new URL(value).host === requestHost;
+    } catch {
+      return false;
+    }
+  };
+  return (
+    isSameOrigin(request.headers.get('origin')) ||
+    isSameOrigin(request.headers.get('referer'))
+  );
+}
+
 export async function action({request, context}: ActionFunctionArgs) {
   const {cart} = context;
+
+  if (!isSameOriginRequest(request)) {
+    return data({error: 'Invalid request'}, {status: 400});
+  }
 
   const formData = await request.formData();
 
